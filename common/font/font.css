@@ -1,0 +1,12 @@
+@font-face{
+  font-family: 'SimHei';
+  /*src:url('./AvenirNextBold.ttf');*/
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face{
+  font-family: 'content-font';
+  /*src:url('./simply.ttf');*/
+  font-weight: normal;
+  font-style: normal;
+}

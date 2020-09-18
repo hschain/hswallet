@@ -1,0 +1,19 @@
+{
+  "name": "hschain_wallet_uniapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@dcloudio/uni-ui": "^1.2.5",
+    "axios": "^0.20.0",
+    "bip39": "^3.0.2",
+    "hschainjs": "^1.0.1",
+    "vuex": "^3.5.1"
+  }
+}

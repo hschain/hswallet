@@ -1,0 +1,59 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/main/main",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/application/application",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/my/my",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/assets/assets",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/assetsDetail/assetsDetail",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationStyle": "custom",
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#919293",
+		"selectedColor": "#FFCB5C",
+		"backgroundColor": "#fff",
+		"borderStyle": "black",
+		"list": [{
+			"pagePath": "pages/main/main",
+			"text": "钱包"
+			// "iconPath": "static/images/tabBar/index.png",
+			// "selectedIconPath": "static/images/tabBar/index_selected.png"
+		}, {
+			"pagePath": "pages/application/application",
+			"text": "应用"
+			// "iconPath": "static/images/tabBar/drink.png",
+			// "selectedIconPath": "static/images/tabBar/drink_selected.png"
+		}, {
+			"pagePath": "pages/my/my",
+			"text": "我的"
+			// "iconPath": "static/images/tabBar/take.png",
+			// "selectedIconPath": "static/images/tabBar/take_selected.png"
+		}]
+	}
+}

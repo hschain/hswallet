@@ -1,12 +1,12 @@
 <template>
 	<view class="content">
-		<uni-nav-bar @clickLeft='back()' left-icon="back" left-text="" :title="title"></uni-nav-bar>
+		<uni-nav-bar @clickLeft='back()' left-icon="back" left-text="返回" :title="title" color="#fff" background-color="#020e46"></uni-nav-bar>
 		<view class="introduce containerWrapper">
 			介绍
 		</view>
 		<hs-nav-menu @click='changeIndex()' :data="menu" :activeIndex="activeIndex" @changeIndex="changeIndex"></hs-nav-menu>
 		<view class="assetsList containerWrapper">
-			<view @click="navigate(item)" v-for="item in assetsList" :key="item.denom" class="table">
+			<view @click="navigate(item)" v-for="(item, i) in assetsList" :key="i + 'key'" class="table">
 				<view class="tableLeft">
 					<view class="tabTop">
 						<image class="icon" v-if="item.denom === 'HST'" src="../../assets/common/logo.png" mode=""></image>
@@ -50,12 +50,26 @@
 						denom: 'HST',
 						time: '2020-09-16 / 16:54:25',
 						value: 26,
-						type: 'in'
+						type: 'in',
+						success: true,
+					}, {
+						denom: 'HST',
+						time: '2020-09-16 / 12:35:05',
+						value: 34,
+						type: 'out',
+						success: false
 					}, {
 						denom: 'ACOIN',
 						time: '2020-09-16 / 12:35:05',
-						value: 34,
-						type: 'out'
+						value: 95,
+						type: 'in',
+						success: false
+					}, {
+						denom: 'ACOIN',
+						time: '2020-09-16 / 12:35:05',
+						value: 33,
+						type: 'out',
+						success: true
 					},
 				],
 				oAssetsList: [],
@@ -71,15 +85,17 @@
 				uni.navigateBack()
 			},
 			changeIndex(val) {
-				if (val !== 'all') {
+				if (val !== 'all' && val !== 'fail') {
 					this.assetsList = this.oAssetsList.filter(item => item.type === val)
+				} else if (val === 'fail') {
+					this.assetsList = this.oAssetsList.filter(item => !item.success)
 				} else {
 					this.assetsList = this.oAssetsList
 				}
 
 			},
 			navigate(item) {
-				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail?item=${item}` })
+				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail?item=${JSON.stringify(item)}` })
 			}
 		}
 	}

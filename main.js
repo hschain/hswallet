@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import App from './App'
 import hschain from 'hschainjs'
-import './common/css/common.scss'
+import VueClipboard from 'vue-clipboard2'
 
 Vue.config.productionTip = false
 Vue.prototype.$chain = hschain.network
+Vue.use(VueClipboard);
 
 App.mpType = 'app'
 

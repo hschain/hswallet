@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-		<uni-nav-bar right-text="[ . . . ]" title="钱包"></uni-nav-bar>
+		<uni-nav-bar right-text="[ . . . ]" title="钱包" color="#fff" background-color="var(--mainColor)"></uni-nav-bar>
 		<view class="headerWrapper containerWrapper">
 			<view class="walletName">
 				<text>自定义钱包名</text>
@@ -96,7 +96,7 @@
 			display: flex;
 			flex-direction: column;
 			.title {
-				margin: 30rpx;
+				margin: 30rpx 30rpx 0;
 				font-size: 36rpx;
 			}
 			.assetsList {

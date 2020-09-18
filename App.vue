@@ -14,4 +14,8 @@
 
 <style>
 	/*每个页面公共css */
+	@import './common/css/common.scss';
+	:root {
+		--mainColor: #020e46
+	}
 </style>

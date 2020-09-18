@@ -25,18 +25,42 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
+		}, {
+			"path": "pages/home/home",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/safetyTips/safetyTips",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/createMnemonic/createMnemonic",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/pinCode/pinCode",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {
 		"navigationStyle": "custom",
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarBackgroundColor": "#020e46",
+		"backgroundColor": "#020e46",
+		"app-plus": {  
+			"background": "#020e46",  
+			"animationType": "slide-in-right"  
+		}
 	},
 	"tabBar": {
 		"color": "#919293",
-		"selectedColor": "#FFCB5C",
+		"selectedColor": "#C1996C",
 		"backgroundColor": "#fff",
 		"borderStyle": "black",
 		"list": [{

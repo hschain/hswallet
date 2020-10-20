@@ -1,12 +1,12 @@
 <template>
 	<view class="home">
 		<view class="tip">
-			<image class="logo" src="../../assets/common/HSTLOGO.png" mode=""></image>
+			<image class="logo" src="../../static/common/logo.png" mode=""></image>
 			欢迎使用HSWallet，下一步您可以创建钱包或导入已有钱包
 		</view>
 		<view class="bottomSize">
-			<button class="btn" @click="create" type="primary">创建钱包</button>
-			<button class="btn" type="primary">导入钱包</button>
+			<view class="btn greenBtn" @click="create">创建钱包</view>
+			<view class="btn greenBtn" @click="importWallet">导入钱包</view>
 		</view>
 	</view>
 </template>
@@ -14,17 +14,43 @@
 <script>
 	export default {
 		name: 'home',
+		data() {
+			return {
+				first: null
+			}
+		},
+		onBackPress() {
+			if (!this.first) {
+				this.first = new Date().getTime()
+				plus.nativeUI.toast("再按一次退出应用", {
+					duration: "short"
+				});
+				setTimeout(() => {
+					this.first = null
+				}, 1000)
+			} else {
+				if (new Date().getTime() - this.first < 1500) {
+					plus.runtime.quit()
+				}
+			}
+			return true //return true的意思是禁止返回到上一个界面
+		},
 		methods: {
 			create() {
 				uni.navigateTo({
 					url: '../safetyTips/safetyTips'
+				})
+			},
+			importWallet() {
+				uni.navigateTo({
+					url: '../importMnemonic/importMnemonic'
 				})
 			}
 		}
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 	.home {
 		.tip {
 			display: flex;
@@ -36,16 +62,19 @@
 			font-size: 36rpx;
 			display: flex;
 			flex-direction: column;
+			color: #fff;
 			.logo {
-				width: 100rpx;
-				height: 100rpx;
+				width: 150rpx;
+				height: 150rpx;
 				margin-bottom: 60rpx;
 			}
 		}
 		.bottomSize {
 			.btn {
-				width: 400rpx;
+				font-size: 30rpx;
+				width: 300rpx;
 				margin: 0 auto 40rpx;
+				color: #000;
 			}
 		}
 	}

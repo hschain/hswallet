@@ -1,107 +1,188 @@
 <template>
 	<view class="content">
-		<uni-nav-bar @clickLeft='back()' left-icon="back" left-text="返回" :title="title" color="#fff" background-color="#020e46"></uni-nav-bar>
-		<view class="introduce containerWrapper">
-			介绍
-		</view>
-		<hs-nav-menu @click='changeIndex()' :data="menu" :activeIndex="activeIndex" @changeIndex="changeIndex"></hs-nav-menu>
-		<view class="assetsList containerWrapper">
-			<view @click="navigate(item)" v-for="(item, i) in assetsList" :key="i + 'key'" class="table">
-				<view class="tableLeft">
-					<view class="tabTop">
-						<image class="icon" v-if="item.denom === 'HST'" src="../../assets/common/logo.png" mode=""></image>
-						<image class="icon" v-else src="../../assets/common/symbol_none.svg" mode=""></image>
-						<text class="denom">{{item.denom}}</text>
-					</view>
-					<view class="tabBottom">
-						<text>{{item.time}}</text>
-					</view>
-				</view>
-				<view class="tableRight">
-					<text>{{item.type === 'in' ? '+' : '-'}} {{item.value}}</text>
-				</view>
+		<!-- <view style="height: var(--status-bar-height);background-color: var(--mainColor);"></view> -->
+		<view class="introduce greenContainer">
+			<view class="detail containerWrap">
+				介绍
 			</view>
+		</view>
+		<view class="tabMenu">
+			<u-tabs-swiper 
+				ref="tabs"
+				:list="menu"
+				active-color="rgb(193, 153, 108)"
+				inactive-color="#909399"
+				:is-scroll="false"
+				bar-width = "90"
+				font-size="32"
+				current="0"
+				bg-color="#000"
+				:current="activeIndex"
+				@change="changeIndex"
+			></u-tabs-swiper>
+		</view>
+		<swiper class="swiperCard" :current="swiperCurrent" @transition="transition" @animationfinish="animationfinish">
+			<swiper-item v-for="(sub, name) in assetsList" :key="name">
+				<view class="yellowContainer">
+					<scroll-view scroll-y="true" class="assetsList containerWrap" @scrolltolower="getAssetsList(true)" :scroll-top="scrollTop" scroll-with-animation="true">
+						<view class="listWrapper">
+							<view v-show="!assetsList[name].length" class="isEmpty">
+								<u-empty text="暂无信息" mode="data"></u-empty>
+							</view>
+							<view v-show="assetsList[name].length" @click="navigate(item)" v-for="(item, i) in assetsList[name]" :key="i + 'key'" class="table">
+								<view class="tableLeft">
+									<view class="tabTop">
+										<image class="icon" v-if="item.denom === 'HST'" src="../../static/common/logo.png" mode=""></image>
+										<image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
+										<text class="denom">{{item.denom}}</text>
+									</view>
+									<view class="tabBottom">
+										<text>{{item.time}}</text>
+									</view>
+								</view>
+								<view class="tableRight">
+									<text>{{item.type === 'in' ? '+' : '-'}} {{item.value}}</text>
+								</view>
+							</view>
+							<u-loadmore v-show="assetsList[name].length" :status="loadStatus" margin-bottom="30" :load-text="loadText" @loadmore="getAssetsList(true)" icon-type="flower"/>	
+						</view>
+					</scroll-view>
+				</view>
+			</swiper-item>
+		</swiper>
+		
+		<view class="bottomBar">
+			<view class="btn yellowBtn" :custom-style="customStyle" @click="receipt">收款</view>
+			<view class="btn greenBtn" type="primary" @click="transfer">转账</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import { formatTime } from '../../common/js/common.js'
 	export default {
+		name: 'assets',
 		data() {
 			return {
-				title: '',
+				customStyle: {
+					color: 'white',
+					backgroundColor: '#67c8e5'
+				},
 				menu: [
 					{
 						name: '全部',
-						value: 'all'
 					}, {
 						name: '转出',
-						value: 'out'
 					}, {
 						name: '转入',
-						value: 'in'
 					}, {
 						name: '失败',
-						value: 'fail'
 					},
 				],
-				assetsList: [
-					{
-						denom: 'HST',
-						time: '2020-09-16 / 16:54:25',
-						value: 26,
-						type: 'in',
-						success: true,
-					}, {
-						denom: 'HST',
-						time: '2020-09-16 / 12:35:05',
-						value: 34,
-						type: 'out',
-						success: false
-					}, {
-						denom: 'ACOIN',
-						time: '2020-09-16 / 12:35:05',
-						value: 95,
-						type: 'in',
-						success: false
-					}, {
-						denom: 'ACOIN',
-						time: '2020-09-16 / 12:35:05',
-						value: 33,
-						type: 'out',
-						success: true
-					},
-				],
-				oAssetsList: [],
-				activeIndex: 'all'
+				loadText: {
+					loadmore: '点击或上拉加载更多',
+					loading: '正在加载',
+					nomore: '没有更多了'
+				},
+				assetsList: {
+					all: [],
+					in: [],
+					out: [],
+					err: []
+				},
+				// 因为内部的滑动机制限制，请将tabs组件和swiper组件的current用不同变量赋值
+				activeIndex: 0, // tabs组件的current值，表示当前活动的tab选项
+				swiperCurrent: 0, // swiper组件的current值，表示当前那个swiper-item是活动的
+				limit: 10,
+				paging: {}, //列表数据量细节
+				loadStatus: 'loadmore', //底部加载状态
+				scrollTop: 50,
 			}
 		},
 		onLoad(value) {
-			this.title = value.val
-			this.oAssetsList = this.assetsList
+			 uni.setNavigationBarTitle({
+			 	title: value.val
+			 })
+		},
+		onShow() {
+			this.assetsList = {
+				all: [],
+				in: [],
+				out: [],
+				err: []
+			}
+			this.getAssetsList()
 		},
 		methods: {
 			back() {
 				uni.navigateBack()
 			},
 			changeIndex(val) {
-				if (val !== 'all' && val !== 'fail') {
-					this.assetsList = this.oAssetsList.filter(item => item.type === val)
-				} else if (val === 'fail') {
-					this.assetsList = this.oAssetsList.filter(item => !item.success)
-				} else {
-					this.assetsList = this.oAssetsList
+				this.swiperCurrent = val
+			},
+			// swiper-item左右移动，通知tabs的滑块跟随移动
+			transition(e) {
+				let dx = e.detail.dx;
+				this.$refs.tabs.setDx(dx);
+			},
+			// 由于swiper的内部机制问题，快速切换swiper不会触发dx的连续变化，需要在结束时重置状态
+			// swiper滑动结束，分别设置tabs和swiper的状态
+			animationfinish(e) {
+				let current = e.detail.current;
+				this.$refs.tabs.setFinishCurrent(current);
+				this.swiperCurrent = current;
+				this.activeIndex = current;
+			},
+			getAssetsList(lazyLoad) {
+				let params = {
+					limit: this.limit,
+					address: this.$store.state.myAddr
 				}
-
+				if (lazyLoad) params.begin = this.paging.end - 1;
+				this.loadStatus = 'loading'
+				this.$u.api.getAssetsList(params).then(res => {
+					this.paging = res.paging
+					if (res.data) {
+						res.data.forEach(item => {
+							let obj = {
+								denom: '',
+								time: formatTime(item.timestamp, true),
+								value: 0,
+								type: '',
+								success: item.messages[0].success,
+								txHash: item.tx_hash
+							}
+							item.messages[0].events.message.sender === this.$store.state.myAddr ? obj.type = 'out' : obj.type = 'in'
+							if (/^u/i.test(item.messages[0].events.transfer.denom)) {
+								obj.denom = item.messages[0].events.transfer.denom.slice(1);
+								obj.value = (item.messages[0].events.transfer.amount / 1000000).toFixed(6);
+							}
+							this.assetsList.all.push(obj)
+						})
+						this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
+						this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
+						this.assetsList.err = this.assetsList.all.filter(item => !item.success)
+					}
+					res.paging.total*1 === this.assetsList.all.length ? this.loadStatus = 'nomore' : this.loadStatus = 'loadmore'
+				})
 			},
 			navigate(item) {
-				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail?item=${JSON.stringify(item)}` })
+				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail?hash=${item.txHash}` })
+			},
+			//转账
+			transfer() {
+				uni.navigateTo({ url: '../transfer/transfer' })
+			},
+			//收款
+			receipt() {
+				uni.navigateTo({ url: '../receipt/receipt' })
 			}
 		}
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+	$hei: 52vh;
 	.content {
 		display: flex;
 		flex-direction: column;
@@ -111,46 +192,80 @@
 			font-size: 36rpx;
 			margin: 20rpx 0;
 			height: 300rpx;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-		.assetsList {
-			margin: 10rpx 40rpx;
-			padding-top: 40rpx;
-			.table {
+			.detail {
 				display: flex;
-				justify-content: space-between;
-				margin: 0 30rpx 30rpx;
-				box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
-				border-radius: 5px;
-				padding: 20rpx;
-				.tableLeft {
-					display: flex;
-					flex-direction: column;
-					.tabTop {
+				justify-content: center;
+				align-items: center;
+			}
+		}
+		.tabMenu{
+			width: 90%;
+		}
+		.swiperCard{
+			width: 100%;
+			height: $hei;
+			margin-top: 20rpx;
+			.assetsList {
+				background-color: #fff;
+				height: calc(#{$hei} - 4vh);
+				.listWrapper {
+					// margin: 40rpx 0 0;
+					.isEmpty{
 						display: flex;
-						margin-bottom: 20rpx;
-						.icon {
-							width: 60rpx;
-							height: 60rpx;
-							border-radius: 50px;
-							margin-right: 20rpx;
+						justify-content: center;
+						align-items: center;
+						height: calc(#{$hei} - 4vh - 6rpx);
+					}
+					.table {
+						display: flex;
+						justify-content: space-between;
+						margin: 0 30rpx 30rpx;
+						box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+						border-radius: 5px;
+						padding: 20rpx;
+						.tableLeft {
+							display: flex;
+							flex-direction: column;
+							.tabTop {
+								display: flex;
+								margin-bottom: 20rpx;
+								.icon {
+									width: 60rpx;
+									height: 60rpx;
+									border-radius: 50px;
+									margin-right: 20rpx;
+								}
+								.denom {
+									font-size: 32rpx;
+									line-height: 60rpx;
+								}							
+							}
+							.tabBottom {
+								margin-left: 10rpx;
+							}
 						}
-						.denom {
-							font-size: 32rpx;
-							line-height: 60rpx;
-						}							
-					}
-					.tabBottom {
-						margin-left: 10rpx;
+						.tableRight {
+							font-size: 36rpx;
+							display: flex;
+							align-items: center;
+						}
 					}
 				}
-				.tableRight {
-					font-size: 36rpx;
-					display: flex;
-					align-items: center;
-				}
+			}
+		}
+		.bottomBar {
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			z-index: 998;
+			border-top: 1px solid rgba(0, 0, 0, 0.2);
+			display: flex;
+			justify-content: space-between;
+			width: 100vw;
+			padding: 10rpx 5vw;
+			.btn {
+				width: 330rpx;
+				margin: 0;
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 <template>
 	<view class="application">
-		<uni-nav-bar title="应用" color="#fff" background-color="#020e46"></uni-nav-bar>
+		<!-- <view style="height: var(--status-bar-height);background-color: var(--mainColor);"></view> -->
 		<view class="msg">
 			敬请期待
 		</view>

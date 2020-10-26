@@ -35,6 +35,14 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill{
 	text-align: center;
 	padding: 25rpx;
 }
+.purpleBtn{
+	display: block;
+	color:#000;
+	background:linear-gradient(117deg, rgba(119,241,255,1) 0%, rgba(38,93,255,1) 100%);
+	border-radius:50rpx;
+	text-align: center;
+	padding: 25rpx;
+}
 .greyBtn{
     color: #fff;
     background: rgba(236, 238, 255, 0.5);
@@ -193,4 +201,8 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill{
 .cellContainer {
 	width: 90vw;
 	margin: 40rpx auto 0;
+}
+
+.gap {
+	margin: 40rpx;
 }

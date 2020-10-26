@@ -2,9 +2,9 @@
 	<view class="address">
 		<u-empty v-show="!addrList.length" margin-top="300" text="暂无数据" mode="list"></u-empty>
 		
-		<view class="greenContainer">
+		<view v-show="addrList.length" class="greenContainer">
 			<view class="containerWrap">
-				<u-cell-group v-show="addrList.length" class="tableList">
+				<u-cell-group class="tableList">
 					<u-cell-item v-for="(item, index) in addrList" :key="index" @click="choose(index)" :arrow="false" :label="item.description" :value="fliterAddr(item.addr)" :title="item.name" :title-style="{color: '#fff'}" hover-class="none">
 						<u-image class="addrImg" slot="icon" width="60" height="60" src="../../static/common/logo.png" shape="circle" :fade="false"></u-image>
 					</u-cell-item>
@@ -12,9 +12,9 @@
 			</view>
 		</view>
 
-		<u-modal v-model="delWarning" :content="'确定要删除'+(showIndex !== -1?addrList[showIndex].name:'')+'的信息?'" @confirm="delItem" @cancel="()=>delWarning = false" :show-cancel-button="true"></u-modal>
+		<u-modal v-model="delWarning" :content="'确定要删除'+(addrList.length ? addrList[showIndex].name : '')+'的信息?'" @confirm="delItem" @cancel="()=>delWarning = false" :show-cancel-button="true"></u-modal>
 		
-		<u-action-sheet @click="selectOption" :list="optionList" v-model="showActionSheet" :tips="{text: addrList[showIndex].name, color: '#000', fontSize: 40}" :cancel-btn="true" border-radius="20"></u-action-sheet>
+		<u-action-sheet @click="selectOption" :list="optionList" v-model="showActionSheet" :tips="{text: addrList.length ? addrList[showIndex].name : '', color: '#000', fontSize: 40}" :cancel-btn="true" border-radius="20"></u-action-sheet>
 	</view>
 </template>
 
@@ -27,20 +27,6 @@
 				route: '', //获取前一个路由的路径
 				showIndex: 0, //点击目标内容的下标位置
 				keyword: '', //搜索栏关键词
-				options: [
-					{
-						text: '编辑',
-						style: {
-							backgroundColor: '#007aff'
-						}
-					},
-					{
-						text: '删除',
-						style: {
-							backgroundColor: '#dd524d'
-						}
-					}
-				],
 				optionList: [
 					{
 						text: '编辑',
@@ -63,7 +49,7 @@
 		},
 		onShow() {
 			//获取地址本
-			if (uni.getStorageSync('addressBook')) this.addrList = this.secret.decrypt(uni.getStorageSync('addressBook'))
+			if (uni.getStorageSync('addressBook_' + this.$store.state.myAddr)) this.addrList = uni.getStorageSync('addressBook_' + this.$store.state.myAddr)
 		},
 		onNavigationBarButtonTap() {
 			uni.navigateTo({url: 'newAddress'})
@@ -88,7 +74,7 @@
 					this.$store.dispatch('saveAddrData', this.addrList[val])
 					this.addrList.unshift(this.addrList[val])
 					this.addrList.splice(val+1, 1)
-					uni.setStorageSync('addressBook', this.secret.encrypt(this.addrList))
+					uni.setStorageSync('addressBook_' + this.$store.state.myAddr, this.addrList)
 					uni.navigateBack()
 				} else { //换出侧边栏
 					this.showIndex = val
@@ -98,7 +84,7 @@
 			//删除所选内容
 			delItem() {
 				this.addrList.splice(this.showIndex, 1)
-				uni.setStorageSync('addressBook', this.secret.encrypt(this.addrList))
+				uni.setStorageSync('addressBook_' + this.$store.state.myAddr, this.addrList)
 				this.showIndex = -1
 				this.delWarning = false
 				uni.showToast({title: '删除成功'})

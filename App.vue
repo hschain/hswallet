@@ -2,7 +2,9 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
-			
+			// #ifdef APP-PLUS
+				plus.nativeUI.setUIStyle('dark')
+			// #endif
 			// 测试home页面时使用
 			// uni.removeStorage({
 			// 	key: 'mnemonicData'
@@ -15,12 +17,19 @@
 					url: './pages/home/home'
 				})
 			}
+			// this.$store.dispatch('websocketInit', "wss://testnet.hschain.io/api/v1/ws")
+			// uni.showTabBarRedDot({index:1});
+			// uni.hideTabBarRedDot({index:1});
 		},
 		onShow: function() {
 			console.log('App Show')
+			// this.$store.dispatch('websocketSend', 'testing')
 		},
 		onHide: function() {
 			console.log('App Hide')
+		},
+		beforeDestroy() {
+			// this.$store.dispatch('websocketClose', "wss://testnet.hschain.io/api/v1/ws")
 		}
 	}
 </script>
@@ -32,7 +41,7 @@
 	@import './common/css/common.scss';
 	@font-face{
 	  font-family: 'content-font';
-	  src:url('~@/static/font/simply.ttf');
+	  // src:url('~@/static/font/simply.ttf');
 	  font-weight: normal;
 	  font-style: normal;
 	}
@@ -65,6 +74,13 @@
 	// 	border-top: 2rpx solid rgba(236, 238, 255, 0.3) !important;
 	// 	padding: 0 60rpx !important;
 	// }
+	body,html {
+	  // line-height: 1;
+	  font-weight: 500;
+	   font-family:arial, 'PingFang SC','SimHei', 'STHeitiSC-Light', 'Helvetica-Light', monospace, sans-serif, Times New Roman;
+	  //font-family: 'content-font';
+	  background: #000;
+	}
 	page {
 		color: #fff;
 		background-color: #000;

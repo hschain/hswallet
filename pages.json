@@ -16,6 +16,11 @@
 				"navigationBarTitleText": "我的"
 			}
 		}, {
+			"path": "pages/market/market",
+			"style": {
+				"navigationBarTitleText": "市场"
+			}
+		}, {
 			"path": "pages/assets/assets"
 		}, {
 			"path": "pages/assetsDetail/assetsDetail",
@@ -106,6 +111,16 @@
 			"style": {
 				"navigationBarTitleText": "收款"
 			}
+		}, {
+			"path": "pages/about/about",
+			"style": {
+				"navigationBarTitleText": "关于我们"
+			}
+		}, {
+			"path": "pages/log/log",
+			"style": {
+				"navigationBarTitleText": "版本日志"
+			}
 		}
 	],
 	"globalStyle": {
@@ -131,6 +146,11 @@
 			"text": "钱包",
 			"iconPath": "static/main/wallet.png",
 			"selectedIconPath": "static/main/wallet_active.png"
+		}, {
+			"pagePath": "pages/market/market",
+			"text": "市场",
+			"iconPath": "static/main/market.png",
+			"selectedIconPath": "static/main/market_active.png"
 		}, {
 			"pagePath": "pages/application/application",
 			"text": "应用",

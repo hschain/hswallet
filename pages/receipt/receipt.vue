@@ -3,7 +3,7 @@
 		<view class="containerBox purpleContainer">
 			<view class="containerWrap boxWrapper">
 				<view class="content">
-					扫二维码，转入HSC
+					扫二维码，转入HST
 				</view>
 				<view class="qrCodeBox">
 					<view class="boxWrapper">

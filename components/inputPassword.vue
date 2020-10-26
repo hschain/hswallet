@@ -13,26 +13,16 @@
 <script>
 	export default {
 		name: 'inputPassword',
-		props: {
-			addr: {
-				type: String,
-				default: ''
-			},
-			account: {
-				type: Object,
-				default: {}
-			}
-		},
 		data() {
 			return {
 				inputPwDialog: false, //输入密码弹框
-				top: 400, //弹框偏移量
+				top: 600, //弹框偏移量
 			}
 		},
 		methods: {
 			//验证密码
 			validatePw(e) {
-				if (this.$md5(e) === this.account[this.addr].pw) {
+				if (this.$md5(e) === uni.getStorageSync('localPw')) {
 					this.$emit('correct', true)
 					this.inputPwDialog = false
 				} else{

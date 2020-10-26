@@ -46,19 +46,12 @@
 					//存储数据并跳转路由
 					let addr = this.$chain('https://testnet.hschain.io/', 'hst01').getAddress(this.$store.state.mnemonic)
 					let account = {}
-					account[addr] = {name: 'HST', key: this.$store.state.mnemonic, pw: this.$md5(this.pw)}
-					if (uni.getStorageSync('mnemonicData')) { //判断是否已存在其他地址信息
-						let data = this.secret.decrypt(uni.getStorageSync('mnemonicData'))
-						data.push(account)
-						uni.setStorage({
-							key: 'mnemonicData',
-							data: this.secret.encrypt(data)
-						})
-					} else {
-						uni.setStorage({
-							key: 'mnemonicData',
-							data: this.secret.encrypt([account])
-						})
+					this.$store.commit('SAVE_MY_ADDRESS', addr)
+					this.$store.commit('SET_WALLETNAME', 'HST')
+					uni.setStorageSync('localPw', this.$md5(this.pw))
+					account[addr] = {
+						name: 'HST', 
+						key: this.$store.state.mnemonic,
 					}
 					uni.setStorage({
 						key: 'account',

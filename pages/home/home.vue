@@ -19,6 +19,9 @@
 				first: null
 			}
 		},
+		onShow() {
+			this.$store.dispatch('saveMnemonic', '')
+		},
 		onBackPress() {
 			if (!this.first) {
 				this.first = new Date().getTime()

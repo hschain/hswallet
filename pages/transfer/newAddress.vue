@@ -54,7 +54,7 @@
 		onLoad(value) {
 			if (value.addrIndex) {
 				this.editIndex = value.addrIndex
-				this.newAddr = this.secret.decrypt(uni.getStorageSync('addressBook'))[value.addrIndex]
+				this.newAddr = uni.getStorageSync('addressBook_' + this.$store.state.myAddr)[value.addrIndex]
 			}
 		},
 		onReady() {
@@ -86,8 +86,8 @@
 				})
 			} else {
 				let sameAddr = false //是否存在相同地址的判断标志位
-				if (uni.getStorageSync('addressBook')) { //本地存储是否存在这一属性值
-					let data = this.secret.decrypt(uni.getStorageSync('addressBook'))
+				if (uni.getStorageSync('addressBook_' + this.$store.state.myAddr)) { //本地存储是否存在这一属性值
+					let data = uni.getStorageSync('addressBook_' + this.$store.state.myAddr)
 					if (this.editIndex === -1) {// 判断是否为编辑地址模式，等于-1则不是
 						data.forEach(item => {
 						if (item.addr === this.newAddr.addr) {
@@ -102,21 +102,21 @@
 						if (!sameAddr) {
 							data.push(this.newAddr)
 							uni.setStorage({
-								key: 'addressBook',
-								data: this.secret.encrypt(data)
-							})						
+								key: 'addressBook_' + this.$store.state.myAddr,
+								data: data
+							})
 						}
 					} else{
 						data.splice(this.editIndex, 1, this.newAddr)
 						uni.setStorage({
-							key: 'addressBook',
-							data: this.secret.encrypt(data)
+							key: 'addressBook_' + this.$store.state.myAddr,
+							data: data
 						})
 					}
 				} else {
 					uni.setStorage({
-						key: 'addressBook',
-						data: this.secret.encrypt([this.newAddr])
+						key: 'addressBook_' + this.$store.state.myAddr,
+						data: [this.newAddr]
 					})
 				}
 				if (!sameAddr) {

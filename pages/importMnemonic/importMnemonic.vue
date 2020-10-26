@@ -55,24 +55,6 @@
 							},
 							message: '助记词超过24个', 
 							trigger: ['blur'],
-						}, {
-							validator: (rule, value, callback) => {
-								if (uni.getStorageSync('mnemonicData')) {
-									let mnemonicData = this.secret.decrypt(uni.getStorageSync('mnemonicData')),
-										ruleValue = true
-									for (let i in mnemonicData) {
-										if (mnemonicData[i][Object.keys(mnemonicData[i])[0]].key === value) {
-											ruleValue = false
-											break
-										}
-									}
-									return ruleValue
-								} else {
-									return true
-								}
-							},
-							message: '已存在相同的助记词', 
-							trigger: ['blur'],
 						}
 					]
 				}
@@ -86,7 +68,11 @@
 				this.$refs.uForm.validate(valid => {
 					if (valid) {
 						let value = this.form.value
-						this.$store.dispatch('saveMnemonic', this.mnemonic)
+						this.$store.dispatch('saveMnemonic', value)
+						let addr = this.$chain('https://testnet.hschain.io/', 'hst01').getAddress(value)
+						if (uni.getStorageSync('mnemonicData') && this.secret.decrypt(uni.getStorageSync('mnemonicData'))[addr]) {
+							uni.setStorageSync('backupMnemonic', true)
+						}
 						uni.showToast({
 							title: '助记词导入成功',
 							success() {

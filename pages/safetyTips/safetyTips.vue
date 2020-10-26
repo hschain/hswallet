@@ -9,7 +9,10 @@
 			<text class="">如果您遗失了手机或卸载了本程序，您可以通过助记词恢复资产！</text>
 		</view>
 		<view class="bottomSize">
-			<u-button class="btn greenBtn" @click="notice">我已明白！</u-button>
+			<u-button class="btn greenBtn" @click="notice">立即备份</u-button>
+			<view v-if="!redirectToBackupPage" class="btn greyBtn" style="color: #fff;" @click="later">
+				稍后备份
+			</view>
 		</view>
 	</view>
 </template>
@@ -17,8 +20,15 @@
 <script>
 	export default {
 		name: 'safetyTips',
-		onLoad() {
-			this.$store.dispatch('saveMnemonic', '')
+		data() {
+			return {
+				redirectToBackupPage: this.$store.state.toBackupPage || false,
+			}
+		},
+		onShow() {
+			if (!this.$store.state.mnemonic) {
+				this.$store.dispatch('saveMnemonic', require('bip39').generateMnemonic(256))
+			}
 		},
 		methods: {
 			back() {
@@ -27,6 +37,11 @@
 			notice() {
 				uni.navigateTo({
 					url: '../createMnemonic/createMnemonic'
+				})
+			},
+			later() {
+				uni.navigateTo({
+					url: '../setPw/setPw'
 				})
 			}
 		}

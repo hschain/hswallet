@@ -16,7 +16,7 @@
 					<text>{{assetData.type === 'in' ? '+' : '-'}}{{assetData.value + ' ' + assetData.denom}}</text>
 				</view>
 				<view class="txsDetail">
-					<view class="txDetailBox" v-for="item in assetData.details" :key="item + 'index'">
+					<view class="txDetailBox" v-for="(item, index) in assetData.details" :key="index + 'index'">
 						<view class="txDetailContent">
 							<view class="">
 								{{item.name}}

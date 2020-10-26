@@ -6,6 +6,7 @@ const install = (Vue, vm) => {
 		getAccounts(hash) {return vm.$u.get('api/lcd/auth/accounts/' + hash)},
 		broadcast(params) {return vm.$u.post('api/lcd/txs', params)},
 		getAssetsList(params, hash='') {return vm.$u.get('api/v1/txs' + hash, params)},
+		getVersion(params) {return vm.$u.get('api/v1/version', params)},
 	}
 	
 	// 将各个定义的接口名称，统一放进对象挂载到vm.$u.api(因为vm就是this，也即this.$u.api)下

@@ -1,8 +1,8 @@
 <template>
 	<view class="content">
-		<!-- <view style="height: var(--status-bar-height);background-color: var(--mainColor);"></view> -->
-		<view class="headerWrapper purpleContainer">
-			<view class="containerWrap">
+		
+		<view class="headerWrapper yellowContainer">
+			<view class="containerWrapTop">
 				<view class="walletName">
 					<u-section
 						font-size="42"
@@ -12,24 +12,42 @@
 						:title="walletName"
 						sub-title="..."
 						:arrow="false"
-						@click="figure"
+						@click="navigate('../management/management')"
 					></u-section>
 				</view>
-				<view class="address purpleFont">
+				<view class="address">
 					{{addr | hash}}
 				</view>
 				<view class="cash">
 					{{hideBalance ? '****' : '$ ' + assetsList[0].value}}
 				</view>
 			</view>
+			<view class="containerWrapBottom">
+				<view class="boxWrapper" @click="navigate('../transfer/transfer')">
+					<view class="content yellowFont">
+						转账
+					</view>
+				</view>
+				<view class="boxWrapper" @click="navigate('../receipt/receipt')">
+					<view class="content yellowFont">
+						收款
+					</view>
+				</view>
+				<view class="boxWrapper" @click="info">
+					<view class="content yellowFont">
+						PoB
+					</view>
+				</view>
+			</view>
 		</view>
+		
 		<view class="assets yellowContainer">
 			<view class="containerWrap">
 				<view class="title">
 					<text>资产</text>
 				</view>
 				<view class="assetsList">
-					<view @click="navigate(item)" v-for="item in assetsList" :key="item.denom" class="table">
+					<view @click="enterAssets(item)" v-for="item in assetsList" :key="item.denom" class="table">
 						<view class="tableWrapper">
 							<view class="tableLeft">
 								<image class="icon" v-if="item.denom === 'HST'" src="../../static/common/logo.png" mode=""></image>
@@ -45,12 +63,16 @@
 				</view>
 			</view>
 		</view>
+		
+		<updateTip  ref="updateTipNav" :newestUpdate="newestUpdate"></updateTip>
 	</view>
 </template>
 
 <script>
+	import updateTip from '../../components/updateTip.vue'
 	export default {
 		name: 'mainPage',
+		components: { updateTip },
 		data() {
 			return {
 				walletName: '',
@@ -60,15 +82,26 @@
 						value: 0
 					}
 				],
-				hideBalance: false //隐藏余额
+				hideBalance: false ,//隐藏余额
+				newestUpdate: false, //是否为最新版本
+				backupMnemonic: uni.getStorageSync('backupMnemonic') || false
 			}
 		},
-		onShow() {
-			uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
-			if (uni.getStorageSync('account')) {
+		onLoad() {
+			this.getUpdate()
+			if (!this.$store.state.walletName) {
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
 				this.addr =  Object.keys(acc)[0]
 				this.walletName = acc[this.addr].name
+				this.$store.commit('SET_WALLETNAME', this.walletName)
+				this.$store.commit('SAVE_MY_ADDRESS', this.addr)
+			}
+		},
+		onShow() {
+			this.walletName = this.$store.state.walletName
+			this.addr = this.$store.state.myAddr
+			uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
+			if (uni.getStorageSync('account')) {
 				this.$u.api.getAssets(this.addr).then(res => {
 					this.assetsList = res.data.result.value.coins
 					this.assetsList.forEach((item) => {
@@ -80,7 +113,9 @@
 						item.value = (item.price*item.amount).toFixed(6)
 					});
 				})
+
 			}
+
 		},
 		filters: {
 			hash: function (value) {
@@ -88,15 +123,30 @@
 			},
 		},
 		methods: {
-			navigate(item) {
-				// this.$store.commit('SAVE_MY_ADDRESS', this.addr)
-				this.$store.commit('SAVE_MY_ADDRESS', this.addr)
+			enterAssets(item) {
 				uni.navigateTo({ url: `/pages/assets/assets?val=${item.denom}` })
 			},
-			figure() {
-				uni.navigateTo({
-					url: '/pages/management/management'
-				})
+			navigate(url) {
+				uni.navigateTo({url})
+			},
+			info() {
+				// #ifdef APP-PLUS
+				plus.nativeUI.toast('敬请期待')
+				// #endif
+			},
+			getUpdate() {
+				if (uni.getStorageSync('account')) { //如果用户已注册账号，则会检测版本更新
+					let platform = ''
+					// #ifdef APP-PLUS
+					window.plus.os.name === 'Android' ? platform = 'Android' : platform = 'ios'
+					// #endif
+					this.$u.api.getVersion({
+						app: 'HSWallet',
+						platform
+					}).then(res => {
+						console.log(res);
+					})
+				}
 			}
 		}
 	}
@@ -113,18 +163,61 @@
 			flex-direction: column;
 			margin: 20rpx 0 30rpx;
 			color: #fff;
-			.walletName {
-				margin: 30rpx;
+			.containerWrapTop {
+				width:calc(100% - .6rpx);
+				height:calc(100% - .6rpx);
+				// background:linear-gradient(132deg,rgba(19,78,51,1) 0%,rgba(9,32,53,1) 100%);
+				background:linear-gradient(132deg,rgba(6, 23, 16,1) 0%,rgba(9,32,53,1) 100%);
+				border-radius:12rpx 12rpx 0 0;
+				box-sizing: border-box;
+				.walletName {
+					margin: 30rpx;
+				}
+				.address {
+					margin: 10rpx 30rpx;
+					font-size: 36rpx;
+				}
+				.cash {
+					display: flex;
+					justify-content: flex-end;
+					margin: 30rpx 30rpx 40rpx;
+					font-size: 40rpx;
+				}
 			}
-			.address {
-				margin: 10rpx 30rpx;
-				font-size: 36rpx;
-			}
-			.cash {
+			.containerWrapBottom {
+				margin-top: 1rpx;
+				width:calc(100% - .6rpx);
+				height:calc(100% - .6rpx);
+				// background:linear-gradient(132deg,rgba(19,78,51,1) 0%,rgba(9,32,53,1) 100%);
+				background:linear-gradient(132deg,rgba(6, 23, 16,1) 0%,rgba(9,32,53,1) 100%);
+				border-radius:0 0 12rpx 12rpx;
+				box-sizing: border-box;
 				display: flex;
-				justify-content: flex-end;
-				margin: 30rpx 30rpx;
-				font-size: 40rpx;
+				justify-content: space-between;
+				.boxWrapper {
+					width: 100%;
+					margin: 30rpx 0;
+					font-size: 32rpx;
+					border-left: 1rpx solid #423008;
+					&:first-child {
+						border-left: 0rpx solid #fff;
+					}
+				}
+			}
+		}
+		.btnBox {
+			margin-bottom: 30rpx;
+			.boxWrapper {
+				padding: 30rpx 0;
+				display: flex;
+				justify-content: space-between;
+				.content {
+					margin: 0 25rpx;
+					.btn {
+						text-align: center;
+						padding: 15rpx 0;
+					}
+				}
 			}
 		}
 		.assets {

@@ -1,11 +1,6 @@
 <template>
 	<view class="management cellContainer">
-<!-- 		<u-cell-group>
-			<u-cell-item title="钱包地址" :label="fliterAddr(addr)" @click="showQrCode()" :arrow="false">
-				<u-icon slot="right-icon" color="#aaa" name="qrCode" custom-prefix="project-icon" size="30"></u-icon>
-			</u-cell-item>
-			<u-cell-item title="钱包名称" :value="account[addr].name" @click="modifyActive"></u-cell-item>
-		</u-cell-group> -->
+
 		
 		<view class="greenContainer cellMark" @click="showQrCode()">
 			<view class="containerWrap circle">
@@ -45,6 +40,30 @@
 			</view>
 		</view>
 		
+		<view class="greenContainer cellMark" @click="backup">
+			<view class="containerWrap circle">
+				<view class="boxLeft">
+					<view class="leftWrapper">
+						<view class="title greenFont">
+							备份钱包
+						</view>
+					</view>
+				</view>
+				<view class="boxRight">
+					<view class="rightWrapper">
+						<view class="rightValue greenFont">
+							{{backupMnemonic ? '' : '未备份'}}
+						</view>
+						<image class="rightImg" src="../../static/common/greenArrow.png" mode=""></image>
+					</view>
+				</view>
+			</view>
+		</view>
+		
+		<view class="quitAccount btn greenBtn" @click="quitDialog = true">
+			退出账户
+		</view>
+		
 		<!-- 修改钱包名称弹框 -->
 		<u-modal :negative-top="top" v-model="modifyName" title="钱包名称" @confirm="modify" @cancel="()=>modifyName = false" :show-cancel-button="true" :mask-close-able="true">
 			<view class="walletName">
@@ -53,45 +72,57 @@
 		</u-modal>
 
 		<!-- 地址详情弹框 -->
-		<u-modal v-model="showAddr" title="钱包地址" :negative-top="top" :mask-close-able="true" :show-confirm-button="false">
+		<u-modal v-model="showAddr" title="扫二维码,转入HST" :negative-top="top" :mask-close-able="true" confirm-color="#999" confirm-text="复制" @confirm="onCopy" :title-style="{color: '#aaa', fontSize: '28rpx'}">
 			<view class="qrCodeBox">
 				<qrCode :imgText="imgText"></qrCode>
 			</view>
 			<view class="showAddressBox">
-				<scroll-view :scroll-x="true" class="showValue" :show-scrollbar="true">
+				<view class="tip">
+					钱包地址
+				</view>
+				<view class="showValue">
 					{{addr}}
-				</scroll-view>
+				</view>
 				<!-- #ifdef H5-->
 				<u-icon name="copy" custom-prefix="project-icon" size="40" v-clipboard:copy="addr" v-clipboard:success="onCopy"></u-icon>
 				<!-- #endif -->
 				<!-- #ifndef H5 -->
-				<u-icon name="copy" custom-prefix="project-icon" size="40" @click="onCopy"></u-icon>
+				<!-- <u-icon name="copy" custom-prefix="project-icon" size="40" @click="onCopy"></u-icon> -->
 				<!-- #endif -->
 			</view>
 		</u-modal>
+		
+		<!-- 未备份退出提示弹框 -->
+		<u-modal :negative-top="top" v-model="quitDialog" content="是否已备份钱包信息，如果您遗失了手机或卸载了本程序，您可以通过助记词恢复资产！" @confirm="quitAccount" @cancel="()=>quitDialog = false" :show-cancel-button="true" :mask-close-able="true"></u-modal>
+		
+		<!-- 输入密码弹框 -->
+		<inputPassword  ref="inputPwNav" @correct="correct"></inputPassword>
 	</view>
 </template>
 
 <script>
 	import qrCode from '../../components/qrCode.vue'
 	import QR from "../../common/js/wxqrcode.js"
+	import inputPassword from '../../components/inputPassword.vue'
 	export default {
 		name: 'management',
-		components: { qrCode },
+		components: { qrCode, inputPassword },
 		data() {
 			return {
-				addr: '',
+				addr: this.$store.state.myAddr || '',
 				account: {},
 				modifyName: false, //修改钱包名称弹框
-				value: '', //修改的名称
+				value: this.$store.state.walletName || '', //修改的名称
 				showAddr: false, //显示钱包地址全称
-				top: 400, //弹框偏移量
+				top: 200, //弹框偏移量
 				imgText: '',
+				backupMnemonic: uni.getStorageSync('backupMnemonic') || false,
+				inputPwOption: '', //根据入口，判断输入密码成功后的操作
+				quitDialog: false, //未备份退出提示弹框
 			}
 		},
 		onLoad() {
 			this.account = this.secret.decrypt(uni.getStorageSync('account'))
-			this.addr = Object.keys(this.account)[0]
 			
 			//提前处理好二维码生成
 			let params = {
@@ -114,6 +145,7 @@
 			},
 			// 复制地址
 			onCopy() {
+				this.showAddr = true
 				//#ifdef H5
 				uni.showToast({
 					title: '内容已复制'
@@ -139,6 +171,37 @@
 			},
 			showQrCode() {
 				this.showAddr = true
+			},
+			backup() {
+				this.inputPwOption = 'backup'
+				this.$refs.inputPwNav.showDialog()
+			},
+			// 验证正确后开启备份
+			correct(val) {
+				if (val) {
+					if (this.inputPwOption === 'backup') {
+						this.$store.dispatch('redirectToBackupPage', true)
+						this.$store.dispatch('saveMnemonic', this.secret.decrypt(uni.getStorageSync('account'))[this.addr].key)
+						uni.navigateTo({
+							url: '../safetyTips/safetyTips'
+						})
+					} else if (this.inputPwOption === 'quit') {
+						uni.removeStorageSync('account')
+						uni.removeStorageSync('localPw')
+						this.$store.dispatch('saveMnemonic', '')
+						this.$store.dispatch('saveAddrData', {})
+						this.$store.commit('SET_WALLETNAME', '')
+						this.$store.commit('SAVE_MY_ADDRESS', '')
+						uni.navigateTo({
+							url: '../home/home'
+						})
+					}
+				}
+			},
+			// 退出账户
+			quitAccount() {
+				this.inputPwOption = 'quit'
+				this.$refs.inputPwNav.showDialog()
 			}
 		}
 	}
@@ -156,17 +219,23 @@
 		}
 		.showAddressBox {
 			display: flex;
-			justify-content: space-between;
 			align-items: center;
-			padding: 20rpx 30rpx 60rpx;
+			flex-direction: column;
+			padding: 20rpx 30rpx 40rpx;
 			color: #000;
-			.showValue {
-				margin: 10rpx 0;
-				width: 450rpx;
-				border: 1px solid #9d9d9d;
-				border-radius: 5px;
-				padding: 10rpx;
+			.tip {
+				color: #aaa;
+				margin-bottom: 20rpx;
+				font-size: 28rpx;
 			}
+			.showValue {
+				width: 100%;
+				word-wrap: break-word;
+				text-align: center;
+			}
+		}
+		.quitAccount {
+			margin-top: 100rpx;
 		}
 	}
 </style>

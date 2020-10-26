@@ -37,7 +37,7 @@
 		<view :class="['nextStep', nextStatus ? 'greenBtn' : 'greyBtn']" @click="nextStatus ? nextStep() : ''">下一步</view>
 		
 		<!-- 输入密码弹框 -->
-		<inputPassword  ref="inputPwNav" @correct="correct" :addr="myAddr" :account="account"></inputPassword>
+		<inputPassword  ref="inputPwNav" @correct="correct"></inputPassword>
 		
 		<!-- 验证指纹弹框 -->
 		<fingerprint @identifySuccess="identifySuccess" ref="fingerprintNav"></fingerprint>
@@ -54,9 +54,9 @@
 		components: { inputPassword, fingerprint },
 		data() {
 			return {
-				addr: '', //输入框地址，用于比对地址本数据
+				addr: '', //输入框地址，用于比对 地址本数据
 				myAddr: ',', //个人地址
-				account: '', 
+				account: {}, 
 				addrData: {},
 				addrBook: [],
 				cash: '',
@@ -99,7 +99,7 @@
 		onLoad() {
 			this.account = this.secret.decrypt(uni.getStorageSync('account'))
 			this.myAddr = this.$store.state.myAddr
-			if (uni.getStorageSync('addressBook')) this.addrBook = this.secret.decrypt(uni.getStorageSync('addressBook'))
+			if (uni.getStorageSync('addressBook_' + this.$store.state.myAddr)) this.addrBook = uni.getStorageSync('addressBook_' + this.$store.state.myAddr)
 		},
 		onShow() {
 			if (this.$store.state.addrData) {
@@ -109,6 +109,7 @@
 		onNavigationBarButtonTap() {
 			let _this = this
 			uni.scanCode({
+				onlyFromCamera: true,
 			    success: function (res) {
 			        _this.addr = JSON.parse(res.result).address
 			    }

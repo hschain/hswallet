@@ -75,7 +75,7 @@
 								}
 							}
 						}
-						item.messages[0].events.message.sender === this.$store.state.myAddr ? this.assetData.type = 'out' : this.assetData.type = 'in'
+						item.messages[0].events.message.sender === uni.getStorageSync('userAddress') ? this.assetData.type = 'out' : this.assetData.type = 'in'
 						if (/^u/i.test(item.messages[0].events.transfer.denom)) {
 							this.assetData.denom = item.messages[0].events.transfer.denom.slice(1);
 							this.assetData.value = (item.messages[0].events.transfer.amount / 1000000).toFixed(6);

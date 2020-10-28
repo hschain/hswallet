@@ -110,7 +110,6 @@
 			//已备份
 			backup() {
 				this.confirm = true
-				// this.$store.dispatch('saveMnemonic', this.mnemonic)
 				this.corrMnemonicArray = this.mnemonic.split(' ')
 				this.randMnemonicArray = []
 				this.corrMnemonicArray.forEach(item => {
@@ -125,34 +124,61 @@
 			// 确认已备份
 			check() {
 				//存储数据并跳转路由
-				let account = this.secret.decrypt(uni.getStorageSync('account'))
-				uni.setStorageSync('backupMnemonic', true)
-				if (uni.getStorageSync('mnemonicData')) { //判断是否已存在其他地址信息
-					let data = this.secret.decrypt(uni.getStorageSync('mnemonicData'))
-					data.push(account)
-					uni.setStorage({
-						key: 'mnemonicData',
-						data: this.secret.encrypt(data)
-					})
-				} else {
-					uni.setStorage({
-						key: 'mnemonicData',
-						data: this.secret.encrypt([account])
-					})
+				if (!uni.getStorageSync('backupMnemonic')) {
+					//未备份信息时开始备份
+					let account = this.secret.decrypt(uni.getStorageSync('account'))
+					uni.setStorageSync('backupMnemonic', true)
+					if (uni.getStorageSync('mnemonicData')) { //判断是否已存在其他地址信息
+						let data = this.secret.decrypt(uni.getStorageSync('mnemonicData'))
+						data.push(account)
+						uni.setStorage({
+							key: 'mnemonicData',
+							data: this.secret.encrypt(data)
+						})
+					} else {
+						uni.setStorage({
+							key: 'mnemonicData',
+							data: this.secret.encrypt([account])
+						})
+					}
 				}
-				
-				if (this.$store.state.redirectToBackupPage) {
+
+				if (this.$store.state.toBackupPage) { //通过备份助记词跳转过来的，执行此语句
 					this.$store.dispatch('redirectToBackupPage', false)
-					uni.navigateTo({
+					uni.switchTab({
 						url: '../main/main'
 					})
 				} else {
-					uni.navigateTo({
-						url: '../setPw/setPw'
-					})
+					if (uni.getStorageSync('account')) {
+						let addr = this.$chain('https://testnet.hschain.io/', 'hst01').getAddress(this.mnemonic)
+						let account = this.secret.decrypt(uni.getStorageSync('account'))
+						account[addr] = {
+							name: 'HST', 
+							key: this.mnemonic,
+						}
+						let userWallet = []
+						for (let idx in account) {
+							userWallet.push({
+								addr: idx,
+								name: account[idx].name
+							})
+						}
+						this.$store.commit('SAVE_USER_WALLET', userWallet)
+						this.$store.commit('SET_WALLETNAME', 'HST')
+						uni.setStorageSync('userAddress', addr)
+						uni.setStorage({
+							key: 'account',
+							data: this.secret.encrypt(account)
+						})
+						uni.switchTab({
+							url: '../main/main'
+						})
+					} else {
+						uni.navigateTo({
+							url: '../setPw/setPw'
+						})
+					}
 				}
-				
-				
 			},
 			//点击选择标签
 			chooseTag(item, index) {
@@ -167,6 +193,15 @@
 				}
 				this.inputMnemonicArray.push({value: item.value, idx: index, error})
 				this.randMnemonicArray[index].choose = true
+				this.allCorrect = true
+				this.inputMnemonicArray.forEach((item, index) => {
+					if(item.value !== this.corrMnemonicArray[index]) {
+						this.allCorrect = false
+						item.error = true
+					} else {
+						item.error = false
+					}
+				})
 			},
 			//点击取消标签
 			cancelTag(item, index) {
@@ -238,7 +273,8 @@
 				margin: 20rpx 5vw;
 			}
 			.tag {
-				margin: 10rpx;
+				margin: 15rpx;
+				font-size: 26rpx;
 			}
 		}
 		.bottomSize {

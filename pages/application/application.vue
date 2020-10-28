@@ -5,6 +5,22 @@
 				<view class="boxLeft">
 					<view class="leftWrapper">
 						<view class="title greenFont">
+							一键发币
+						</view>
+					</view>
+				</view>
+				<view class="boxRight">
+					<view class="rightWrapper">
+						<image class="rightImg" src="../../static/common/greenArrow.png" mode=""></image>						
+					</view>
+				</view>
+			</view>
+		</view>
+		<view class="greenContainer cellMark"  @click="info">
+			<view class="containerWrap circle">
+				<view class="boxLeft">
+					<view class="leftWrapper">
+						<view class="title greenFont">
 							商圈
 						</view>
 					</view>

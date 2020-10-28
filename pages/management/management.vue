@@ -109,7 +109,7 @@
 		components: { qrCode, inputPassword },
 		data() {
 			return {
-				addr: this.$store.state.myAddr || '',
+				addr: uni.getStorageSync('userAddress') || '',
 				account: {},
 				modifyName: false, //修改钱包名称弹框
 				value: this.$store.state.walletName || '', //修改的名称
@@ -161,6 +161,15 @@
 			modify() {
 				if (this.$u.trim(this.value)) { //去掉首尾空格
 					this.account[this.addr].name = this.value
+					let userWallet = []
+					for (let idx in this.account) {
+						userWallet.push({
+							addr: idx,
+							name: this.account[idx].name
+						})
+					}
+					this.$store.commit('SAVE_USER_WALLET', userWallet)
+					this.$store.commit('SET_WALLETNAME', this.value)
 					uni.setStorageSync('account', this.secret.encrypt(this.account))
 					this.modifyName = false
 				}
@@ -188,10 +197,10 @@
 					} else if (this.inputPwOption === 'quit') {
 						uni.removeStorageSync('account')
 						uni.removeStorageSync('localPw')
-						this.$store.dispatch('saveMnemonic', '')
+						uni.removeStorageSync('userAddress')
 						this.$store.dispatch('saveAddrData', {})
 						this.$store.commit('SET_WALLETNAME', '')
-						this.$store.commit('SAVE_MY_ADDRESS', '')
+						this.$store.dispatch('websocketClose', "wss://testnet.hschain.io/api/v1/ws")
 						uni.navigateTo({
 							url: '../home/home'
 						})

@@ -98,8 +98,8 @@
 		},
 		onLoad() {
 			this.account = this.secret.decrypt(uni.getStorageSync('account'))
-			this.myAddr = this.$store.state.myAddr
-			if (uni.getStorageSync('addressBook_' + this.$store.state.myAddr)) this.addrBook = uni.getStorageSync('addressBook_' + this.$store.state.myAddr)
+			this.myAddr = uni.getStorageSync('userAddress')
+			if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))) this.addrBook = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
 		},
 		onShow() {
 			if (this.$store.state.addrData) {

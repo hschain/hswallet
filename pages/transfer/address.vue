@@ -49,7 +49,7 @@
 		},
 		onShow() {
 			//获取地址本
-			if (uni.getStorageSync('addressBook_' + this.$store.state.myAddr)) this.addrList = uni.getStorageSync('addressBook_' + this.$store.state.myAddr)
+			if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))) this.addrList = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
 		},
 		onNavigationBarButtonTap() {
 			uni.navigateTo({url: 'newAddress'})
@@ -74,7 +74,7 @@
 					this.$store.dispatch('saveAddrData', this.addrList[val])
 					this.addrList.unshift(this.addrList[val])
 					this.addrList.splice(val+1, 1)
-					uni.setStorageSync('addressBook_' + this.$store.state.myAddr, this.addrList)
+					uni.setStorageSync('addressBook_' + uni.getStorageSync('userAddress'), this.addrList)
 					uni.navigateBack()
 				} else { //换出侧边栏
 					this.showIndex = val
@@ -84,7 +84,7 @@
 			//删除所选内容
 			delItem() {
 				this.addrList.splice(this.showIndex, 1)
-				uni.setStorageSync('addressBook_' + this.$store.state.myAddr, this.addrList)
+				uni.setStorageSync('addressBook_' + uni.getStorageSync('userAddress'), this.addrList)
 				this.showIndex = -1
 				this.delWarning = false
 				uni.showToast({title: '删除成功'})

@@ -46,9 +46,14 @@
 					//存储数据并跳转路由
 					let addr = this.$chain('https://testnet.hschain.io/', 'hst01').getAddress(this.$store.state.mnemonic)
 					let account = {}
-					this.$store.commit('SAVE_MY_ADDRESS', addr)
 					this.$store.commit('SET_WALLETNAME', 'HST')
 					uni.setStorageSync('localPw', this.$md5(this.pw))
+					uni.setStorageSync('userAddress', addr)
+					let userWallet = [{
+						addr,
+						name: 'HST'
+					}]
+					this.$store.commit('SAVE_USER_WALLET', userWallet)
 					account[addr] = {
 						name: 'HST', 
 						key: this.$store.state.mnemonic,

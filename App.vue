@@ -17,7 +17,6 @@
 					url: './pages/home/home'
 				})
 			}
-			// this.$store.dispatch('websocketInit', "wss://testnet.hschain.io/api/v1/ws")
 			// uni.showTabBarRedDot({index:1});
 			// uni.hideTabBarRedDot({index:1});
 		},
@@ -29,7 +28,7 @@
 			console.log('App Hide')
 		},
 		beforeDestroy() {
-			// this.$store.dispatch('websocketClose', "wss://testnet.hschain.io/api/v1/ws")
+			this.$store.dispatch('websocketClose', "wss://testnet.hschain.io/api/v1/ws")
 		}
 	}
 </script>

@@ -11,6 +11,8 @@
 				</view>
 			</view>
 		</view>
+		
+		<!-- 切换菜单 -->
 		<view class="tabMenu">
 			<u-tabs-swiper 
 				ref="tabs"
@@ -27,6 +29,7 @@
 			></u-tabs-swiper>
 		</view>
 		
+		<!-- 菜单列表 -->
 		<swiper class="swiperCard" :current="swiperCurrent" @transition="transition" @animationfinish="animationfinish">
 			<swiper-item v-for="(sub, name) in assetsList" :key="name">
 				<view class="yellowContainer">
@@ -50,7 +53,7 @@
 									<text>{{item.type === 'in' ? '+' : '-'}} {{hideBalance ? "****" : item.value}}</text>
 								</view>
 							</view>
-							<u-loadmore v-show="assetsList[name].length" :status="loadStatus" margin-bottom="30" :load-text="loadText" @loadmore="getAssetsList(true)" icon-type="flower"/>	
+							<u-loadmore style="display: -webkit-box" v-if="assetsList[name].length" :status="loadStatus" margin-bottom="30" :load-text="loadText" @loadmore="getAssetsList(true)" icon-type="flower"/>	
 						</view>
 					</scroll-view>
 				</view>
@@ -98,24 +101,39 @@
 				paging: {}, //列表数据量细节
 				loadStatus: 'loadmore', //底部加载状态
 				balance: 0, //账户总额
-				hideBalance: false //隐藏余额
+				hideBalance: false ,//隐藏余额
+				denom: '', //货币单位
 			}
 		},
 		onLoad(value) {
 			 uni.setNavigationBarTitle({
 			 	title: value.val
 			 })
+			 this.denom = 'u' + value.val.toLowerCase()
 		},
 		onShow() {
+			this.$store.commit('SET_QUERY_INFO_FLAG', true)
 			this.assetsList = {
 				all: [],
 				out: [],
 				in: [],
 				err: []
 			}
+
 			this.getAssetsList()
+			this.queryNewAssetsList()
+			// this.wsSendMsg('in')
+			// this.$store.state.socketTask.onMessage(res => {
+			// 	console.log(res);
+			// })
+		},
+		onBackPress() {
+			this.$store.commit('SET_QUERY_INFO_FLAG', false)
+			// this.wsSendMsg('out')
 		},
 		onHide() {
+			this.$store.commit('SET_QUERY_INFO_FLAG', false)
+			// this.wsSendMsg('out')
 		},
 		methods: {
 			back() {
@@ -137,16 +155,62 @@
 				this.swiperCurrent = current;
 				this.activeIndex = current;
 			},
+			// 获取最新资产详情
+			queryNewAssetsList() {
+				let params = {
+					limit: this.limit,
+					address: uni.getStorageSync('userAddress'),
+					timetable: 'now',
+					denom: this.denom
+				}
+				this.$u.api.getAssetsList(params).then(res => {
+					if (res.data) {
+						res.data.reverse()
+						res.data.forEach(item => {
+							let obj = {
+								denom: '',
+								time: formatTime(item.timestamp, true),
+								value: 0,
+								type: '',
+								success: item.messages[0].success,
+								txHash: item.tx_hash
+							}
+							item.messages[0].events.message.sender === uni.getStorageSync('userAddress') ? obj.type = 'out' : obj.type = 'in'
+							if (/^u/i.test(item.messages[0].events.transfer.denom)) {
+								obj.denom = item.messages[0].events.transfer.denom.slice(1);
+								obj.value = (item.messages[0].events.transfer.amount / 1000000).toFixed(6);
+							}
+							this.assetsList.all.unshift(obj)
+						})
+						// this.assetsList.all.forEach(item => {
+						// 	item.type === 'out' ? this.assetsList.out.push(item) : this.assetsList.in.push(item)
+						// 	if (!item.success) this.assetsList.err.push(item)
+						// })
+						this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
+						this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
+						this.assetsList.err = this.assetsList.all.filter(item => !item.success)
+					}
+				}).finally(() => {
+					setTimeout(() => {
+						if (this.$store.state.queryNewInfoflag) {
+							this.queryNewAssetsList()
+						}
+					}, 5000)
+				})
+			},
+			// 获取资产详情
 			getAssetsList(lazyLoad) {
 				uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
 				let params = {
 					limit: this.limit,
-					address: this.$store.state.myAddr
+					address: uni.getStorageSync('userAddress'),
+					timetable: 'history',
+					denom: this.denom
 				}
 				if (lazyLoad) {
 					params.begin = this.paging.end - 1
 				} else {
-					this.$u.api.getAssets(this.$store.state.myAddr).then(res => {
+					this.$u.api.getAssets(uni.getStorageSync('userAddress')).then(res => {
 						let coins = res.data.result.value.coins
 						if (/^u/i.test(coins[0].denom)) {
 							coins[0].amount = (coins[0].amount / 1000000).toFixed(6);
@@ -157,7 +221,7 @@
 				if (this.loadStatus === 'loadmore') {
 					this.loadStatus = 'loading'
 					this.$u.api.getAssetsList(params).then(res => {
-						this.paging = res.paging
+						if (!lazyLoad) this.paging = res.paging
 						if (res.data) {
 							res.data.forEach(item => {
 								let obj = {
@@ -168,16 +232,21 @@
 									success: item.messages[0].success,
 									txHash: item.tx_hash
 								}
-								item.messages[0].events.message.sender === this.$store.state.myAddr ? obj.type = 'out' : obj.type = 'in'
+								item.messages[0].events.message.sender === uni.getStorageSync('userAddress') ? obj.type = 'out' : obj.type = 'in'
 								if (/^u/i.test(item.messages[0].events.transfer.denom)) {
 									obj.denom = item.messages[0].events.transfer.denom.slice(1);
 									obj.value = (item.messages[0].events.transfer.amount / 1000000).toFixed(6);
 								}
 								this.assetsList.all.push(obj)
 							})
+							// this.assetsList.all.forEach(item => {
+							// 	item.type === 'out' ? this.assetsList.out.push(item) : this.assetsList.in.push(item)
+							// 	if (!item.success) this.assetsList.err.push(item)
+							// })
 							this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
 							this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
 							this.assetsList.err = this.assetsList.all.filter(item => !item.success)
+							console.log(this.assetsList);
 						}
 						res.paging.total*1 <= this.assetsList.all.length ? this.loadStatus = 'nomore' : this.loadStatus = 'loadmore'
 					})
@@ -193,13 +262,23 @@
 			//收款
 			receipt() {
 				uni.navigateTo({ url: '../receipt/receipt' })
+			},
+			//向后端发送进入此页面或者离开此页面消息
+			wsSendMsg(signal) {
+				let wsParams = {
+					address: uni.getStorageSync('userAddress'),
+					app: 'HSWallet',
+					page: 'tx',
+					signal
+				}
+				this.$store.dispatch('websocketSend', wsParams)
 			}
 		}
 	}
 </script>
 
 <style lang="scss">
-	$hei: 52vh;
+	$hei: 100vh;
 	.content {
 		display: flex;
 		flex-direction: column;
@@ -225,26 +304,27 @@
 		}
 		.swiperCard{
 			width: 100%;
-			height: $hei;
+			height: calc(#{$hei} - 570rpx);
 			margin-top: 20rpx;
 			.assetsList {
 				background-color: #fff;
-				height: calc(#{$hei} - 4vh);
+				height: calc(#{$hei} - 580rpx);
 				.listWrapper {
-					margin: 0;
 					.isEmpty{
 						display: flex;
 						justify-content: center;
 						align-items: center;
-						height: calc(#{$hei} - 4vh - 6rpx);
+						height: calc(#{$hei} - 586rpx);
+					}
+					>uni-view {
+						display: none;
 					}
 					.table {
 						display: flex;
 						justify-content: space-between;
-						margin: 20rpx 30rpx 10rpx;
+						padding: 40rpx 50rpx 30rpx;
 						box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
 						border-radius: 5px;
-						padding: 20rpx;
 						.tableLeft {
 							display: flex;
 							flex-direction: column;

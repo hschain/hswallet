@@ -73,13 +73,41 @@
 						if (uni.getStorageSync('mnemonicData') && this.secret.decrypt(uni.getStorageSync('mnemonicData'))[addr]) {
 							uni.setStorageSync('backupMnemonic', true)
 						}
+						
+						let _this = this
 						uni.showToast({
 							title: '助记词导入成功',
 							success() {
 								setTimeout(() => {
-									uni.navigateTo({
-										url: `../setPw/setPw`
-									})
+									if (uni.getStorageSync('account')) {
+										let addr = _this.$chain('https://testnet.hschain.io/', 'hst01').getAddress(_this.$store.state.mnemonic)
+										let account = _this.secret.decrypt(uni.getStorageSync('account'))
+										account[addr] = {
+											name: 'HST', 
+											key: _this.$store.state.mnemonic,
+										}
+										let userWallet = []
+										for (let idx in account) {
+											userWallet.push({
+												addr: idx,
+												name: account[idx].name
+											})
+										}
+										_this.$store.commit('SAVE_USER_WALLET', userWallet)
+										_this.$store.commit('SET_WALLETNAME', 'HST')
+										uni.setStorageSync('userAddress', addr)
+										uni.setStorage({
+											key: 'account',
+											data: _this.secret.encrypt(account)
+										})
+										uni.switchTab({
+											url: '../main/main'
+										})
+									} else {
+										uni.navigateTo({
+											url: `../setPw/setPw`
+										})
+									}
 								},1000)
 							}
 						})

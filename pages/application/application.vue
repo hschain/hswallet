@@ -3,9 +3,27 @@
 		<view class="greenContainer cellMark"  @click="info">
 			<view class="containerWrap circle">
 				<view class="boxLeft">
+					<image class="leftImg" src="../../static/application/issuing.png" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title greenFont">
-							商圈
+							一键发币
+						</view>
+					</view>
+				</view>
+				<view class="boxRight">
+					<view class="rightWrapper">
+						<image class="rightImg" src="../../static/common/greenArrow.png" mode=""></image>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view class="greenContainer cellMark"  @click="info">
+			<view class="containerWrap circle">
+				<view class="boxLeft">
+					<image class="leftImg" src="../../static/application/tradingArea.png" mode=""></image>
+					<view class="leftWrapper">
+						<view class="title greenFont">
+							链上商圈
 						</view>
 					</view>
 				</view>
@@ -19,6 +37,7 @@
 		<view class="greenContainer cellMark"  @click="info">
 			<view class="containerWrap circle">
 				<view class="boxLeft">
+					<image class="leftImg" src="../../static/application/chainStore.png" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title greenFont">
 							链上商城
@@ -35,6 +54,7 @@
 		<view class="greenContainer cellMark"  @click="info">
 			<view class="containerWrap circle">
 				<view class="boxLeft">
+					<image class="leftImg" src="../../static/application/chainLife.png" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title greenFont">
 							链上生活
@@ -51,6 +71,7 @@
 		<view class="greenContainer cellMark"  @click="info">
 			<view class="containerWrap circle">
 				<view class="boxLeft">
+					<image class="leftImg" src="../../static/application/chainGame.png" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title greenFont">
 							链上游戏

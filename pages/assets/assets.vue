@@ -11,6 +11,8 @@
 				</view>
 			</view>
 		</view>
+		
+		<!-- 切换菜单 -->
 		<view class="tabMenu">
 			<u-tabs-swiper 
 				ref="tabs"
@@ -27,6 +29,7 @@
 			></u-tabs-swiper>
 		</view>
 		
+		<!-- 菜单列表 -->
 		<swiper class="swiperCard" :current="swiperCurrent" @transition="transition" @animationfinish="animationfinish">
 			<swiper-item v-for="(sub, name) in assetsList" :key="name">
 				<view class="yellowContainer">
@@ -50,7 +53,7 @@
 									<text>{{item.type === 'in' ? '+' : '-'}} {{hideBalance ? "****" : item.value}}</text>
 								</view>
 							</view>
-							<u-loadmore v-show="assetsList[name].length" :status="loadStatus" margin-bottom="30" :load-text="loadText" @loadmore="getAssetsList(true)" icon-type="flower"/>	
+							<u-loadmore style="display: -webkit-box" v-if="assetsList[name].length" :status="loadStatus" margin-bottom="30" :load-text="loadText" @loadmore="getAssetsList(true)" icon-type="flower"/>	
 						</view>
 					</scroll-view>
 				</view>
@@ -99,7 +102,6 @@
 				loadStatus: 'loadmore', //底部加载状态
 				balance: 0, //账户总额
 				hideBalance: false ,//隐藏余额
-				queryNewInfo: false , //是否持续轮询获取新的信息
 				denom: '', //货币单位
 			}
 		},
@@ -110,7 +112,7 @@
 			 this.denom = 'u' + value.val.toLowerCase()
 		},
 		onShow() {
-			this.queryNewInfo = true
+			this.$store.commit('SET_QUERY_INFO_FLAG', true)
 			this.assetsList = {
 				all: [],
 				out: [],
@@ -126,11 +128,11 @@
 			// })
 		},
 		onBackPress() {
-			this.queryNewInfo = false
+			this.$store.commit('SET_QUERY_INFO_FLAG', false)
 			// this.wsSendMsg('out')
 		},
 		onHide() {
-			this.queryNewInfo = false
+			this.$store.commit('SET_QUERY_INFO_FLAG', false)
 			// this.wsSendMsg('out')
 		},
 		methods: {
@@ -190,7 +192,7 @@
 					}
 				}).finally(() => {
 					setTimeout(() => {
-						if (this.queryNewInfo) {
+						if (this.$store.state.queryNewInfoflag) {
 							this.queryNewAssetsList()
 						}
 					}, 5000)
@@ -276,7 +278,7 @@
 </script>
 
 <style lang="scss">
-	$hei: 52vh;
+	$hei: 100vh;
 	.content {
 		display: flex;
 		flex-direction: column;
@@ -302,17 +304,17 @@
 		}
 		.swiperCard{
 			width: 100%;
-			height: $hei;
+			height: calc(#{$hei} - 570rpx);
 			margin-top: 20rpx;
 			.assetsList {
 				background-color: #fff;
-				height: calc(#{$hei} - 4vh);
+				height: calc(#{$hei} - 580rpx);
 				.listWrapper {
 					.isEmpty{
 						display: flex;
 						justify-content: center;
 						align-items: center;
-						height: calc(#{$hei} - 4vh - 6rpx);
+						height: calc(#{$hei} - 586rpx);
 					}
 					>uni-view {
 						display: none;

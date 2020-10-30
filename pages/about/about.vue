@@ -96,6 +96,7 @@
 					app: 'HSWallet',
 					platform
 				}).then(res => {
+					//保存最新版本信息，打开版本更新t提示
 					this.$store.commit('SAVE_UPDATE_RES', res)
 					this.$refs.updateTipNav.showDialog()
 				}).finally(() => {

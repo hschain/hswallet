@@ -1,6 +1,5 @@
 <template>
 	<view class="content">
-		<!-- <view style="height: var(--status-bar-height);background-color: var(--mainColor);"></view> -->
 		<view class="detail greenContainer">
 			<view class="showDetail containerWrap">
 				<image v-if="assetData.success" class="icon" src="../../static/common/yes.png" mode=""></image>
@@ -9,6 +8,7 @@
 				<text>{{assetData.time}}</text>
 			</view>
 		</view>
+		
 		<view class="amountDetail greenContainer">
 			<view class="containerWrap containerBox">
 				<view class="amountMsg">
@@ -42,7 +42,6 @@
 			}
 		},
 		onLoad(value) {
-			// this.assetData = JSON.parse(value.item) 
 			this.$u.api.getAssetsList({}, '/' + value.hash).then(res => {
 				if (res.data) {
 					res.data.forEach(item => {

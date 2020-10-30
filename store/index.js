@@ -11,6 +11,7 @@ const store = new Vuex.Store({
 		toBackupPage: false, //从其他页面进入备份页
 		userWallet: [], //当前账号的多个钱包信息
 		updateRes: {}, //从后端返回的结果
+		queryNewInfoflag: false, //是否定时轮询最新交易信息
 		
 		socketTask: null,
 		socketIsOpen: false,
@@ -39,6 +40,9 @@ const store = new Vuex.Store({
 		},
 		SAVE_UPDATE_RES:  (state, value) => {
 			state.updateRes = value
+		},
+		SET_QUERY_INFO_FLAG:  (state, value) => {
+			state.queryNewInfoflag = value
 		},
 		
 		WEBSOCKET_INIT: (state, url) => {

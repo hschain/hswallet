@@ -1,8 +1,8 @@
 const install = (Vue, vm) => {
 	// 此为自定义配置参数
 	Vue.prototype.$u.http.setConfig({
-		// baseUrl: 'https://testnet.hschain.io', // 请求的本域名 (测试环境)
-		baseUrl: 'https://scan.hschain.io', //请求的本域名 (正式环境)
+		baseUrl: 'https://testnet.hschain.io', // 请求的本域名 (测试环境)
+		// baseUrl: 'https://scan.hschain.io', //请求的本域名 (正式环境)
 		showLoading: true, // 是否显示请求中的loading
 		loadingText: '请求中...', // 请求loading中的文字提示
 		loadingTime: 1500, // 在此时间内，请求还没回来的话，就显示加载中动画，单位ms

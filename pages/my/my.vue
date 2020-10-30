@@ -36,7 +36,7 @@
 			</view>
 		</view>
 		
-		<view class="gap"></view>
+		<!-- <view class="gap"></view> -->
 		
 		<view class="greenContainer cellMark" @click="info">
 			<view class="containerWrap circle">

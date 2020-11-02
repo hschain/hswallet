@@ -106,6 +106,7 @@
 			}
 		},
 		onLoad(value) {
+			//根据进入时选择的币种，将其展示在标题栏上
 			 uni.setNavigationBarTitle({
 			 	title: value.val
 			 })

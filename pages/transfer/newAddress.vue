@@ -52,6 +52,7 @@
 			}
 		},
 		onLoad(value) {
+			//从编辑进入的，则给予初始值
 			if (value.addrIndex) {
 				this.editIndex = value.addrIndex
 				this.newAddr = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))[value.addrIndex]

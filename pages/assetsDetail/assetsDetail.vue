@@ -42,6 +42,7 @@
 			}
 		},
 		onLoad(value) {
+			//获取当前交易hash信息
 			this.$u.api.getAssetsList({}, '/' + value.hash).then(res => {
 				if (res.data) {
 					res.data.forEach(item => {
@@ -82,19 +83,6 @@
 					})
 				}
 			})
-		},
-		methods: {
-			back() {
-				uni.navigateBack()
-			},
-			changeIndex(val) {
-				if (val !== 'all') {
-					this.assetsList = this.oAssetsList.filter(item => item.type === val)
-				} else {
-					this.assetsList = this.oAssetsList
-				}
-
-			}
 		}
 	}
 </script>

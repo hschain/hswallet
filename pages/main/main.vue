@@ -105,8 +105,8 @@
 		components: { updateTip },
 		data() {
 			return {
-				walletName: '',
-				addr: '',
+				walletName: '', //钱包名称
+				addr: '', //当前使用地址
 				assetsList: [
 					{
 						value: 0
@@ -119,7 +119,7 @@
 					backgroundColor: '#000',
 				},
 				changeWalletDialog: false, //弹起钱包选择弹框
-				addNewAddrDialog: false, //
+				addNewAddrDialog: false, //添加新地址弹框
 				optionList: [
 					{
 						text: '创建钱包',
@@ -136,6 +136,7 @@
 			}
 		},
 		onLoad() {
+			//延时调用，防止在android上plus方法未准备完毕，导致代码无法往下执行
 			setTimeout(() => {
 				this.getUpdate()			
 			}, 500)
@@ -157,6 +158,7 @@
 				this.walletName = this.$store.state.walletName
 				this.userWallet = this.$store.state.userWallet
 			}
+			//是否隐藏资金
 			uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
 			
 			//如果用户已注册账户地址，则执行接下来的命令

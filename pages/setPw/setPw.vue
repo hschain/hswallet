@@ -28,9 +28,11 @@
 			back() {
 				this.secondCheck ? this.secondCheck = false : uni.navigateBack()
 			},
+			//一次输入密码或者二次输入密码
 			inputPw(e) {
 				this.secondCheck ? this.confirmPw = e : this.pw = e
 			},
+			//点击验证密码并下一步跳转
 			check() {
 				if (this.secondCheck) {
 					if (this.confirmPw.length !== 6) {

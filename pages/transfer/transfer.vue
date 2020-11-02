@@ -56,13 +56,13 @@
 			return {
 				addr: '', //输入框地址，用于比对 地址本数据
 				myAddr: ',', //个人地址
-				account: {}, 
-				addrData: {},
-				addrBook: [],
-				cash: '',
-				memo: '',
+				account: {}, //个人信息
+				addrData: {}, //交易目标信息
+				addrBook: [], //地址本
+				cash: '', //输入交易价格
+				memo: '', //输入交易备注
 				nextStatus: false, //下一步按钮是否可用
-				timer: null,
+				timer: null, //定时器
 			}
 		},
 		watch: {
@@ -106,6 +106,7 @@
 				this.addr = this.$store.state.addrData.addr
 			}
 		},
+		//调用二维码扫码功能
 		onNavigationBarButtonTap() {
 			let _this = this
 			uni.scanCode({
@@ -116,6 +117,7 @@
 			});
 		},
 		methods:{
+			//添加新地址
 			addAddress() {
 				uni.navigateTo({url: `address`})
 			},

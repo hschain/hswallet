@@ -115,8 +115,8 @@
 				value: this.$store.state.walletName || '', //修改的名称
 				showAddr: false, //显示钱包地址全称
 				top: 200, //弹框偏移量
-				imgText: '',
-				backupMnemonic: uni.getStorageSync('backupMnemonic') || false,
+				imgText: '', //二维码内容
+				backupMnemonic: uni.getStorageSync('backupMnemonic') || false, //是否已备份助记词
 				inputPwOption: '', //根据入口，判断输入密码成功后的操作
 				quitDialog: false, //未备份退出提示弹框
 			}
@@ -178,9 +178,11 @@
 			modifyActive() {
 				this.modifyName = true
 			},
+			// 显示二维码
 			showQrCode() {
 				this.showAddr = true
 			},
+			// 备份前调用密码校验
 			backup() {
 				this.inputPwOption = 'backup'
 				this.$refs.inputPwNav.showDialog()

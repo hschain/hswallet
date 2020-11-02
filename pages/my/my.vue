@@ -36,6 +36,7 @@
 			</view>
 		</view>
 		
+		<!-- 快速生成内容间隔 -->
 		<!-- <view class="gap"></view> -->
 		
 		<view class="greenContainer cellMark" @click="info">

@@ -64,6 +64,7 @@
 			back() {
 				uni.navigateBack()
 			},
+			//点击开始校验并导入助记词,根据不同场景做相应处理
 			startImport() {
 				this.$refs.uForm.validate(valid => {
 					if (valid) {

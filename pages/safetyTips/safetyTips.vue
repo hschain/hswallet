@@ -34,11 +34,13 @@
 			back() {
 				uni.navigateBack()
 			},
+			//立即备份
 			notice() {
 				uni.navigateTo({
 					url: '../createMnemonic/createMnemonic'
 				})
 			},
+			//稍后备份
 			later() {
 				if (uni.getStorageSync('account')) {
 					let addr = this.$chain('https://testnet.hschain.io/', 'hst01').getAddress(this.$store.state.mnemonic)

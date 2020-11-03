@@ -149,7 +149,7 @@
 						url: '../main/main'
 					})
 				} else {
-					if (uni.getStorageSync('account')) {
+					if (uni.getStorageSync('account')) { //如果已存在账户，则代表入口来自管理页面
 						let addr = this.$chain('https://testnet.hschain.io/', 'hst01').getAddress(this.mnemonic)
 						let account = this.secret.decrypt(uni.getStorageSync('account'))
 						account[addr] = {

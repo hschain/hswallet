@@ -27,7 +27,7 @@
 		data() {
 			return {
 				addr: '', //地址
-				imgText: ''
+				imgText: '' //二维码内容
 			}
 		},
 		onLoad() {

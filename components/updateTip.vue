@@ -37,13 +37,16 @@
 			}
 		},
 		methods: {
+			//点击确认时，处理逻辑
 			confirm() {
 				this.newestUpdate ? this.updateDialog = false : plus.runtime.openURL(this.downloadUrl)
 			},
+			//点击取消时，处理逻辑
 			cancel() {
 				if (!this.synchronization) {
 					this.updateDialog = false
 				} else {
+					//强制更新时，点击取消则直接退出app
 					plus.runtime.quit()
 				}
 			},

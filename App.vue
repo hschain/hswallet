@@ -17,12 +17,9 @@
 					url: './pages/home/home'
 				})
 			}
-			// uni.showTabBarRedDot({index:1});
-			// uni.hideTabBarRedDot({index:1});
 		},
 		onShow: function() {
 			console.log('App Show')
-			// this.$store.dispatch('websocketSend', 'testing')
 		},
 		onHide: function() {
 			console.log('App Hide')

@@ -61,6 +61,8 @@
 			}
 		},
 		onLoad() {
+			//提前判断设备是否可使用指纹功能，不可使用则禁止按钮选择
+			
 			// #ifdef APP-PLUS
 			if (!plus.fingerprint.isSupport()) {
 				this.result = '此设备不支持指纹识别';

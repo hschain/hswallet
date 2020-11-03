@@ -80,6 +80,7 @@
 			// #endif
 		},
 		methods: {
+			// 点击检测更新
 			checkUpdate() {
 				uni.showLoading({
 					title: '检查版本更新中',

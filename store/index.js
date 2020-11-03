@@ -13,8 +13,8 @@ const store = new Vuex.Store({
 		updateRes: {}, //从后端返回的结果
 		queryNewInfoflag: false, //是否定时轮询最新交易信息
 		
-		socketTask: null,
-		socketIsOpen: false,
+		socketTask: null, //websocket方法
+		socketIsOpen: false, //是否已开启websocket
 	},
 	getters: {
 		
@@ -32,7 +32,7 @@ const store = new Vuex.Store({
 		REDIRECT_TO_BACKUP_PAGE: (state, value) => {
 			state.toBackupPage = value
 		},
-		CLOSE_WEBSOCKET:  (state) => {
+		CLOSE_WEBSOCKET:  (state) => { //关闭websocket
 			state.socketIsOpen = false
 		},
 		SAVE_USER_WALLET:  (state, value) => {
@@ -48,7 +48,6 @@ const store = new Vuex.Store({
 		WEBSOCKET_INIT: (state, url) => {
 			// 防止重复连接
 			if(state.socketIsOpen) return
-			
 			state.socketTask = uni.connectSocket(
 				{
 					url,

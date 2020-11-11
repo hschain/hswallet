@@ -19,10 +19,8 @@
 				first: null
 			}
 		},
-		onShow() {
-			this.$store.dispatch('saveMnemonic', '')
-		},
 		onBackPress() {
+			//改变用户回退行为，否则会回退到main页面，无法再进入home页面
 			if (!this.first) {
 				this.first = new Date().getTime()
 				plus.nativeUI.toast("再按一次退出应用", {

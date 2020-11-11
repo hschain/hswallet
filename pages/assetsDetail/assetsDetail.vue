@@ -1,6 +1,5 @@
 <template>
 	<view class="content">
-		<!-- <view style="height: var(--status-bar-height);background-color: var(--mainColor);"></view> -->
 		<view class="detail greenContainer">
 			<view class="showDetail containerWrap">
 				<image v-if="assetData.success" class="icon" src="../../static/common/yes.png" mode=""></image>
@@ -9,6 +8,7 @@
 				<text>{{assetData.time}}</text>
 			</view>
 		</view>
+		
 		<view class="amountDetail greenContainer">
 			<view class="containerWrap containerBox">
 				<view class="amountMsg">
@@ -42,7 +42,7 @@
 			}
 		},
 		onLoad(value) {
-			// this.assetData = JSON.parse(value.item) 
+			//获取当前交易hash信息
 			this.$u.api.getAssetsList({}, '/' + value.hash).then(res => {
 				if (res.data) {
 					res.data.forEach(item => {
@@ -75,7 +75,7 @@
 								}
 							}
 						}
-						item.messages[0].events.message.sender === this.$store.state.myAddr ? this.assetData.type = 'out' : this.assetData.type = 'in'
+						item.messages[0].events.message.sender === uni.getStorageSync('userAddress') ? this.assetData.type = 'out' : this.assetData.type = 'in'
 						if (/^u/i.test(item.messages[0].events.transfer.denom)) {
 							this.assetData.denom = item.messages[0].events.transfer.denom.slice(1);
 							this.assetData.value = (item.messages[0].events.transfer.amount / 1000000).toFixed(6);
@@ -83,19 +83,6 @@
 					})
 				}
 			})
-		},
-		methods: {
-			back() {
-				uni.navigateBack()
-			},
-			changeIndex(val) {
-				if (val !== 'all') {
-					this.assetsList = this.oAssetsList.filter(item => item.type === val)
-				} else {
-					this.assetsList = this.oAssetsList
-				}
-
-			}
 		}
 	}
 </script>

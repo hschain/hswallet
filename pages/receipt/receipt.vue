@@ -10,7 +10,7 @@
 						<qrCode :imgText="imgText"></qrCode>						
 					</view>
 				</view>
-				<view class="showAddressBox">
+				<view class="showAddressBox" @click="onCopy">
 					{{addr | hash}}
 				</view>
 			</view>
@@ -27,7 +27,7 @@
 		data() {
 			return {
 				addr: '', //地址
-				imgText: ''
+				imgText: '' //二维码内容
 			}
 		},
 		onLoad() {
@@ -46,6 +46,14 @@
 			},
 		},
 		methods: {
+			// 复制地址
+			onCopy() {
+				//#ifndef H5
+				uni.setClipboardData({
+					data: this.addr
+				})
+				//#endif
+			},
 		}
 	}
 </script>

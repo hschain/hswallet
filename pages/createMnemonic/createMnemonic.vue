@@ -110,7 +110,6 @@
 			//已备份
 			backup() {
 				this.confirm = true
-				// this.$store.dispatch('saveMnemonic', this.mnemonic)
 				this.corrMnemonicArray = this.mnemonic.split(' ')
 				this.randMnemonicArray = []
 				this.corrMnemonicArray.forEach(item => {
@@ -125,34 +124,87 @@
 			// 确认已备份
 			check() {
 				//存储数据并跳转路由
-				let account = this.secret.decrypt(uni.getStorageSync('account'))
-				uni.setStorageSync('backupMnemonic', true)
-				if (uni.getStorageSync('mnemonicData')) { //判断是否已存在其他地址信息
-					let data = this.secret.decrypt(uni.getStorageSync('mnemonicData'))
-					data.push(account)
+				console.log("*********",uni.getStorageSync('backupMnemonic'),"***************");
+				if(!uni.getStorageSync('account')){
+					let addr = this.$chain(this.$url, this.$chainId).getAddress(this.$store.state.mnemonic)
+					//let addr = this.$chain('https://scan.hschain.io/', 'hst01').getAddress(this.$store.state.mnemonic)
+					let accounts = {}
+					this.$store.commit('SET_WALLETNAME', 'HST')
+					uni.setStorageSync('userAddress', addr)
+					let userWallet = [{
+						addr,
+						name: 'HST'
+					}]
+					this.$store.commit('SAVE_USER_WALLET', userWallet)
+					accounts[addr] = {
+						name: 'HST', 
+						key: this.$store.state.mnemonic,
+					}
 					uni.setStorage({
-						key: 'mnemonicData',
-						data: this.secret.encrypt(data)
-					})
-				} else {
-					uni.setStorage({
-						key: 'mnemonicData',
-						data: this.secret.encrypt([account])
+						key: 'account',
+						data: this.secret.encrypt(accounts)
 					})
 				}
-				
-				if (this.$store.state.redirectToBackupPage) {
+				if (!uni.getStorageSync('backupMnemonic')) {
+					//未备份信息时开始备份
+					let account = this.secret.decrypt(uni.getStorageSync('account'))
+					uni.setStorageSync('backupMnemonic', true)
+					if (uni.getStorageSync('mnemonicData')) { //判断是否已存在其他地址信息
+					console.log("执行断点2")
+						let data = this.secret.decrypt(uni.getStorageSync('mnemonicData'))
+						data.push(account)
+						uni.setStorage({
+							key: 'mnemonicData',
+							data: this.secret.encrypt(data)
+						})
+					} else {
+						console.log("执行断点3")
+						uni.setStorage({
+							key: 'mnemonicData',
+							data: this.secret.encrypt([account])
+						})
+					}
+				}
+				if (this.$store.state.toBackupPage) { //通过备份助记词跳转过来的，执行此语句
+					console.log("执行断点4")
 					this.$store.dispatch('redirectToBackupPage', false)
-					uni.navigateTo({
+					uni.switchTab({
 						url: '../main/main'
 					})
 				} else {
-					uni.navigateTo({
-						url: '../setPw/setPw'
-					})
+					console.log("执行断点5")
+					if (uni.getStorageSync('isAccount')) { //如果已存在账户，则代表入口来自管理页面
+						console.log("执行断点6")
+						let addr = this.$chain(this.$url, this.$chainId).getAddress(this.mnemonic)
+						let account = this.secret.decrypt(uni.getStorageSync('account'))
+						account[addr] = {
+							name: 'HST', 
+							key: this.mnemonic,
+						}
+						let userWallet = []
+						for (let idx in account) {
+							userWallet.push({
+								addr: idx,
+								name: account[idx].name
+							})
+						}
+						this.$store.commit('SAVE_USER_WALLET', userWallet)
+						this.$store.commit('SET_WALLETNAME', 'HST')
+						uni.setStorageSync('userAddress', addr)
+						uni.setStorage({
+							key: 'account',
+							data: this.secret.encrypt(account)
+						})
+						uni.switchTab({
+							url: '../main/main'
+						})
+					} else {
+						console.log("执行断点7")
+						uni.navigateTo({
+							url: '../setPw/setPw'
+						})
+					}
 				}
-				
-				
 			},
 			//点击选择标签
 			chooseTag(item, index) {
@@ -166,7 +218,17 @@
 					})
 				}
 				this.inputMnemonicArray.push({value: item.value, idx: index, error})
+				console.log(this.inputMnemonicArray);
 				this.randMnemonicArray[index].choose = true
+				this.allCorrect = true
+				this.inputMnemonicArray.forEach((item, index) => {
+					if(item.value !== this.corrMnemonicArray[index]) {
+						this.allCorrect = false
+						item.error = true
+					} else {
+						item.error = false
+					}
+				})
 			},
 			//点击取消标签
 			cancelTag(item, index) {
@@ -238,7 +300,8 @@
 				margin: 20rpx 5vw;
 			}
 			.tag {
-				margin: 10rpx;
+				margin: 15rpx;
+				font-size: 26rpx;
 			}
 		}
 		.bottomSize {

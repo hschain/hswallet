@@ -6,7 +6,7 @@
 				HSWallet
 			</view>
 			<view class="version">
-				v {{version}}
+				{{version}}
 			</view>
 		</view>
 		
@@ -60,7 +60,7 @@
 			</view>			
 		</u-link>
 		
-		<updateTip  ref="updateTipNav" :newestUpdate="newestUpdate"></updateTip>
+		<updateTip  ref="updateTipNav" :formMain="false"></updateTip>
 	</view>
 </template>
 
@@ -71,26 +71,37 @@
 		components: { updateTip },
 		data() {
 			return {
-				version: '1.0.0',
-				newestUpdate: false, //是否为最新版本
+				version: '', //当前app版本
 			}
 		},
+		onLoad() {
+			// #ifdef APP-PLUS
+				this.version = 'v' + plus.runtime.version
+			// #endif
+		},
 		methods: {
+			// 点击检测更新
 			checkUpdate() {
 				uni.showLoading({
 					title: '检查版本更新中',
 				})
 				let platform = ''
+				let version = ''
 				// #ifdef APP-PLUS
-				window.plus.os.name === 'Android' ? platform = 'Android' : platform = 'ios'
+				plus.os.name === 'Android' ? platform = 'Android' : platform = 'Ios'
+				version = 'v' + plus.runtime.version
 				// #endif
 				this.$u.api.getVersion({
+					address: uni.getStorageSync('userAddress'),
+					version,
 					app: 'HSWallet',
 					platform
 				}).then(res => {
-					uni.hideLoading()
-					this.newestUpdate = true
+					//保存最新版本信息，打开版本更新t提示
+					this.$store.commit('SAVE_UPDATE_RES', res)
 					this.$refs.updateTipNav.showDialog()
+				}).finally(() => {
+					uni.hideLoading()
 				})
 			},
 			navigate(url) {

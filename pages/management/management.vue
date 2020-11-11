@@ -109,14 +109,14 @@
 		components: { qrCode, inputPassword },
 		data() {
 			return {
-				addr: this.$store.state.myAddr || '',
+				addr: uni.getStorageSync('userAddress') || '',
 				account: {},
 				modifyName: false, //修改钱包名称弹框
 				value: this.$store.state.walletName || '', //修改的名称
 				showAddr: false, //显示钱包地址全称
 				top: 200, //弹框偏移量
-				imgText: '',
-				backupMnemonic: uni.getStorageSync('backupMnemonic') || false,
+				imgText: '', //二维码内容
+				backupMnemonic: uni.getStorageSync('backupMnemonic') || false, //是否已备份助记词
 				inputPwOption: '', //根据入口，判断输入密码成功后的操作
 				quitDialog: false, //未备份退出提示弹框
 			}
@@ -131,6 +131,7 @@
 			this.imgText = QR.createQrCodeImg( JSON.stringify(params), {  
 				 size: parseInt(200)  
 			})
+			uni.setStorageSync('isAccount', true)//管理界面标识
 		},
 		onBackPress() {
 			if (this.showAddr) {
@@ -161,6 +162,15 @@
 			modify() {
 				if (this.$u.trim(this.value)) { //去掉首尾空格
 					this.account[this.addr].name = this.value
+					let userWallet = []
+					for (let idx in this.account) {
+						userWallet.push({
+							addr: idx,
+							name: this.account[idx].name
+						})
+					}
+					this.$store.commit('SAVE_USER_WALLET', userWallet)
+					this.$store.commit('SET_WALLETNAME', this.value)
 					uni.setStorageSync('account', this.secret.encrypt(this.account))
 					this.modifyName = false
 				}
@@ -169,9 +179,11 @@
 			modifyActive() {
 				this.modifyName = true
 			},
+			// 显示二维码
 			showQrCode() {
 				this.showAddr = true
 			},
+			// 备份前调用密码校验
 			backup() {
 				this.inputPwOption = 'backup'
 				this.$refs.inputPwNav.showDialog()
@@ -188,10 +200,10 @@
 					} else if (this.inputPwOption === 'quit') {
 						uni.removeStorageSync('account')
 						uni.removeStorageSync('localPw')
-						this.$store.dispatch('saveMnemonic', '')
+						uni.removeStorageSync('userAddress')
 						this.$store.dispatch('saveAddrData', {})
 						this.$store.commit('SET_WALLETNAME', '')
-						this.$store.commit('SAVE_MY_ADDRESS', '')
+						this.$store.dispatch('websocketClose', "wss://testnet.hschain.io/api/v1/ws")
 						uni.navigateTo({
 							url: '../home/home'
 						})

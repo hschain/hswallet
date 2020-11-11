@@ -28,9 +28,11 @@
 			back() {
 				this.secondCheck ? this.secondCheck = false : uni.navigateBack()
 			},
+			//一次输入密码或者二次输入密码
 			inputPw(e) {
 				this.secondCheck ? this.confirmPw = e : this.pw = e
 			},
+			//点击验证密码并下一步跳转
 			check() {
 				if (this.secondCheck) {
 					if (this.confirmPw.length !== 6) {
@@ -44,19 +46,26 @@
 					}
 					
 					//存储数据并跳转路由
-					let addr = this.$chain('https://testnet.hschain.io/', 'hst01').getAddress(this.$store.state.mnemonic)
-					let account = {}
-					this.$store.commit('SAVE_MY_ADDRESS', addr)
-					this.$store.commit('SET_WALLETNAME', 'HST')
-					uni.setStorageSync('localPw', this.$md5(this.pw))
-					account[addr] = {
-						name: 'HST', 
-						key: this.$store.state.mnemonic,
+					if(!uni.getStorageSync('account')){
+						let addr = this.$chain(this.$url, this.$chainId).getAddress(this.$store.state.mnemonic)
+						let account = {}
+						this.$store.commit('SET_WALLETNAME', 'HST')
+						uni.setStorageSync('userAddress', addr)
+						let userWallet = [{
+							addr,
+							name: 'HST'
+						}]
+						this.$store.commit('SAVE_USER_WALLET', userWallet)
+						account[addr] = {
+							name: 'HST', 
+							key: this.$store.state.mnemonic,
+						}
+						uni.setStorage({
+							key: 'account',
+							data: this.secret.encrypt(account)
+						})
 					}
-					uni.setStorage({
-						key: 'account',
-						data: this.secret.encrypt(account)
-					})
+					uni.setStorageSync('localPw', this.$md5(this.pw))
 					uni.showToast({
 						title: '密码设置成功',
 						success() {

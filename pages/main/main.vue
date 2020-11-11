@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-		
+		<u-navbar back-icon-name="list" :custom-back="selectWallet" back-icon-color="#fff" style="font-weight: 600;" title-color="#fff" :border-bottom="false" title="钱包" :background="{background}"></u-navbar>
 		<view class="headerWrapper yellowContainer">
 			<view class="containerWrapTop">
 				<view class="walletName">
@@ -15,7 +15,7 @@
 						@click="navigate('../management/management')"
 					></u-section>
 				</view>
-				<view class="address">
+				<view class="address yellowFont" @click="onCopy()">
 					{{addr | hash}}
 				</view>
 				<view class="cash">
@@ -24,16 +24,19 @@
 			</view>
 			<view class="containerWrapBottom">
 				<view class="boxWrapper" @click="navigate('../transfer/transfer')">
+					<u-icon class="icon" name="transfer" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
 					<view class="content yellowFont">
 						转账
 					</view>
 				</view>
 				<view class="boxWrapper" @click="navigate('../receipt/receipt')">
+					<u-icon class="icon" name="receipt" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
 					<view class="content yellowFont">
 						收款
 					</view>
 				</view>
 				<view class="boxWrapper" @click="info">
+					<u-icon class="icon" name="dig" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
 					<view class="content yellowFont">
 						PoB
 					</view>
@@ -64,7 +67,34 @@
 			</view>
 		</view>
 		
-		<updateTip  ref="updateTipNav" :newestUpdate="newestUpdate"></updateTip>
+		<u-popup v-model="changeWalletDialog" mode="bottom" border-radius="20" :closeable="true">
+			<view class="changeWalletDialog">
+				<view class="headerTip">
+					<u-icon class="icon" size="40" name="../../static/common/circlePlus.png" color="#000" @click="addNewAddress"></u-icon>
+					<view class="title">
+						钱包列表
+					</view>
+				</view>
+				<scroll-view scroll-y="true" class="containerBox">
+					<view class="yellowContainer addressBox" v-for="(item, index) in userWallet" :key="index + 'name'" @click="switchUserAddress(item)">
+						<view class="containerWrap">
+							<view class="walletInfo">
+								<view class="name">
+									{{item.name}}
+								</view>
+								<view class="addr">
+									{{item.addr | hash}}
+								</view>
+							</view>
+						</view>
+					</view>
+				</scroll-view>
+			</view>
+		</u-popup>
+		
+		<u-action-sheet @click="selectOption" :list="optionList" v-model="addNewAddrDialog" :cancel-btn="true" border-radius="20"></u-action-sheet>
+		
+		<updateTip  ref="updateTipNav" :formMain="true"></updateTip>
 	</view>
 </template>
 
@@ -75,8 +105,8 @@
 		components: { updateTip },
 		data() {
 			return {
-				walletName: '',
-				addr: '',
+				walletName: '', //钱包名称
+				addr: '', //当前使用地址
 				assetsList: [
 					{
 						value: 0
@@ -84,38 +114,79 @@
 				],
 				hideBalance: false ,//隐藏余额
 				newestUpdate: false, //是否为最新版本
-				backupMnemonic: uni.getStorageSync('backupMnemonic') || false
+				backupMnemonic: uni.getStorageSync('backupMnemonic') || false, //是否已备份助记词
+				background: {
+					backgroundColor: '#000',
+				},
+				changeWalletDialog: false, //弹起钱包选择弹框
+				addNewAddrDialog: false, //添加新地址弹框
+				optionList: [
+					{
+						text: '创建钱包',
+						fontSize: 32,
+						color: '#000'
+					}, {
+						text: '导入钱包',
+						fontSize: 32,
+						color: '#000'
+					}
+				],
+				btnIconColor: '#bea41e',
+				userWallet: [], //当前用户多个钱包信息
 			}
 		},
 		onLoad() {
-			this.getUpdate()
-			if (!this.$store.state.walletName) {
-				let acc = this.secret.decrypt(uni.getStorageSync('account'));
-				this.addr =  Object.keys(acc)[0]
-				this.walletName = acc[this.addr].name
-				this.$store.commit('SET_WALLETNAME', this.walletName)
-				this.$store.commit('SAVE_MY_ADDRESS', this.addr)
-			}
+			//延时调用，防止在android上plus方法未准备完毕，导致代码无法往下执行
+			setTimeout(() => {
+				this.getUpdate()			
+			}, 500)
 		},
 		onShow() {
-			this.walletName = this.$store.state.walletName
-			this.addr = this.$store.state.myAddr
-			uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
-			if (uni.getStorageSync('account')) {
-				this.$u.api.getAssets(this.addr).then(res => {
-					this.assetsList = res.data.result.value.coins
-					this.assetsList.forEach((item) => {
-						if (/^u/i.test(item.denom)) {
-							item.denom = item.denom.slice(1).toUpperCase();
-							item.amount = (item.amount / 1000000).toFixed(6);
-						}
-						item.price = (item.price*1).toFixed(6)
-						item.value = (item.price*item.amount).toFixed(6)
-					});
-				})
-
+			this.addr = uni.getStorageSync('userAddress')
+			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
+				let acc = this.secret.decrypt(uni.getStorageSync('account'));
+				this.walletName = acc[this.addr].name
+				for (let idx in acc) {
+					this.userWallet.push({
+						addr: idx,
+						name: acc[idx].name
+					})
+				}
+				this.$store.commit('SAVE_USER_WALLET', this.userWallet)
+				this.$store.commit('SET_WALLETNAME', this.walletName)
+			} else {
+				this.walletName = this.$store.state.walletName
+				this.userWallet = this.$store.state.userWallet
 			}
-
+			//是否隐藏资金
+			uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
+			
+			//如果用户已注册账户地址，则执行接下来的命令
+			if (uni.getStorageSync('account')) {
+				this.getAssets()
+				
+				// if (!this.$store.state.socketIsOpen) {
+				// 	this.$store.dispatch('websocketInit', "wss://testnet.hschain.io/api/v1/ws")
+				// 	let _this = this
+				// 	let wsParams = {
+				// 		address: this.addr,
+				// 		app: 'HSWallet',
+				// 		page: 'app',
+				// 		signal: 'connect'
+				// 	}
+				// 	this.$store.state.socketTask.onOpen(res => {
+				// 		this.$store.state.socketTask.send({
+				// 			data: JSON.stringify(wsParams),
+				// 			async success() {
+				// 				console.log('发送connect信息成功');
+				// 			}
+				// 		})
+				// 	})
+				// }
+			}
+			
+			//如果vuex存在助记词缓存，则清空助记词
+			if (this.$store.state.mnemonic) this.$store.dispatch('saveMnemonic', '')
 		},
 		filters: {
 			hash: function (value) {
@@ -131,22 +202,81 @@
 			},
 			info() {
 				// #ifdef APP-PLUS
-				plus.nativeUI.toast('敬请期待')
+				plus.nativeUI.toast('主网映射后开放')
 				// #endif
+			},
+			getAssets () {
+				this.$u.api.getAssets(this.addr).then(res => {
+					this.assetsList = res.data.result.value.coins
+					this.assetsList.forEach((item) => {
+						if (/^u/i.test(item.denom)) {
+							item.denom = item.denom.slice(1).toUpperCase();
+							item.amount = (item.amount / 1000000).toFixed(6);
+						}
+						item.price = (item.price*1).toFixed(6)
+						item.value = (item.price*item.amount).toFixed(6)
+					});
+				})
 			},
 			getUpdate() {
 				if (uni.getStorageSync('account')) { //如果用户已注册账号，则会检测版本更新
 					let platform = ''
+					let version = ''
 					// #ifdef APP-PLUS
-					window.plus.os.name === 'Android' ? platform = 'Android' : platform = 'ios'
+					plus.os.name === 'Android' ? platform = 'Android' : platform = 'Ios'
+					version = 'v' + plus.runtime.version
 					// #endif
 					this.$u.api.getVersion({
+						address: uni.getStorageSync('userAddress'),
+						version,
 						app: 'HSWallet',
 						platform
 					}).then(res => {
-						console.log(res);
+						if (version !== res.data.version) {
+							this.$store.commit('SAVE_UPDATE_RES', res)
+							this.$refs.updateTipNav.showDialog()
+						}
 					})
 				}
+			},
+			// 复制地址
+			onCopy() {
+				//#ifndef H5
+				uni.setClipboardData({
+					data: this.addr
+				})
+				//#endif
+			},
+			//选择钱包
+			selectWallet() {
+				this.changeWalletDialog = true
+			},
+			//添加新的钱包地址
+			addNewAddress() {
+				this.addNewAddrDialog = true
+			},
+			//创建或导入钱包
+			selectOption(index) {
+				//index: 操作下标
+				if(index === 0) { // 创建
+					uni.navigateTo({url: '../safetyTips/safetyTips'})
+				} else { // 导入
+					uni.navigateTo({url: '../importMnemonic/importMnemonic'})
+				}
+				this.changeWalletDialog = false
+			},
+			//切换用户地址
+			switchUserAddress(item) {
+				this.addr =  item.addr
+				this.walletName = item.name
+				this.$store.commit('SET_WALLETNAME', item.name)
+				uni.setStorageSync('userAddress', item.addr)
+				this.getAssets()
+				this.changeWalletDialog = false
+				//刷新页面
+				uni.reLaunch({
+					url: '../main/main'
+				})
 			}
 		}
 	}
@@ -175,7 +305,8 @@
 				}
 				.address {
 					margin: 10rpx 30rpx;
-					font-size: 36rpx;
+					font-size: 28rpx;
+					color: #FCC350;
 				}
 				.cash {
 					display: flex;
@@ -197,10 +328,16 @@
 				.boxWrapper {
 					width: 100%;
 					margin: 30rpx 0;
+					padding: 0 30rpx;
 					font-size: 32rpx;
 					border-left: 1rpx solid #423008;
+					display: flex;
+					justify-content: center;
 					&:first-child {
 						border-left: 0rpx solid #fff;
+					}
+					.icon {
+						padding-right: 20rpx;
 					}
 				}
 			}
@@ -256,6 +393,38 @@
 							display: flex;
 							flex-direction: column;
 							align-items: flex-end;
+						}
+					}
+				}
+			}
+		}
+		.changeWalletDialog {
+			color: #000000;
+			position: relative;
+			.headerTip {
+				margin: 30rpx 0 40rpx;
+				.icon {
+					position: absolute;
+					left: 30rpx;
+				}
+				.title {
+					text-align: center;
+					font-size: 40rpx;
+				}
+			}
+			.containerBox {
+				padding: 30rpx 0;
+				height: 600rpx;
+				.addressBox {
+					margin-bottom: 30rpx;
+					.walletInfo {
+						color: #fff;
+						padding: 30rpx;
+						.name {
+							font-size: 36rpx;
+						}
+						.addr {
+							text-align: end;
 						}
 					}
 				}

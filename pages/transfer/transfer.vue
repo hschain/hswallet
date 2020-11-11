@@ -56,13 +56,13 @@
 			return {
 				addr: '', //输入框地址，用于比对 地址本数据
 				myAddr: ',', //个人地址
-				account: {}, 
-				addrData: {},
-				addrBook: [],
-				cash: '',
-				memo: '',
+				account: {}, //个人信息
+				addrData: {}, //交易目标信息
+				addrBook: [], //地址本
+				cash: '', //输入交易价格
+				memo: '', //输入交易备注
 				nextStatus: false, //下一步按钮是否可用
-				timer: null,
+				timer: null, //定时器
 			}
 		},
 		watch: {
@@ -98,14 +98,15 @@
 		},
 		onLoad() {
 			this.account = this.secret.decrypt(uni.getStorageSync('account'))
-			this.myAddr = this.$store.state.myAddr
-			if (uni.getStorageSync('addressBook_' + this.$store.state.myAddr)) this.addrBook = uni.getStorageSync('addressBook_' + this.$store.state.myAddr)
+			this.myAddr = uni.getStorageSync('userAddress')
+			if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))) this.addrBook = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
 		},
 		onShow() {
 			if (this.$store.state.addrData) {
 				this.addr = this.$store.state.addrData.addr
 			}
 		},
+		//调用二维码扫码功能
 		onNavigationBarButtonTap() {
 			let _this = this
 			uni.scanCode({
@@ -116,6 +117,7 @@
 			});
 		},
 		methods:{
+			//添加新地址
 			addAddress() {
 				uni.navigateTo({url: `address`})
 			},
@@ -149,8 +151,8 @@
 			//验证成功后下一步开启交易
 			transation() {
 				const mnemonic = this.account[this.myAddr].key
-				const hschain = this.$chain('https://testnet.hschain.io/', 'hst01')
-				hschain.setPath("m/44'/118'/0'/0/0")
+				const hschain = this.$chain(this.$url, this.$chainId)
+				hschain.setPath(this.$path)
 				const ecpairPriv = hschain.getECPairPriv(mnemonic)
 				this.$u.api.getAccounts(this.myAddr).then(res => {
 					let stdSignMsg = hschain.newStdMsg({

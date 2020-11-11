@@ -36,7 +36,8 @@
 			</view>
 		</view>
 		
-		<view class="gap"></view>
+		<!-- 快速生成内容间隔 -->
+		<!-- <view class="gap"></view> -->
 		
 		<view class="greenContainer cellMark" @click="info">
 			<view class="containerWrap circle">
@@ -59,7 +60,7 @@
 		<view class="greenContainer cellMark" @click="info">
 			<view class="containerWrap circle">
 				<view class="boxLeft">
-					<image class="leftImg" src="../../static/my/announcement.png" mode=""></image>
+					<image class="leftImg" src="../../static/my/agreement.png" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title greenFont">
 							用户协议
@@ -107,7 +108,9 @@
 				uni.navigateTo({url})
 			},
 			info() {
+				// #ifdef APP-PLUS
 				plus.nativeUI.toast('敬请期待')
+				// #endif
 			}
 		}
 	}

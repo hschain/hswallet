@@ -34,15 +34,43 @@
 			back() {
 				uni.navigateBack()
 			},
+			//立即备份
 			notice() {
 				uni.navigateTo({
 					url: '../createMnemonic/createMnemonic'
 				})
 			},
+			//稍后备份
 			later() {
-				uni.navigateTo({
-					url: '../setPw/setPw'
-				})
+				if (uni.getStorageSync('account')) {
+					let addr = this.$chain(this.$url, this.$chainId).getAddress(this.$store.state.mnemonic)
+					let account = this.secret.decrypt(uni.getStorageSync('account'))
+					account[addr] = {
+						name: 'HST', 
+						key: this.$store.state.mnemonic,
+					}
+					let userWallet = []
+					for (let idx in account) {
+						userWallet.push({
+							addr: idx,
+							name: account[idx].name
+						})
+					}
+					this.$store.commit('SAVE_USER_WALLET', userWallet)
+					this.$store.commit('SET_WALLETNAME', 'HST')
+					uni.setStorageSync('userAddress', addr)
+					uni.setStorage({
+						key: 'account',
+						data: this.secret.encrypt(account)
+					})
+					uni.switchTab({
+						url: '../main/main'
+					})
+				} else {
+					uni.navigateTo({
+						url: '../setPw/setPw'
+					})
+				}
 			}
 		}
 	}

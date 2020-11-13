@@ -66,6 +66,7 @@
 						})
 					}
 					uni.setStorageSync('localPw', this.$md5(this.pw))
+					uni.setStorageSync('backupMnemonic', true)
 					uni.showToast({
 						title: '密码设置成功',
 						success() {

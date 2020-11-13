@@ -97,6 +97,7 @@
 										_this.$store.commit('SAVE_USER_WALLET', userWallet)
 										_this.$store.commit('SET_WALLETNAME', 'HST')
 										uni.setStorageSync('userAddress', addr)
+										
 										uni.setStorage({
 											key: 'account',
 											data: _this.secret.encrypt(account)

@@ -120,7 +120,6 @@
 				in: [],
 				err: []
 			}
-
 			this.getAssetsList()
 			this.queryNewAssetsList()
 			// this.wsSendMsg('in')
@@ -199,6 +198,38 @@
 					}, 5000)
 				})
 			},
+			//请求资产详情
+			queryAssetsList(lazyLoad,loadStatus,params){
+				this.$u.api.getAssetsList(params).then(res => {
+					if (!lazyLoad) this.paging = res.paging
+					if (res.data) {
+						res.data.forEach(item => {
+							let obj = {
+								denom: '',
+								time: formatTime(item.timestamp, true),
+								value: 0,
+								type: '',
+								success: item.messages[0].success,
+								txHash: item.tx_hash
+							}
+							item.messages[0].events.message.sender === uni.getStorageSync('userAddress') ? obj.type = 'out' : obj.type = 'in'
+							if (/^u/i.test(item.messages[0].events.transfer.denom)) {
+								obj.denom = item.messages[0].events.transfer.denom.slice(1);
+								obj.value = (item.messages[0].events.transfer.amount / 1000000).toFixed(6);
+							}
+							this.assetsList.all.push(obj)
+						})
+						// this.assetsList.all.forEach(item => {
+						// 	item.type === 'out' ? this.assetsList.out.push(item) : this.assetsList.in.push(item)
+						// 	if (!item.success) this.assetsList.err.push(item)
+						// })
+						this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
+						this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
+						this.assetsList.err = this.assetsList.all.filter(item => !item.success)
+					}
+					res.paging.total*1 <= this.assetsList.all.length ? this.loadStatus = 'nomore' : this.loadStatus = 'loadmore'
+				})
+			},
 			// 获取资产详情
 			getAssetsList(lazyLoad) {
 				uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
@@ -221,36 +252,9 @@
 				}
 				if (this.loadStatus === 'loadmore') {
 					this.loadStatus = 'loading'
-					this.$u.api.getAssetsList(params).then(res => {
-						if (!lazyLoad) this.paging = res.paging
-						if (res.data) {
-							res.data.forEach(item => {
-								let obj = {
-									denom: '',
-									time: formatTime(item.timestamp, true),
-									value: 0,
-									type: '',
-									success: item.messages[0].success,
-									txHash: item.tx_hash
-								}
-								item.messages[0].events.message.sender === uni.getStorageSync('userAddress') ? obj.type = 'out' : obj.type = 'in'
-								if (/^u/i.test(item.messages[0].events.transfer.denom)) {
-									obj.denom = item.messages[0].events.transfer.denom.slice(1);
-									obj.value = (item.messages[0].events.transfer.amount / 1000000).toFixed(6);
-								}
-								this.assetsList.all.push(obj)
-							})
-							// this.assetsList.all.forEach(item => {
-							// 	item.type === 'out' ? this.assetsList.out.push(item) : this.assetsList.in.push(item)
-							// 	if (!item.success) this.assetsList.err.push(item)
-							// })
-							this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
-							this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
-							this.assetsList.err = this.assetsList.all.filter(item => !item.success)
-							console.log(this.assetsList);
-						}
-						res.paging.total*1 <= this.assetsList.all.length ? this.loadStatus = 'nomore' : this.loadStatus = 'loadmore'
-					})
+					this.queryAssetsList(lazyLoad,this.loadStatus,params);
+				}else{
+					this.queryAssetsList(lazyLoad,this.loadStatus,params);
 				}
 			},
 			navigate(item) {

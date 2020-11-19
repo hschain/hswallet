@@ -3,7 +3,7 @@
 		{
 			"path": "pages/main/main",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationStyle": "custom"//导航栏样式，仅支持default/custom。custom即取消默认的原生导航栏
 			}
 		}, {
 			"path": "pages/application/application",
@@ -56,13 +56,13 @@
 			"path": "pages/transfer/transfer",
 			"style": {
 				"navigationBarTitleText": "转账",
-				"app-plus": {
-					"titleNView": {
-						"buttons": [{
-							"text": "\ue601",
-							"fontSrc": "/static/iconfont.ttf",
-							"fontSize": "22px",
-							"color": "#FFFFFF"
+				"app-plus": {//设置编译到App平台的特定样式
+					"titleNView": {//导航栏设置
+						"buttons": [{//自定义按钮
+							"text": "\ue601",//使用字体图标时unicode字符表示必须'\u'开头
+							"fontSrc": "/static/iconfont.ttf",//按钮上文字使用的字体文件路径，使用本地地址。
+							"fontSize": "22px",//按钮上文字大小
+							"color": "#FFFFFF"//按钮上文字颜色
 						}]
 					}
 				}
@@ -123,10 +123,10 @@
 			}
 		}
 	],
-	"globalStyle": {
-		"navigationBarTextStyle": "white",
-		"navigationBarBackgroundColor": "#000",
-		"backgroundColor": "#000",
+	"globalStyle": {//用于设置应用的状态、导航条、标题、窗口颜色背景
+		"navigationBarTextStyle": "white",//导航栏标题颜色及状态栏前景颜色，仅限black/white
+		"navigationBarBackgroundColor": "#000",//导航栏背景颜色
+		"backgroundColor": "#000",//下拉显示出来的窗口的背景色
 		"app-plus": {  
 			"background": "#000",  
 			"animationType": "slide-in-right"

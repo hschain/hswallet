@@ -52,6 +52,23 @@
             },
             /* ios打包配置 */
             "ios" : {},
+            /* h5跨域配置 */
+            "h5" : {
+                "devServer" : {
+                    // "port" : 8081, //端口号
+                    // "disableHostCheck" : true,
+                    "proxy" : {
+                        "/api" : {
+                            "target" : "https://testnet.hschain.io/api/", //目标接口域名
+                            "changeOrigin" : true, //是否跨域
+                            "secure" : true, // 设置支持https协议的代理
+                            "pathRewrite" : {
+                                "^/api" : ""
+                            }
+                        }
+                    }
+                }
+            },
             /* SDK配置 */
             "sdkConfigs" : {
                 "ad" : {}

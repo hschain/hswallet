@@ -119,6 +119,7 @@
 				backupMnemonic: uni.getStorageSync('backupMnemonic') || false, //是否已备份助记词
 				inputPwOption: '', //根据入口，判断输入密码成功后的操作
 				quitDialog: false, //未备份退出提示弹框
+				walletList:this.$store.state.userWallet||'',
 			}
 		},
 		onLoad() {
@@ -131,6 +132,8 @@
 			this.imgText = QR.createQrCodeImg( JSON.stringify(params), {  
 				 size: parseInt(200)  
 			})
+			uni.setStorageSync('isAccount', true)//管理界面标识
+			
 		},
 		onBackPress() {
 			if (this.showAddr) {

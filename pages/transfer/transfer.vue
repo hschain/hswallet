@@ -151,8 +151,8 @@
 			//验证成功后下一步开启交易
 			transation() {
 				const mnemonic = this.account[this.myAddr].key
-				const hschain = this.$chain('https://testnet.hschain.io/', 'hst01')
-				hschain.setPath("m/44'/118'/0'/0/0")
+				const hschain = this.$chain(this.$url, this.$chainId)
+				hschain.setPath(this.$path)
 				const ecpairPriv = hschain.getECPairPriv(mnemonic)
 				this.$u.api.getAccounts(this.myAddr).then(res => {
 					let stdSignMsg = hschain.newStdMsg({

@@ -7,12 +7,19 @@ import VueClipboard from 'vue-clipboard2'
 import secret from 'common/js/secret.js'
 import md5 from 'js-md5';
 // import 'typeface-roboto'
-
+console.log(Vue.prototype)
 Vue.config.productionTip = false
 Vue.prototype.$chain = hschain.network
 Vue.prototype.$store = store
 Vue.prototype.$md5 = md5
 Vue.prototype.secret = secret
+Vue.prototype.$url='https://testnet.hschain.io/'
+//Vue.prototype.$url='https://scan.hschain.io/'
+Vue.prototype.$chainId='hst01'
+Vue.prototype.$path="m/44'/532'/0'/0/0"
+Vue.prototype.$bech32MainPrefix="hsc"
+//Vue.prototype.$path="m/44'/532'/0'/0/0"
+
 
 Vue.use(uView);
 Vue.use(VueClipboard);

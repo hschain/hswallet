@@ -43,7 +43,7 @@
 			//稍后备份
 			later() {
 				if (uni.getStorageSync('account')) {
-					let addr = this.$chain('https://testnet.hschain.io/', 'hst01').getAddress(this.$store.state.mnemonic)
+					let addr = this.$chain(this.$url, this.$chainId).getAddress(this.$store.state.mnemonic)
 					let account = this.secret.decrypt(uni.getStorageSync('account'))
 					account[addr] = {
 						name: 'HST', 

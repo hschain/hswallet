@@ -70,7 +70,7 @@
 					if (valid) {
 						let value = this.form.value
 						this.$store.dispatch('saveMnemonic', value)
-						let addr = this.$chain('https://testnet.hschain.io/', 'hst01').getAddress(value)
+						let addr = this.$chain(this.$url, this.$chainId).getAddress(value)
 						if (uni.getStorageSync('mnemonicData') && this.secret.decrypt(uni.getStorageSync('mnemonicData'))[addr]) {
 							uni.setStorageSync('backupMnemonic', true)
 						}
@@ -81,7 +81,7 @@
 							success() {
 								setTimeout(() => {
 									if (uni.getStorageSync('account')) {
-										let addr = _this.$chain('https://testnet.hschain.io/', 'hst01').getAddress(_this.$store.state.mnemonic)
+										let addr = _this.$chain(_this.$url, _this.$chainId).getAddress(_this.$store.state.mnemonic)
 										let account = _this.secret.decrypt(uni.getStorageSync('account'))
 										account[addr] = {
 											name: 'HST', 
@@ -97,6 +97,7 @@
 										_this.$store.commit('SAVE_USER_WALLET', userWallet)
 										_this.$store.commit('SET_WALLETNAME', 'HST')
 										uni.setStorageSync('userAddress', addr)
+										
 										uni.setStorage({
 											key: 'account',
 											data: _this.secret.encrypt(account)

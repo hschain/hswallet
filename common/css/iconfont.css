@@ -1,0 +1,56 @@
+@font-face {font-family: "project-icon";
+  src: url('data:application/x-font-woff2;charset=utf-8;base64,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') format('woff2');
+}
+
+.project-icon {
+  font-family: "project-icon" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.project-icon-receipt:before {
+  content: "\e639";
+}
+
+.project-icon-dig:before {
+  content: "\ec5c";
+}
+
+.project-icon-transfer:before {
+  content: "\e616";
+}
+
+.project-icon-menu:before {
+  content: "\e602";
+}
+
+.project-icon-qrCode:before {
+  content: "\e615";
+}
+
+.project-icon-scan:before {
+  content: "\e601";
+}
+
+.project-icon-copy:before {
+  content: "\e617";
+}
+
+.project-icon-addrBook:before {
+  content: "\e645";
+}
+
+.project-icon-setting:before {
+  content: "\e618";
+}
+
+.project-icon-plus:before {
+  content: "\e600";
+}
+
+.project-icon-wallet:before {
+  content: "\e70a";
+}
+

@@ -1,0 +1,2 @@
+# hswallet
+hschain decentralized wallet

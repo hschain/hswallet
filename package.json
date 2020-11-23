@@ -1,0 +1,29 @@
+{
+  "name": "hschain_wallet_uniapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@dcloudio/uni-ui": "^1.2.5",
+    "axios": "^0.20.0",
+    "bip39": "^3.0.2",
+    "crypto-js": "^4.0.0",
+    "ethers": "^5.0.19",
+    "hschainjs": "git+ssh://git@github.com:hschain/hschain_js.git",
+    "js-md5": "^0.7.3",
+    "typeface-roboto": "^1.1.13",
+    "uview-ui": "^1.7.1",
+    "vue-clipboard2": "^0.3.1",
+    "vuex": "^3.5.1"
+  },
+  "devDependencies": {
+    "node-sass": "^4.14.1",
+    "sass-loader": "^10.0.2"
+  }
+}

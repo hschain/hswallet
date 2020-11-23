@@ -1,0 +1,212 @@
+.containerWrapper {
+	width: 90vw;
+	box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.2);
+	font-size: 24rpx;
+	border-radius: 10rpx;
+}
+
+.tableBar {
+	font-size: 24rpx;
+	margin: 0 auto;
+	/deep/ .u-input__input {
+		color: #fff !important;
+	}
+}
+
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill{
+	-webkit-box-shadow: 0 0 0px 2000rpx transparent inset
+}
+
+// 黄色渐变色按钮
+.yellowBtn{
+	display: block;
+	color:#000;
+	background:linear-gradient(144deg,rgba(250,249,96,1) 0%,rgba(255,163,0,1) 100%);
+	border-radius:50rpx;
+	text-align: center;
+	padding: 25rpx;
+}
+// 绿色渐变色按钮
+.greenBtn{
+	display: block;
+	color:#000;
+	background:linear-gradient(117deg,rgba(119,255,155,1) 0%,rgba(38,254,255,1) 100%);
+	border-radius:50rpx;
+	text-align: center;
+	padding: 25rpx;
+}
+.purpleBtn{
+	display: block;
+	color:#000;
+	background:linear-gradient(117deg, rgba(119,241,255,1) 0%, rgba(38,93,255,1) 100%);
+	border-radius:50rpx;
+	text-align: center;
+	padding: 25rpx;
+}
+.greyBtn{
+    color: #fff;
+    background: rgba(236, 238, 255, 0.5);
+	border-radius:50rpx;
+	padding: 25rpx;
+    text-align: center;
+}
+// 交易记录绿色圆圈
+.greenCircle{
+	background:linear-gradient(137deg,rgba(119,255,155,1) 0%,rgba(38,254,255,1) 100%);
+	opacity:0.7;
+	border-radius: 50%;
+}
+.yellowCircle{
+	background:linear-gradient(144deg, rgba(250,249,96,1) 0%, rgba(255,163,0,1) 100%);
+	opacity:0.7;
+	border-radius: 50%;
+}
+// 交易记录紫色圆圈
+.purpleCircle{
+	background:linear-gradient(135deg,rgba(119,241,255,1) 0%,rgba(38,93,255,1) 100%);
+	opacity:0.7;
+	border-radius: 50%;
+}
+// 绿色渐变字
+.greenFont{
+	background:linear-gradient(0deg, rgba(119,255,155,1) 0%, rgba(38,254,255,1) 100%);
+	-webkit-background-clip:text;
+	-webkit-text-fill-color:transparent;
+	// font-family: 'SimHei';
+	font-family: 'SimHei';
+}
+// 紫色渐变字
+.purpleFont{
+	background:linear-gradient(117deg, rgba(119,241,255,1) 0%, rgba(38,93,255,1) 100%);
+	-webkit-background-clip:text;
+	-webkit-text-fill-color:transparent;
+	font-family: 'SimHei';
+}
+// 黄色渐变字
+.yellowFont{
+	background:linear-gradient(144deg, rgba(250,249,96,1) 0%, rgba(255,163,0,1) 100%);
+	-webkit-background-clip:text;
+	-webkit-text-fill-color:transparent;
+	font-family: 'SimHei';
+}
+.deepPurpleFont{
+	color:#C26AD5;
+	font-family: 'SimHei';
+}
+.deepBlueFont{
+	color:#4A90E2;
+	font-family: 'SimHei';
+}
+// 绿色边框
+.greenContainer,.yellowContainer,.purpleContainer,.deepPurpleContainer,.deepBlueContainer{
+	width:90%;
+	border-radius:12rpx;
+	margin:0 auto;
+	padding:3rpx; 
+	overflow: hidden;
+	box-sizing: border-box;
+	background-image:linear-gradient(117deg, rgba(119,255,152,0.6), rgba(38,254,255,0.6));
+	.containerWrap{
+		width:calc(100% - .6rpx);
+		height:calc(100% - .6rpx);
+		// background:linear-gradient(132deg,rgba(19,78,51,1) 0%,rgba(9,32,53,1) 100%);
+		background:linear-gradient(132deg,rgba(6, 23, 16,1) 0%,rgba(9,32,53,1) 100%);
+		border-radius:12rpx;
+		box-sizing: border-box;
+	}
+}
+// 黄色边框
+.yellowContainer{
+	background-image:linear-gradient(144deg, rgba(250,249,96,0.6), rgba(255,163,0,0.6));
+	.containerWrap{
+		background:linear-gradient(132deg,rgba(78,58,19,1) 0%,rgba(9,32,53,1) 100%);
+		background:linear-gradient(132deg,rgba(23, 18, 7,1) 0%,rgba(9,32,53,1) 100%);
+	}
+}
+// 紫色边框
+.purpleContainer{
+	background-image:linear-gradient(117deg, rgba(119,241,255,0.6), rgba(38,93,255,0.6));
+	.containerWrap{
+		// background:linear-gradient(128deg,rgba(79,81,98,0.7) 0%,rgba(30,32,44,0.7) 100%);
+		background:linear-gradient(128deg,rgba(26, 27, 39,1) 0%,rgba(11, 12, 24,1) 100%);
+	}
+}
+// 深紫边框
+.deepPurpleContainer{
+	background-image:linear-gradient(117deg, rgba(170,84,255,0.7), rgba(234,106,255,0.7));
+	.containerWrap{
+		background:linear-gradient(134deg,rgba(34,14,108,1) 0%,rgba(9,32,53,1) 100%);
+		// background:linear-gradient(134deg,#220e6c, 0%,#092035 100%);
+		// background:linear-gradient(134deg,rgba(34,14,108,0.6) 0%,rgba(9,32,53,0.6) 100%);
+	}
+}
+// 深蓝边框
+.deepBlueContainer{
+	background-image:linear-gradient(135deg, rgba(119,241,255,0.6), rgba(76,162,255,0), rgba(38,93,255,0.6));
+	.containerWrap{
+		background:linear-gradient(134deg,rgba(5, 9, 23,1) 0%,rgba(4, 8, 20,1) 100%);
+	}
+}
+// cell单元格
+.cellMark {
+	width: 100%;
+	background: #fff;
+	// margin-bottom: 15rpx;
+	.circle {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 28rpx;
+		height: 128rpx;
+		.boxLeft {
+			display: flex;
+			.leftImg {
+				width: 60rpx;
+				height: 60rpx;
+				margin-right: 36rpx;
+			}
+			.leftWrapper {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				.title {
+					font-size: 30rpx;
+					color: #1F1F1F;
+				}
+				.value {
+					margin-top: 16rpx;
+					font-size: 24rpx;
+					color: #909195;
+				}
+			}
+		}
+		.boxRight {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			.rightWrapper {
+				display: flex;
+				align-items: center;
+				.rightValue {
+					margin-right: 20rpx;
+					font-size: 32rpx;
+					color: #1F1F1F;
+				}
+				.rightImg {
+					width: 32rpx;
+					height: 32rpx;
+				}
+			}
+
+		}
+	}
+}
+
+.cellContainer {
+	width: 90vw;
+	margin: 40rpx auto 0;
+}
+
+.gap {
+	margin: 40rpx;
+}

@@ -14,7 +14,7 @@
     "axios": "^0.20.0",
     "bip39": "^3.0.2",
     "crypto-js": "^4.0.0",
-    "hschainjs": "^1.0.4",
+    "hschainjs": "git+ssh://git@github.com:hschain/hschain_js.git",
     "js-md5": "^0.7.3",
     "typeface-roboto": "^1.1.13",
     "uview-ui": "^1.7.1",

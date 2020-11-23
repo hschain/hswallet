@@ -1,14 +1,14 @@
 <template>
 	<view class="setPw">
 		<view class="header">
-			<image @click="back" class="back" src="../../static/common/back.png" mode=""></image>
+			<image @click="back" class="back" src="../../static/common/ic_back.png" mode=""></image>
 		</view>
 		<view class="inputPassword">
 			<view class="pinTip">{{secondCheck ? '再次验证密码' : '设置密码'}}</view>
-			<u-message-input v-show="!secondCheck" active-color="#888" inactive-color="#fff" :breathe="true" :maxlength="6" :focus="true" :dot-fill="true" @change="inputPw" ></u-message-input>
-			<u-message-input v-show="secondCheck" active-color="#888" inactive-color="#fff" :breathe="true" :maxlength="6" :dot-fill="true" @change="inputPw" ></u-message-input>
+			<u-message-input v-show="!secondCheck" active-color="#888" inactive-color="#1F1F1F" :breathe="true" :maxlength="6" :focus="true" :dot-fill="true" @change="inputPw" ></u-message-input>
+			<u-message-input v-show="secondCheck" active-color="#888" inactive-color="#1F1F1F" :breathe="true" :maxlength="6" :dot-fill="true" @change="inputPw" ></u-message-input>
 		</view>
-		<view class="confirmCheck greenBtn" @click="check()">确定</view>
+		<view class="confirmCheck" @click="check()">确定</view>
 		<u-toast ref="uToast" />
 	</view>
 </template>
@@ -47,17 +47,17 @@
 					
 					//存储数据并跳转路由
 					if(!uni.getStorageSync('account')){
-						let addr = this.$chain(this.$url, this.$chainId).getAddress(this.$store.state.mnemonic)
+						let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
 						let account = {}
-						this.$store.commit('SET_WALLETNAME', 'HST')
+						this.$store.commit('SET_WALLETNAME', this.$store.state.walletType)
 						uni.setStorageSync('userAddress', addr)
 						let userWallet = [{
 							addr,
-							name: 'HST'
+							name: this.$store.state.walletType
 						}]
 						this.$store.commit('SAVE_USER_WALLET', userWallet)
 						account[addr] = {
-							name: 'HST', 
+							name: this.$store.state.walletType, 
 							key: this.$store.state.mnemonic,
 						}
 						uni.setStorage({
@@ -97,7 +97,8 @@
 
 <style lang="scss" scoped>
 	.setPw {
-		color: #fff;
+		overflow: hidden;
+		color: #1F1F1F;
 		.header {
 			margin: 100rpx 40rpx 0;
 			.back {
@@ -107,14 +108,10 @@
 		}
 
 		.inputPassword {
-			padding: 10rpx;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
 			margin-bottom: 25vh;
 			.pinTip{
-				margin: 50rpx 100rpx;
-				font-size: 64rpx;
+				margin: 50rpx 0;
+				font-size: 68rpx;
 				text-align: center;
 			}
 			.inputText{
@@ -123,10 +120,17 @@
 		}
 		.confirmCheck {
 			font-size: 32rpx;
-			width: 300rpx;
+			width: 686rpx;
+			height: 96rpx;
 			font-weight: 400;
-			margin: 0 auto 40rpx;
-			padding: 25rpx;
+			line-height: 96rpx;
+			text-align: center;
+			color: #fff;
+			background: url('../../static/common/button_gold.png') no-repeat;
+			background-size: 100% 100%;
+			position: absolute;
+			left: 50%;
+			transform: translate(-50%,0);
 		}
 	}
 </style>

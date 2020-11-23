@@ -1,4 +1,6 @@
 <script>
+	const unorm = require('./unorm.js')
+	
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
@@ -75,10 +77,10 @@
 	  font-weight: 500;
 	   font-family:arial, 'PingFang SC','SimHei', 'STHeitiSC-Light', 'Helvetica-Light', monospace, sans-serif, Times New Roman;
 	  //font-family: 'content-font';
-	  background: #000;
+	  background: #fff;
 	}
 	page {
 		color: #fff;
-		background-color: #000;
+		background-color: #fff;
 	}
 </style>

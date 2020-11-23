@@ -150,12 +150,14 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill{
 // cell单元格
 .cellMark {
 	width: 100%;
-	margin-bottom: 15rpx;
+	background: #fff;
+	// margin-bottom: 15rpx;
 	.circle {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		padding: 28rpx;
+		height: 128rpx;
 		.boxLeft {
 			display: flex;
 			.leftImg {
@@ -169,11 +171,12 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill{
 				justify-content: center;
 				.title {
 					font-size: 30rpx;
+					color: #1F1F1F;
 				}
 				.value {
 					margin-top: 16rpx;
 					font-size: 24rpx;
-					color: #909399;
+					color: #909195;
 				}
 			}
 		}
@@ -187,10 +190,11 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill{
 				.rightValue {
 					margin-right: 20rpx;
 					font-size: 32rpx;
+					color: #1F1F1F;
 				}
 				.rightImg {
-					width: 15rpx;
-					height: 28rpx;
+					width: 32rpx;
+					height: 32rpx;
 				}
 			}
 

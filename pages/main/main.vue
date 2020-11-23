@@ -1,54 +1,59 @@
 <template>
 	<view class="content">
-		<u-navbar back-icon-name="list" :custom-back="selectWallet" back-icon-color="#fff" style="font-weight: 600;" title-color="#fff" :border-bottom="false" title="钱包" :background="{background}"></u-navbar>
-		<view class="headerWrapper yellowContainer">
-			<view class="containerWrapTop">
-				<view class="walletName">
-					<u-section
-						font-size="42"
-						:show-line="false"
-						color="#fff"
-						sub-color="#fff"
-						:title="walletName"
-						sub-title="..."
-						:arrow="false"
-						@click="navigate('../management/management')"
-					></u-section>
-				</view>
-				<view class="address yellowFont" @click="onCopy()">
-					{{addr | hash}}
-				</view>
-				<view class="cash">
-					{{hideBalance ? '****' : '$ ' + assetsList[0].value}}
-				</view>
-			</view>
-			<view class="containerWrapBottom">
-				<view class="boxWrapper" @click="navigate('../transfer/transfer')">
-					<u-icon class="icon" name="transfer" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
-					<view class="content yellowFont">
-						转账
+		<view class="top">
+			<u-navbar back-icon-name="list" :custom-back="selectWallet" back-icon-color="#fff" style="font-weight: 600;" title-color="#fff" :border-bottom="false" title="钱包" :background="{background}"></u-navbar>
+			<view class="headerWrapper">
+				<view class="containerWrapTop">
+					<view class="walletName">
+						<u-section
+							font-size="42"
+							:show-line="false"
+							color="#fff"
+							sub-color="#fff"
+							:title="walletName"
+							sub-title="..."
+							:arrow="false"
+							@click="navigate('../management/management')"
+						></u-section>
+					</view>
+					<view class="address" @click="onCopy()">
+						{{addr | hash}}
+					</view>
+					<view class="cash">
+						{{hideBalance ? '****' : '$ ' + assetsList[0].value}}
 					</view>
 				</view>
-				<view class="boxWrapper" @click="navigate('../receipt/receipt')">
-					<u-icon class="icon" name="receipt" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
-					<view class="content yellowFont">
-						收款
+				<image class="btnLogo" src="../../static/common/img_taichi.png" mode=""></image>
+				<view class="containerWrapBottom">
+					
+					<view class="transfer" @click="navigate('../transfer/transfer')">
+						<u-icon class="icon" name="../../static/common/ic_deposit.png" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
+						<view class="contents">
+							转账
+						</view>
 					</view>
-				</view>
-				<view class="boxWrapper" @click="info">
-					<u-icon class="icon" name="dig" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
-					<view class="content yellowFont">
-						PoB
+					<view class="collection" @click="navigate('../receipt/receipt')">
+						<u-icon class="icon" name="../../static/common/ic_withdraw.png" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
+						<view class="contents">
+							收款
+						</view>
 					</view>
+					<!-- <view class="boxWrapper" @click="info">
+						<u-icon class="icon" name="dig" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
+						<view class="content yellowFont">
+							PoB
+						</view>
+					</view> -->
 				</view>
 			</view>
 		</view>
 		
-		<view class="assets yellowContainer">
+		<view class="assets">
 			<view class="containerWrap">
 				<view class="title">
 					<text>资产</text>
 				</view>
+				<u-icon class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000"></u-icon>
 				<view class="assetsList">
 					<view @click="enterAssets(item)" v-for="item in assetsList" :key="item.denom" class="table">
 						<view class="tableWrapper">
@@ -58,7 +63,7 @@
 								<text class="denom">{{item.denom}}</text>
 							</view>
 							<view class="tableRight">
-								<text>{{hideBalance ? '****' : item.amount + ' ' + item.denom}}</text>
+								<text>{{hideBalance ? '****' : item.amount + ' '}}</text>
 								<text>{{hideBalance ? '****' : '$ ' + item.value}}</text>
 							</view>
 						</view>
@@ -67,7 +72,7 @@
 			</view>
 		</view>
 		
-		<u-popup v-model="changeWalletDialog" mode="bottom" border-radius="20" :closeable="true">
+		<!-- <u-popup v-model="changeWalletDialog" mode="bottom" border-radius="20" :closeable="true">
 			<view class="changeWalletDialog">
 				<view class="headerTip">
 					<u-icon class="icon" size="40" name="../../static/common/circlePlus.png" color="#000" @click="addNewAddress"></u-icon>
@@ -90,7 +95,7 @@
 					</view>
 				</scroll-view>
 			</view>
-		</u-popup>
+		</u-popup> -->
 		
 		<u-action-sheet @click="selectOption" :list="optionList" v-model="addNewAddrDialog" :cancel-btn="true" border-radius="20"></u-action-sheet>
 		
@@ -116,7 +121,7 @@
 				newestUpdate: false, //是否为最新版本
 				backupMnemonic: uni.getStorageSync('backupMnemonic') || false, //是否已备份助记词
 				background: {
-					backgroundColor: '#000',
+					backgroundColor: '#fff',
 				},
 				changeWalletDialog: false, //弹起钱包选择弹框
 				addNewAddrDialog: false, //添加新地址弹框
@@ -250,7 +255,7 @@
 			},
 			//选择钱包
 			selectWallet() {
-				this.changeWalletDialog = true
+				uni.navigateTo({url: '../walletList/walletList'})
 			},
 			//添加新的钱包地址
 			addNewAddress() {
@@ -290,60 +295,104 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		.headerWrapper {
-			display: flex;
-			flex-direction: column;
-			margin: 20rpx 0 30rpx;
-			color: #fff;
-			.containerWrapTop {
-				width:calc(100% - .6rpx);
-				height:calc(100% - .6rpx);
-				// background:linear-gradient(132deg,rgba(19,78,51,1) 0%,rgba(9,32,53,1) 100%);
-				background:linear-gradient(132deg,rgba(6, 23, 16,1) 0%,rgba(9,32,53,1) 100%);
-				border-radius:12rpx 12rpx 0 0;
-				box-sizing: border-box;
-				.walletName {
-					margin: 30rpx;
-				}
-				.address {
-					margin: 10rpx 30rpx;
-					font-size: 28rpx;
-					color: #FCC350;
-				}
-				.cash {
-					display: flex;
-					justify-content: flex-end;
-					margin: 30rpx 30rpx 40rpx;
-					font-size: 40rpx;
-				}
-			}
-			.containerWrapBottom {
-				margin-top: 1rpx;
-				width:calc(100% - .6rpx);
-				height:calc(100% - .6rpx);
-				// background:linear-gradient(132deg,rgba(19,78,51,1) 0%,rgba(9,32,53,1) 100%);
-				background:linear-gradient(132deg,rgba(6, 23, 16,1) 0%,rgba(9,32,53,1) 100%);
-				border-radius:0 0 12rpx 12rpx;
-				box-sizing: border-box;
+		.top{
+			width: 100%;
+			height: 530rpx;
+			background: #3C3C3D;
+			.headerWrapper {
 				display: flex;
-				justify-content: space-between;
-				.boxWrapper {
+				flex-direction: column;
+				color: #fff;		
+				.containerWrapTop {
+					width:94%;
+					height:240rpx;
+					background: linear-gradient(225deg, #E6C99B 0%, #C6A471 100%);
+					box-shadow: 0px 24px 24px -24px rgba(212, 180, 131, 0.3);
+					border-radius: 16px;
+					box-sizing: border-box;
+					position: absolute;
+					top: 100rpx;
+					left: 50%;
+					transform: translate(-50%,0);
+					.walletName {
+						margin: 30rpx;
+					}
+					.address {
+						margin: 10rpx 30rpx;
+						font-size: 28rpx;
+						color: #FCC350;
+					}
+					.cash {
+						display: flex;
+						justify-content: flex-end;
+						margin: 30rpx 30rpx 40rpx;
+						font-size: 40rpx;
+					}
+				}
+				.btnLogo{
+				width: 44px;
+				height: 42px;
+				position: absolute;
+				left: 50%;
+				top: 393rpx;
+				transform: translate(-50%,0);
+				z-index: 1;
+			}
+				.containerWrapBottom {
 					width: 100%;
-					margin: 30rpx 0;
-					padding: 0 30rpx;
-					font-size: 32rpx;
-					border-left: 1rpx solid #423008;
+					border-radius:0 0 12rpx 12rpx;
+					box-sizing: border-box;
 					display: flex;
 					justify-content: center;
-					&:first-child {
-						border-left: 0rpx solid #fff;
+					position: absolute;
+					top: 390rpx;
+					font-size: 32rpx;
+					.contents{
+						text-align: center;
+						line-height: 88rpx;
+					}	
+					.transfer{
+						width: 340rpx;
+						height: 88rpx;
+						background: #1F1F1F;
+						border-radius: 22px 0px 0px 22px;
+						border: 1px solid #1F1F1F;
+						.icon {
+							position: absolute;
+							left: 140rpx;
+							top: 30rpx;
+						}
 					}
-					.icon {
-						padding-right: 20rpx;
+					.collection{
+						width: 340rpx;
+						height: 88rpx;
+						background: #fff;
+						border-radius: 0px 22px 22px 0px;
+						border: 1px solid #1F1F1F;
+						color: #1F1F1F;
+						.icon {
+							position: absolute;
+							left: 450rpx;
+							top: 30rpx;
+						}
 					}
+					// .boxWrapper {
+					// 	width: 100%;
+					// 	margin: 30rpx 0;
+					// 	padding: 0 30rpx;
+					// 	font-size: 32rpx;
+					// 	border-left: 1rpx solid #423008;
+					// 	display: flex;
+					// 	justify-content: center;
+					// 	&:first-child {
+					// 		border-left: 0rpx solid #fff;
+					// 	}
+						
+					// }
 				}
 			}
 		}
+		
 		.btnBox {
 			margin-bottom: 30rpx;
 			.boxWrapper {
@@ -362,11 +411,18 @@
 		.assets {
 			display: flex;
 			flex-direction: column;
-			color: #fff;
+			color: #1F1F1F;
 			.title {
-				margin: 30rpx 30rpx 0;
-				font-size: 46rpx;
+				font-size: 32rpx;
 				font-weight: 500;
+				position: absolute;
+				left: 32rpx;
+				margin-top: 20rpx;
+			}
+			.addIcon{
+				position: absolute;
+				right: 32rpx;	
+				margin-top: 20rpx;
 			}
 			.assetsList {
 				margin: 40rpx;
@@ -374,10 +430,12 @@
 					border-radius: 10rpx;
 					margin: 0 0 30rpx;
 					.tableWrapper {
-						padding: 20rpx;
+						width: 750rpx;
+						padding: 50rpx 32rpx;
+
 						display: flex;
 						justify-content: space-between;
-						background-color: transparent;
+						// background-color: transparent;
 						.tableLeft {
 							display: flex;
 							.icon {
@@ -400,37 +458,37 @@
 				}
 			}
 		}
-		.changeWalletDialog {
-			color: #000000;
-			position: relative;
-			.headerTip {
-				margin: 30rpx 0 40rpx;
-				.icon {
-					position: absolute;
-					left: 30rpx;
-				}
-				.title {
-					text-align: center;
-					font-size: 40rpx;
-				}
-			}
-			.containerBox {
-				padding: 30rpx 0;
-				height: 600rpx;
-				.addressBox {
-					margin-bottom: 30rpx;
-					.walletInfo {
-						color: #fff;
-						padding: 30rpx;
-						.name {
-							font-size: 36rpx;
-						}
-						.addr {
-							text-align: end;
-						}
-					}
-				}
-			}
-		}
+		// .changeWalletDialog {
+		// 	color: #000000;
+		// 	position: relative;
+		// 	.headerTip {
+		// 		margin: 30rpx 0 40rpx;
+		// 		.icon {
+		// 			position: absolute;
+		// 			left: 30rpx;
+		// 		}
+		// 		.title {
+		// 			text-align: center;
+		// 			font-size: 40rpx;
+		// 		}
+		// 	}
+		// 	.containerBox {
+		// 		padding: 30rpx 0;
+		// 		height: 600rpx;
+		// 		.addressBox {
+		// 			margin-bottom: 30rpx;
+		// 			.walletInfo {
+		// 				color: #fff;
+		// 				padding: 30rpx;
+		// 				.name {
+		// 					font-size: 36rpx;
+		// 				}
+		// 				.addr {
+		// 					text-align: end;
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
 	}
 </style>

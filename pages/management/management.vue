@@ -1,12 +1,11 @@
 <template>
 	<view class="management cellContainer">
-
-		
-		<view class="greenContainer cellMark" @click="showQrCode()">
-			<view class="containerWrap circle">
+		<!-- <image @click="back" class="back" src="../../static/common/ic_back.png" mode=""></image> -->
+		<view class="cellMark" @click="showQrCode()">
+			<view class="containerWrap circle border">
 				<view class="boxLeft">
 					<view class="leftWrapper">
-						<view class="title greenFont">
+						<view class="title ">
 							钱包地址
 						</view>
 						<view class="value">{{fliterAddr(addr)}}</view>
@@ -20,48 +19,48 @@
 			</view>
 		</view>
 		
-		<view class="greenContainer cellMark" @click="modifyActive">
-			<view class="containerWrap circle">
+		<view class="cellMark" @click="modifyActive">
+			<view class="containerWrap circle border">
 				<view class="boxLeft">
 					<view class="leftWrapper">
-						<view class="title greenFont">
+						<view class="title ">
 							钱包名称
 						</view>
 					</view>
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<view class="rightValue greenFont">
+						<view class="rightValue ">
 							{{account[addr].name}}
 						</view>
-						<image class="rightImg" src="../../static/common/greenArrow.png" mode=""></image>
+						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>
 					</view>
 				</view>
 			</view>
 		</view>
 		
-		<view class="greenContainer cellMark" @click="backup">
+		<view class=" cellMark" @click="backup">
 			<view class="containerWrap circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">
-						<view class="title greenFont">
+						<view class="title">
 							备份钱包
 						</view>
 					</view>
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<view class="rightValue greenFont">
+						<view class="rightValue">
 							{{backupMnemonic ? '' : '未备份'}}
 						</view>
-						<image class="rightImg" src="../../static/common/greenArrow.png" mode=""></image>
+						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>
 					</view>
 				</view>
 			</view>
 		</view>
 		
-		<view class="quitAccount btn greenBtn" @click="quitDialog = true">
-			退出账户
+		<view class="quitAccount  " @click="quitDialog = true">
+		删除钱包
 		</view>
 		
 		<!-- 修改钱包名称弹框 -->
@@ -72,7 +71,7 @@
 		</u-modal>
 
 		<!-- 地址详情弹框 -->
-		<u-modal v-model="showAddr" title="扫二维码,转入HST" :negative-top="top" :mask-close-able="true" confirm-color="#999" confirm-text="复制" @confirm="onCopy" :title-style="{color: '#aaa', fontSize: '28rpx'}">
+		<u-modal v-model="showAddr" :title="'扫二维码,转入'+value" :negative-top="top" :mask-close-able="true" confirm-color="#999" confirm-text="复制" @confirm="onCopy" :title-style="{color: '#aaa', fontSize: '28rpx'}">
 			<view class="qrCodeBox">
 				<qrCode :imgText="imgText"></qrCode>
 			</view>
@@ -141,7 +140,14 @@
 				return true //return true的意思是禁止返回到上一个界面
 			}
 		},
+		mounted(){
+			document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
+			document.querySelector('.u-model__footer__button').style.background = '#000';
+		},
 		methods: {
+			back() {
+				uni.navigateBack()
+            },
 			// 裁剪地址
 			fliterAddr(value) {
 			  return value.slice(0, 12) + " … " + value.slice(-12);
@@ -222,7 +228,13 @@
 </script>
 
 <style lang="scss">
+	.border{
+		border-bottom: 1px solid #F3F3F7;
+	}
 	.management{
+		overflow: hidden;
+		width: 100%;
+		// background: #F7F7F7;
 		.walletName{
 			padding: 30rpx 40rpx 50rpx;
 		}
@@ -249,7 +261,16 @@
 			}
 		}
 		.quitAccount {
+			width: 686rpx;
+			height: 88rpx;
+			background: #D04B63;
+			border-radius: 22px;
+			text-align: center;
+			line-height: 88rpx;
 			margin-top: 100rpx;
+			position: absolute;
+			bottom: 84rpx;
+			left: 32rpx;
 		}
 	}
 </style>

@@ -1,5 +1,5 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [
 		{
 			"path": "pages/main/main",
 			"style": {
@@ -32,7 +32,12 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
-		}, {
+		},{
+			"path": "pages/chooseType/chooseType",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},{
 			"path": "pages/safetyTips/safetyTips",
 			"style": {
 				"navigationStyle": "custom"
@@ -49,6 +54,11 @@
 			}
 		}, {
 			"path": "pages/setPw/setPw",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}, {
+			"path": "pages/walletList/walletList",
 			"style": {
 				"navigationStyle": "custom"
 			}
@@ -99,7 +109,12 @@
 		}, {
 			"path": "pages/management/management",
 			"style": {
-				"navigationBarTitleText": "管理"
+				"navigationBarTitleText": "管理",
+				"app-plus":{  
+					"titleNView":{  
+		   
+					}  
+				}    
 			}
 		}, {
 			"path": "pages/usingSetting/usingSetting",
@@ -124,12 +139,19 @@
 		}
 	],
 	"globalStyle": {//用于设置应用的状态、导航条、标题、窗口颜色背景
-		"navigationBarTextStyle": "white",//导航栏标题颜色及状态栏前景颜色，仅限black/white
-		"navigationBarBackgroundColor": "#000",//导航栏背景颜色
+		"navigationBarTextStyle": "black",//导航栏标题颜色及状态栏前景颜色，仅限black/white
+		"navigationBarBackgroundColor": "#fff",//导航栏背景颜色
 		"backgroundColor": "#000",//下拉显示出来的窗口的背景色
 		"app-plus": {  
-			"background": "#000",  
-			"animationType": "slide-in-right"
+			"background": "#000",
+			"animationType": "slide-in-right",
+			"titleNView":{  
+				"buttons": [ //原生标题栏按钮配置,
+					{
+						
+					}
+				 ]
+			} 
 		}
 	},
 	"easycom": {
@@ -138,9 +160,8 @@
 	"tabBar": {
 		"color": "#919293",
 		"selectedColor": "#2bffe7",
-		"backgroundColor": "#000",
+		"backgroundColor": "#fff",
 		"borderStyle": "black",
-		// "fontSize": "16px",
 		"list": [{
 			"pagePath": "pages/main/main",
 			"text": "钱包",

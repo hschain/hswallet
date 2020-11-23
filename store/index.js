@@ -15,6 +15,7 @@ const store = new Vuex.Store({
 		
 		socketTask: null, //websocket方法
 		socketIsOpen: false, //是否已开启websocket
+		walletType: '', // 选择的钱包类型
 	},
 	getters: {
 		
@@ -105,6 +106,9 @@ const store = new Vuex.Store({
 				state.socketIsOpen = false
 			}
 		},
+		SAVE_WALLET_TYPE:  (state, value) => {
+			state.walletType = value
+		},
 	},
 	actions: {
 		saveMnemonic({ commit }, value) {
@@ -126,6 +130,9 @@ const store = new Vuex.Store({
 		websocketClose({ commit }, value) {
 			commit('WEBSOCKET_CLOSE', value)
 		},
+		saveWalletType({ commit }, value) {
+			commit("SAVE_WALLET_TYPE", value)
+		}
 	}
 })
 

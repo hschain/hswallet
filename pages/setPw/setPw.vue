@@ -53,11 +53,13 @@
 						uni.setStorageSync('userAddress', addr)
 						let userWallet = [{
 							addr,
-							name: this.$store.state.walletType
+							name: this.$store.state.walletType,
+							type: this.$store.state.walletType
 						}]
 						this.$store.commit('SAVE_USER_WALLET', userWallet)
 						account[addr] = {
 							name: this.$store.state.walletType, 
+							type: this.$store.state.walletType,
 							key: this.$store.state.mnemonic,
 						}
 						uni.setStorage({

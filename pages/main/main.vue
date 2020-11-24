@@ -53,7 +53,7 @@
 				<view class="title">
 					<text>资产</text>
 				</view>
-				<u-icon class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000"></u-icon>
+				<u-icon class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000" @click="gotoAddCurrency"></u-icon>
 				<view class="assetsList">
 					<view @click="enterAssets(item)" v-for="item in assetsList" :key="item.denom" class="table">
 						<view class="tableWrapper">
@@ -154,7 +154,8 @@
 				for (let idx in acc) {
 					this.userWallet.push({
 						addr: idx,
-						name: acc[idx].name
+						name: acc[idx].name,
+						type: acc[idx].type
 					})
 				}
 				this.$store.commit('SAVE_USER_WALLET', this.userWallet)
@@ -163,7 +164,6 @@
 				this.walletName = this.$store.state.walletName
 				this.userWallet = this.$store.state.userWallet
 			}
-			console.log("钱包列表",this.userWallet);
 			//是否隐藏资金
 			uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
 			
@@ -205,6 +205,11 @@
 			},
 			navigate(url) {
 				uni.navigateTo({url})
+			},
+			gotoAddCurrency(){
+				uni.navigateTo({
+					url: '../addCurrency/addCurrency'
+				})
 			},
 			info() {
 				// #ifdef APP-PLUS

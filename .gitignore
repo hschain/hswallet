@@ -1,6 +1,8 @@
 .DS_Store
+.gitlab
 node_modules/
 #/dist
+unpackage/
 
 # local env files
 .env.local

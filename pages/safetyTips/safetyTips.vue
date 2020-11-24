@@ -49,13 +49,15 @@
 					let account = this.secret.decrypt(uni.getStorageSync('account'))
 					account[addr] = {
 						name: this.$store.state.walletType, 
+						type: this.$store.state.walletType,
 						key: this.$store.state.mnemonic,
 					}
 					let userWallet = []
 					for (let idx in account) {
 						userWallet.push({
 							addr: idx,
-							name: account[idx].name
+							name: account[idx].name,
+							type: account[idx].type,
 						})
 					}
 					this.$store.commit('SAVE_USER_WALLET', userWallet)

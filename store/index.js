@@ -12,7 +12,6 @@ const store = new Vuex.Store({
 		userWallet: [], //当前账号的多个钱包信息
 		updateRes: {}, //从后端返回的结果
 		queryNewInfoflag: false, //是否定时轮询最新交易信息
-		
 		socketTask: null, //websocket方法
 		socketIsOpen: false, //是否已开启websocket
 		walletType: '', // 选择的钱包类型

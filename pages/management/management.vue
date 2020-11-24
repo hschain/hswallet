@@ -119,6 +119,7 @@
 				inputPwOption: '', //根据入口，判断输入密码成功后的操作
 				quitDialog: false, //未备份退出提示弹框
 				walletList:this.$store.state.userWallet||'',
+				type:''
 			}
 		},
 		onLoad() {

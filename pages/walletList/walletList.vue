@@ -8,8 +8,8 @@
 				<scroll-view scroll-y="true" class="containerBox">
 					<view class="addressBox" v-for="(item, index) in userWallet" :key="index + 'name'" @click="switchUserAddress(item)">
 						<view :class="['containerWrap',selected==item.addr?'hei':'bai']">
-                            <image v-if="item.name=='HST'" class="icons" src="../../static/common/chain_hst.png" mode=""></image>
-                            <image v-else-if="item.name=='ETH'" class="icons" src="../../static/common/chain_eth.png" mode=""></image>
+                            <image v-if="item.type=='HST'" class="icons" src="../../static/common/chain_hst.png" mode=""></image>
+                            <image v-else-if="item.type=='ETH'" class="icons" src="../../static/common/chain_eth.png" mode=""></image>
                             <image v-if="selected==item.addr" class="selected" src="../../static/common/ic_checked.png" mode=""></image>
 							<view class="walletInfo">
 								<view class="name">
@@ -57,10 +57,10 @@
                     for (let idx in acc) {
                         this.userWallet.push({
                             addr: idx,
-                            name: acc[idx].name
+                            name: acc[idx].name,
+							type: acc[idx].type
                         })
                     }
-                    console.log(this.userWallet);
                     this.$store.commit('SAVE_USER_WALLET', this.userWallet)
                     this.$store.commit('SET_WALLETNAME', this.walletName)
                 } else {

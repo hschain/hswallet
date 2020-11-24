@@ -58,6 +58,11 @@
 				"navigationStyle": "custom"
 			}
 		}, {
+			"path": "pages/addCurrency/addCurrency",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},{
 			"path": "pages/walletList/walletList",
 			"style": {
 				"navigationStyle": "custom"

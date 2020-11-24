@@ -164,6 +164,7 @@
 				this.walletName = this.$store.state.walletName
 				this.userWallet = this.$store.state.userWallet
 			}
+			console.log("钱包列表",this.userWallet);
 			//是否隐藏资金
 			uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
 			

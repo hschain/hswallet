@@ -11,23 +11,26 @@
                  placeholder="请输入Token名称或合约地址" 
                  :height="96" 
                  :focus="true" />
-        <view class="title">首页资产</view>
-        <view class="assetsList">
-					<view  v-for="item in assetsList" :key="item.denom" class="table ">
-						<view class="tableWrapper">
-							<view class="tableLeft">
-								<image class="icon" v-if="item.denom === 'HST'" src="../../static/common/logo.png" mode=""></image>
-								<image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
-								<text class="denom">{{item.denom}}</text>
-							</view>
-							<view class="tableRight">
-								<text>{{hideBalance ? '****' : item.amount + ' '}}</text>
-								<text>{{hideBalance ? '****' : '$ ' + item.value}}</text>
-							</view>
-						</view>
-                        <view class="border"></view>
-					</view>
-				</view>
+        <view>
+            <view class="title">首页资产</view>
+            <view class="assetsList">
+                        <view  v-for="item in assetsList" :key="item.denom" class="table ">
+                            <view class="tableWrapper">
+                                <view class="tableLeft">
+                                    <image class="icon" v-if="item.denom === 'HST'" src="../../static/common/logo.png" mode=""></image>
+                                    <image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
+                                    <text class="denom">{{item.denom}}</text>
+                                </view>
+                                <view class="tableRight">
+                                    <text>{{hideBalance ? '****' : item.amount + ' '}}</text>
+                                    <text>{{hideBalance ? '****' : '$ ' + item.value}}</text>
+                                </view>
+                            </view>
+                            <view class="border"></view>
+                        </view>
+                </view>
+            </view>
+        
     </view>
 </template>
 <script>

@@ -297,6 +297,7 @@
                 line-height: 168rpx;
                 display: flex;
                 justify-content: center;
+                color: #000;
             }
             .import{
                 width: 50%;
@@ -304,6 +305,7 @@
                 line-height: 168rpx;
                 display: flex;
                 justify-content: center;
+                color: #000;
             }
             .border{
                 width: 4rpx;

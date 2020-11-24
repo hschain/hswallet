@@ -16,15 +16,15 @@
 	.showQrCode {
 		z-index: 100;
 		position: relative;
-		padding: 20rpx;
-		border: $dborder_width/2 solid #d6dadc;
-		width: calc(#{$dborder_width} + 440rpx);
-		height: calc(#{$dborder_width} + 440rpx);
+		// padding: 20rpx;
+		// border: $dborder_width/2 solid #d6dadc;
+		// width: calc(#{$dborder_width} + 400rpx);
+		// height: calc(#{$dborder_width} + 400rpx);
 		.img {
 			position: relative;
 			z-index: 101;
-			width: 400rpx;
-			height: 400rpx;
+			width: 360rpx;
+			height: 360rpx;
 		}
 		&:before {
 			position: absolute;

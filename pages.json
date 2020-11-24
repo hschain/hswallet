@@ -76,8 +76,8 @@
 						"buttons": [{//自定义按钮
 							"text": "\ue601",//使用字体图标时unicode字符表示必须'\u'开头
 							"fontSrc": "/static/iconfont.ttf",//按钮上文字使用的字体文件路径，使用本地地址。
-							"fontSize": "22px",//按钮上文字大小
-							"color": "#FFFFFF"//按钮上文字颜色
+							"fontSize": "21px",//按钮上文字大小
+							"color": "#000"//按钮上文字颜色
 						}]
 					}
 				}
@@ -151,11 +151,7 @@
 			"background": "#000",
 			"animationType": "slide-in-right",
 			"titleNView":{  
-				"buttons": [ //原生标题栏按钮配置,
-					{
-						
-					}
-				 ]
+				
 			} 
 		}
 	},

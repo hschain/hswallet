@@ -1,9 +1,10 @@
 <template>
 	<view class="content">
 		<!-- <view style="height: var(--status-bar-height);background-color: var(--mainColor);"></view> -->
-		<view class="introduce greenContainer">
-			<view class="detail containerWrap">
-				<view class="value greenFont">
+		<view class="introduce ">
+			<image class="walletIcon" src="../../static/common/chain_hst.png" mode=""></image>
+			<view class="detail ">
+				<view class="value">
 					{{hideBalance ? "****" : this.balance}}
 				</view>
 				<view class="title">
@@ -17,13 +18,13 @@
 			<u-tabs-swiper 
 				ref="tabs"
 				:list="menu"
-				active-color="rgb(193, 153, 108)"
+				active-color="#000"
 				inactive-color="#909399"
 				:is-scroll="false"
-				bar-width = "90"
+				bar-width = "150"
 				font-size="32"
 				current="0"
-				bg-color="#000"
+				bg-color="#fff"
 				:current="activeIndex"
 				@change="changeIndex"
 			></u-tabs-swiper>
@@ -32,8 +33,8 @@
 		<!-- 菜单列表 -->
 		<swiper class="swiperCard" :current="swiperCurrent" @transition="transition" @animationfinish="animationfinish">
 			<swiper-item v-for="(sub, name) in assetsList" :key="name">
-				<view class="yellowContainer">
-					<scroll-view scroll-y="true" class="assetsList containerWrap" @scrolltolower="getAssetsList(true)" scroll-with-animation="true">
+				<view class="">
+					<scroll-view scroll-y="true" class="assetsList " @scrolltolower="getAssetsList(true)" scroll-with-animation="true">
 						<view class="listWrapper">
 							<view v-if="!assetsList[name].length" class="isEmpty">
 								<u-empty text="暂无信息" mode="data"></u-empty>
@@ -61,8 +62,9 @@
 		</swiper>
 		
 		<view class="bottomBar">
-			<view class="btn yellowBtn" :custom-style="customStyle" @click="receipt">收款</view>
-			<view class="btn greenBtn" type="primary" @click="transfer">转账</view>
+			<view class="createBtn" :custom-style="customStyle" @click="receipt">收款</view>
+			<view class="importBtn" type="primary" @click="transfer">转账</view>
+			<image class="btnLogo" src="../../static/common/img_taichi.png" mode=""></image>
 		</view>
 	</view>
 </template>
@@ -293,6 +295,14 @@
 			font-size: 36rpx;
 			margin: 20rpx 0;
 			height: 300rpx;
+			.walletIcon{
+				width: 64rpx;
+				height: 64rpx;
+				position: relative;
+				left: 50%;
+				transform: translate(-50%,0);
+				margin-bottom: 20rpx;
+			}
 			.detail {
 				display: flex;
 				justify-content: center;
@@ -301,6 +311,10 @@
 				.value {
 					margin-bottom: 20rpx;
 					font-size: 50rpx;
+					color: #C19A5F;
+				}
+				.title{
+					color: #909195;
 				}
 			}
 		}
@@ -309,17 +323,19 @@
 		}
 		.swiperCard{
 			width: 100%;
-			height: calc(#{$hei} - 570rpx);
+			height: calc(#{$hei} - 680rpx);
 			margin-top: 20rpx;
-			.assetsList {
-				background-color: #fff;
-				height: calc(#{$hei} - 580rpx);
+			.assetsList {	
+				background: #fff;
+				height: calc(#{$hei} - 680rpx);
 				.listWrapper {
+					border: 2px solid #fff;
 					.isEmpty{
 						display: flex;
 						justify-content: center;
 						align-items: center;
-						height: calc(#{$hei} - 586rpx);
+						height: calc(#{$hei} - 680rpx);
+						border: 2px solid #fff;
 					}
 					>uni-view {
 						display: none;
@@ -363,16 +379,45 @@
 		.bottomBar {
 			position: fixed;
 			left: 0;
-			bottom: 0;
+			bottom: 60px;
 			z-index: 998;
-			border-top: 1px solid rgba(0, 0, 0, 0.2);
 			display: flex;
 			justify-content: space-between;
 			width: 100vw;
 			padding: 10rpx 5vw;
-			.btn {
-				width: 330rpx;
-				margin: 0;
+			.createBtn {
+				font-size: 30rpx;
+				width: 50%;
+				height: 44px;
+				color: #fff;
+				text-align: center;
+				line-height: 44px;
+				background: #1F1F1F;
+				border-radius: 22px 0px 0px 22px;
+				border: 1px solid #1F1F1F;
+				position: absolute;
+				left: 16px;
+			}
+			.importBtn {
+				font-size: 30rpx;
+				width: 46%;
+				height: 44px;
+				background: #fff;
+				color: #000;
+				text-align: center;
+				line-height: 44px;
+				border-radius: 0px 22px 22px 0px;
+				border: 1px solid #1F1F1F;
+				position: absolute;
+				right: 16px;
+			}
+			.btnLogo{
+				width: 44px;
+				height: 42px;
+				position: absolute;
+				left: 50%;
+				top: 6px;
+				transform: translate(-50%,0);
 			}
 		}
 	}

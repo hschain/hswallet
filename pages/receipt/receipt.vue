@@ -1,7 +1,7 @@
 <template>
 	<view class="receipt">
 		<view class="containerBox purpleContainer">
-			<view class="containerWrap boxWrapper">
+			<view class="boxWrapper">
 				<view class="content">
 					扫二维码，转入HST
 				</view>
@@ -11,8 +11,9 @@
 					</view>
 				</view>
 				<view class="showAddressBox" @click="onCopy">
-					{{addr | hash}}
+					{{addr }}
 				</view>
+				<view class="copyBtn" v-clipboard:copy="addr" v-clipboard:success="onCopy">复制</view>
 			</view>
 		</view>
 	</view>
@@ -26,7 +27,7 @@
 		components: { qrCode },
 		data() {
 			return {
-				addr: '', //地址
+				addr: uni.getStorageSync('userAddress') || '', //地址
 				imgText: '' //二维码内容
 			}
 		},
@@ -45,9 +46,21 @@
 			  return value.slice(0, 10) + " … " + value.slice(-10);
 			},
 		},
+		 mounted(){
+			document.querySelector('uni-page').style.background = '#1F1F1F';
+			document.querySelector('.uni-page-head').style.background = '#1F1F1F';
+			document.querySelector('.uni-page-head').style.color = '#fff';
+			document.querySelector('.uni-btn-icon').style.color = '#fff';
+		},
 		methods: {
 			// 复制地址
 			onCopy() {
+				this.showAddr = true
+				//#ifdef H5
+				uni.showToast({
+					title: '内容已复制'
+				})
+				//#endif
 				//#ifndef H5
 				uni.setClipboardData({
 					data: this.addr
@@ -60,33 +73,50 @@
 
 <style lang="scss">
 	.receipt {
+		background: #1F1F1F;
 		.containerBox {
-			background-color: #fff;
+			width: 622rpx;
+			height: 840rpx;
+			box-sizing: border-box;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			flex-direction: column;
-			margin: 10vh auto 0;
+			margin: 64rpx;
+			background: #fff;
 			.boxWrapper {
 				.content {
 					color: #bcbcbc;
 					font-size: 30rpx;
-					margin: 60rpx 0 10rpx;
 					text-align: center;
+					position: absolute;
+					top: 58rpx;
+					left: 50%;
+					transform: translate(-50%,0);
 				}
 				.qrCodeBox{
 					display: flex;
 					justify-content: center;
-					margin: 30rpx 0;
 					.boxWrapper {
 						padding: 16rpx;
 						background-color: #fff;
 					}
 				}
 				.showAddressBox {
+					width: 526rpx;
+					word-wrap : break-word;
 					padding: 20rpx 30rpx 60rpx;
 					text-align: center;
 					font-size: 36rpx;
+					color: #1F1F1F;
+				}
+				.copyBtn{
+					width: 526rpx;
+					height: 96rpx;
+					background: url('../../static/common/button_gold.png');
+					text-align: center;
+					line-height: 96rpx;
+					position:absolute;
 				}
 			}
 		}

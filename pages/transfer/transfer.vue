@@ -3,11 +3,11 @@
 		<view class="addrTitle">
 			收款地址
 		</view>
-		<view class="greenContainer">
+		<view class="Container">
 			<view class="containerWrap">
-				<view class="tableBar addrInput">
-					<u-input :custom-style="{fontSize: '32rpx'}" class="input" v-model="addr" placeholder="HSC地址" :clearable="false"/>
-					<image @click="addAddress" class="addrImg" src="../../static/common/myBook.png" mode=""></image>
+				<view class=" addrInput">
+					<u-input :custom-style="{fontSize: '32rpx',background:'#fff'}" class="input" v-model="addr" placeholder="HSC地址" :clearable="false" :border="false"/>
+					<image @click="addAddress" class="addrImg" src="../../static/common/ic_address.png" mode=""></image>
 				</view>
 				<u-cell-group v-show="Object.keys(addrData).length">
 					<u-cell-item :value-style="{color: '#fff'}" :title-style="{color: '#fff'}" :arrow="false" :value="addrData.description || '(空)'" :title="addrData.name" hover-class="none" :border-bottom="false">
@@ -19,12 +19,12 @@
 		<view class="addrTitle">
 			金额
 		</view>
-		<view class="greenContainer">
+		<view class="Container">
 			<view class="containerWrap">
 				<view class="tableBar">
 					<u-cell-group>
 						<u-cell-item :arrow="false" hover-class="none">
-							<u-input slot="title" :custom-style="{fontSize: '46rpx',padding: '30rpx 0'}" v-model="cash" placeholder="0" :clearable="false" type="number" />
+							<u-input slot="title" :custom-style="{fontSize: '46rpx'}" v-model="cash" placeholder="0" :clearable="false" type="number" />
 						</u-cell-item>
 						<u-cell-item :arrow="false" hover-class="none">
 							<u-input slot="title" :custom-style="{fontSize: '32rpx'}" v-model="memo" placeholder="备注" :clearable="false" />
@@ -34,7 +34,7 @@
 			</view>
 		</view>
 
-		<view :class="['nextStep', nextStatus ? 'greenBtn' : 'greyBtn']" @click="nextStatus ? nextStep() : ''">下一步</view>
+		<view :class="['nextStep', nextStatus ? 'opaque' : 'transparent']" @click="nextStatus ? nextStep() : ''">下一步</view>
 		
 		<!-- 输入密码弹框 -->
 		<inputPassword  ref="inputPwNav" @correct="correct"></inputPassword>
@@ -115,6 +115,13 @@
 			        _this.addr = JSON.parse(res.result).address
 			    }
 			});
+		},
+		mounted(){
+			document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
+			document.querySelectorAll('.u-cell')[1].style.padding= '13px 0';
+			document.querySelectorAll('.u-cell')[2].style.padding= '13px 0';
+			document.querySelectorAll('.uni-input-input')[1].style.color= '#1f1f1f';
+			document.querySelectorAll('.uni-input-input')[2].style.color= '#1f1f1f';
 		},
 		methods:{
 			//添加新地址
@@ -209,23 +216,35 @@
 </script>
 
 <style lang="scss">
+	.transparent{
+		opacity: 0.4;
+	}
+	.opaque{
+		opacity: 1;
+	}
 	.transfer {
 		font-size: 30rpx;
-		
-		/deep/ .u-cell-item-box {
-			background-color: transparent;
-		}
 		.addrTitle {
-			margin: 30rpx 5vw 20rpx;
+			width: 100%;
+			height: 88rpx;
+			// margin: 30rpx 5vw 20rpx;
+			background: #F7F7F7;
+			color: #1f1f1f;
+			padding: 20rpx 32rpx;
+		}
+		.Container{
+			padding: 0 32rpx;
 		}
 		// /deep/.u-input__input {
 		// 	font-size: 36rpx;
 		// }
 		.addrInput {
+			width:100%;
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			padding: 20rpx 30rpx;
+			padding: 20rpx 0;
+			background: #fff;
 			.input {
 				margin-right: 30rpx;
 			}
@@ -237,8 +256,12 @@
 		.nextStep{
 			position: fixed;
 			bottom: 3vh;
-			width: 90vw;
 			left: 5vw;
+			width: 686rpx;
+			height: 96rpx;
+			background: url('../../static/common/button_gold.png');
+			text-align: center;
+			line-height: 96rpx;
 		}
 	}
 </style>

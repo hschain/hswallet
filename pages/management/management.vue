@@ -233,9 +233,10 @@
 		border-bottom: 1px solid #F3F3F7;
 	}
 	.management{
-		overflow: hidden;
+		// overflow: hidden;
 		width: 100%;
 		// background: #F7F7F7;
+		position: absolute;
 		.walletName{
 			padding: 30rpx 40rpx 50rpx;
 		}
@@ -270,8 +271,9 @@
 			line-height: 88rpx;
 			margin-top: 100rpx;
 			position: absolute;
-			bottom: 84rpx;
+			top: 960rpx;
 			left: 32rpx;
+			float: left;
 		}
 	}
 </style>

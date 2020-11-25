@@ -58,8 +58,9 @@
 
 <style lang="scss">
 	.home {
+		overflow: hidden;
 		width: 100%;
-		height: 812px;
+		height: 1624rpx;
 		background: url('../../static/common/bg_taichi.png') no-repeat;
 		background-size:100% 100%;
 		position: relative;

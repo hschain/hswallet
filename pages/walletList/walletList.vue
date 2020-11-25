@@ -151,6 +151,7 @@
 				this.addr =  item.addr
 				this.walletName = item.name
 				this.$store.commit('SET_WALLETNAME', item.name)
+				this.$store.commit('SAVE_WALLET_TYPE', item.type)
 				uni.setStorageSync('userAddress', item.addr)
 				this.getAssets()
 				this.changeWalletDialog = false

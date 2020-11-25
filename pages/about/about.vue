@@ -10,57 +10,70 @@
 			</view>
 		</view>
 		
-		<view class="purpleContainer cellMark" @click="navigate('../log/log')">
-			<view class="containerWrap circle">
+		<view class="clearBG cellMark" @click="navigate('../log/log')" style="position:absolute;top:310px;left:16px;">
+			<view class="circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">
-						<view class="title purpleFont">
+						<view class="title marginLeft">
 							版本日志
 						</view>
 					</view>
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/purpleArrow.png" mode=""></image>						
+						<image class="rightIcon" src="../../static/common/arrow_right.png" mode=""></image>						
 					</view>
 				</view>
 			</view>
+			<view class="boder"></view>
 		</view>
 		
-		<view class="purpleContainer cellMark" @click="checkUpdate">
-			<view class="containerWrap circle">
+		<view class="clearBG cellMark" @click="checkUpdate" style="position:absolute;top:360px;left:16px;">
+			<view class=" circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">
-						<view class="title purpleFont">
+						<view class="title marginLeft">
 							版本更新
 						</view>
 					</view>
 				</view>
+				<view class="boxRight">
+					<view class="rightWrapper">
+						<image class="rightIcon" src="../../static/common/arrow_right.png" mode=""></image>						
+					</view>
+				</view>
 			</view>
+			<view class="boder"></view>
 		</view>
 		
-		<view class="gap"></view>
+		<!-- <view class="gap"></view> -->
 		
 		<u-link href="https://www.hschain.io/">
-			<view class="greenContainer cellMark">
-				<view class="containerWrap circle">
+			<view class="clearBG cellMark" style="position:absolute;top:410px;left:16px;">
+				<view class=" circle">
 					<view class="boxLeft">
 						<view class="leftWrapper">
-							<view class="title greenFont">
+							<view class="title marginLeft">
 								网站
 							</view>
 						</view>
 					</view>
 					<view class="boxRight">
-						<view class="rightWrapper greenFont">
+						<view class="rightWrapper">
 							https://www.hschain.io/
 						</view>
 					</view>
+					<view class="boxRight">
+						<view class="rightWrapper">
+							<image class="rightIcon" src="../../static/common/arrow_right.png" mode=""></image>						
+						</view>
+					</view>
 				</view>
-			</view>			
+				<view class="boder"></view>
+			</view>			 
 		</u-link>
 		
-		<updateTip  ref="updateTipNav" :formMain="false"></updateTip>
+		<!-- <updateTip  ref="updateTipNav" :formMain="false"></updateTip> -->
 	</view>
 </template>
 
@@ -78,6 +91,11 @@
 			// #ifdef APP-PLUS
 				this.version = 'v' + plus.runtime.version
 			// #endif
+		},
+		mounted(){
+			// document.querySelector('uni-page-body').style.background = "none";
+			// document.querySelector('uni-page').style.background = "url('../../static/common/bg_taichi.png') no-repeat";
+			// document.querySelector('uni-page').style.backgroundSize = "100%";
 		},
 		methods: {
 			// 点击检测更新
@@ -112,13 +130,40 @@
 </script>
 
 <style lang="scss">
+	.clearBG{
+		background: none;
+	}
+	.marginLeft{
+		margin-left: 100rpx;
+	}
 	.about {
-		margin: 0 5vw;
+		height: 1536rpx;
+		overflow: hidden;
+		background: url('../../static/common/bg_taichi.png') no-repeat;
+		background-size: 100% 100%;
+		.rightIcon{
+			width: 32rpx;
+			height: 32rpx;
+			margin-right: 120rpx;
+		}
+		.boder{
+			width: 524rpx;
+			height: 3rpx;
+			background: #F3F3F7;
+			position: absolute;
+			left: 50%;
+			transform: translate(-52%,0);
+			bottom: 20rpx;
+		}
 		.headerLogo {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			margin: 60rpx 0 40rpx;
+			// margin: 60rpx 0 40rpx;
+			position: absolute;
+			top:360rpx;
+			left: 50%;
+			transform: translate(-50%,0);
 			.logo {
 				width: 100rpx;
 				height: 100rpx;

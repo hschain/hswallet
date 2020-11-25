@@ -6,7 +6,7 @@
 		<view class="Container">
 			<view class="containerWrap">
 				<view class=" addrInput">
-					<u-input :custom-style="{fontSize: '32rpx',background:'#fff'}" class="input" v-model="addr" placeholder="HSC地址" :clearable="false" :border="false"/>
+					<u-input :custom-style="{fontSize: '32rpx',background:'#fff'}" class="input" v-model="addr" :placeholder="$store.state.walletType + '地址'" :clearable="false" :border="false"/>
 					<image @click="addAddress" class="addrImg" src="../../static/common/ic_address.png" mode=""></image>
 				</view>
 				<u-cell-group v-show="Object.keys(addrData).length">
@@ -105,6 +105,10 @@
 			if (this.$store.state.addrData) {
 				this.addr = this.$store.state.addrData.addr
 			}
+			
+			uni.setNavigationBarTitle({
+			　　title: this.$store.state.walletType + "转账"
+			})			
 		},
 		//调用二维码扫码功能
 		onNavigationBarButtonTap() {

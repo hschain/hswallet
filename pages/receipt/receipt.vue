@@ -3,7 +3,7 @@
 		<view class="containerBox purpleContainer">
 			<view class="boxWrapper">
 				<view class="content">
-					扫二维码，转入HST
+					扫二维码，转入{{ this.$store.state.walletType }}
 				</view>
 				<view class="qrCodeBox">
 					<view class="boxWrapper">
@@ -11,7 +11,7 @@
 					</view>
 				</view>
 				<view class="showAddressBox" @click="onCopy">
-					{{addr }}
+					{{ addr }}
 				</view>
 				<view class="copyBtn" v-clipboard:copy="addr" v-clipboard:success="onCopy">复制</view>
 			</view>

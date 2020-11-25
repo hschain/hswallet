@@ -1,10 +1,10 @@
 <template>
-	<view class="usingSetting cellContainer">
-		<view class="greenContainer cellMark">
-			<view class="containerWrap circle">
+	<view class="usingSetting ">
+		<view class=" cellMark" style="margin-top:48rpx">
+			<view class=" circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">
-						<view class="title greenFont">
+						<view class="title ">
 							指纹识别
 						</view>
 						<view class="value">{{result}}</view>
@@ -12,24 +12,24 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<u-switch @change="estimateStatus" active-color="#26e1cb" v-model="fingerprintFlag" :disabled="disabled" size="35"></u-switch>
+						<u-switch @change="estimateStatus" active-color="#3D8CFF" v-model="fingerprintFlag" :disabled="disabled" size="35" inactive-color="rgba(144, 145, 149,0.2)"></u-switch>
 					</view>
 				</view>
 			</view>
 		</view>
 		
-		<view class="greenContainer cellMark">
-			<view class="containerWrap circle">
+		<view class=" cellMark">
+			<view class=" circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">
-						<view class="title greenFont">
+						<view class="title ">
 							隐藏余额
 						</view>
 					</view>
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<u-switch v-model="hideBalance" active-color="#26e1cb" size="35"></u-switch>
+						<u-switch v-model="hideBalance" active-color="#3D8CFF" size="35" inactive-color="rgba(144, 145, 149,0.2)"></u-switch>
 					</view>
 				</view>
 			</view>
@@ -98,6 +98,11 @@
 					uni.removeStorageSync('hideBalance')
 				}
 			}
+		},
+		mounted(){
+			document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
+			document.querySelector('uni-page').style.background = '#F7F7F7';
+			document.querySelector('uni-page-body').style.background = '#F7F7F7';
 		},
 		methods: {
 			//反馈校验是否成功

@@ -111,6 +111,7 @@
 		data() {
 			return {
 				walletName: '', //钱包名称
+				walletType: '', //钱包类型
 				addr: '', //当前使用地址
 				assetsList: [
 					{
@@ -151,6 +152,7 @@
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
 				this.walletName = acc[this.addr].name
+				this.walletType = acc[this.addr].type
 				for (let idx in acc) {
 					this.userWallet.push({
 						addr: idx,
@@ -160,9 +162,11 @@
 				}
 				this.$store.commit('SAVE_USER_WALLET', this.userWallet)
 				this.$store.commit('SET_WALLETNAME', this.walletName)
+				this.$store.commit('SAVE_WALLET_TYPE', this.walletType)
 			} else {
 				this.walletName = this.$store.state.walletName
 				this.userWallet = this.$store.state.userWallet
+				this.walletType = this.$store.state.walletType
 			}
 			console.log("钱包列表",this.userWallet);
 			//是否隐藏资金

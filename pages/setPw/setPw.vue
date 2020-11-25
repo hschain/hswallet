@@ -73,9 +73,9 @@
 						title: '密码设置成功',
 						success() {
 							setTimeout(() => {
-								uni.switchTab({
+								uni.reLaunch({
 									url: '../main/main'
-								})
+								})								
 							},1000)
 						}
 					})

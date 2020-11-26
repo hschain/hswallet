@@ -103,11 +103,11 @@
 
 			}
 		},
-		mounted(){
-			document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
-			document.querySelector('uni-page').style.background = '#F7F7F7';
-			document.querySelector('uni-page-body').style.background = '#F7F7F7';
-		},
+		// mounted(){
+		// 	document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
+		// 	document.querySelector('uni-page').style.background = '#F7F7F7';
+		// 	document.querySelector('uni-page-body').style.background = '#F7F7F7';
+		// },
 		methods: {
 			navigate(url) {
 				uni.navigateTo({url})
@@ -120,7 +120,11 @@
 		}
 	}
 </script>
-
+<style >
+	page,html{
+		background: #F7F7F7;
+	}
+</style>
 <style lang="scss">
 	.my {
 		.leftIcon{

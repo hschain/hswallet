@@ -1,12 +1,12 @@
 <template>
-	<view class="chooseType">
+	<view class="chooseAddress">
 		<view class="header">
 			<image @click="back" class="back" src="../../static/common/ic_back.png" mode=""></image>
-            <text class="title">选择钱包类型</text>
+            <text class="title">选择地址类型</text>
 		</view>
         <view class="topBoder"></view>
         <view class="typeList">
-            <view class="hst" @click="onSelect('HST')">
+            <view class="hst" @click="onSelect()">
                 <image  class="hstLogo" src="../../static/common/chain_hst.png" mode=""></image>
                 <view class="walletTitle">
                     <view class="HSTwallet">HST</view>
@@ -15,7 +15,7 @@
                 <image  class="arrowRight" src="../../static/common/arrow_right.png" mode=""></image>
                 <view class="shortBoder"></view>
             </view>
-            <view class="eth" @click="onSelect('ETH')">
+            <view class="eth" @click="onSelect()">
                 <image  class="hstLogo" src="../../static/common/chain_eth.png" mode=""></image>
                 <view class="walletTitle">
                     <view class="HSTwallet">ETH</view>
@@ -30,43 +30,32 @@
 
 <script>
 	export default {
-		name: 'chooseType',
+		name: 'chooseAddress',
 		data() {
 			return {
                 type:''
 			}
         },
-        onLoad(data) { //option为object类型，会序列化上个页面传递的参数
-			this.type=data.type;
-        },
+        // onLoad(data) { //option为object类型，会序列化上个页面传递的参数
+		// 	this.type=data.type;
+        // },
 		methods: {
 			back() {
 				uni.navigateBack()
             },
-			onSelect(type) {
-				this.$store.dispatch('saveWalletType', type)
-				
-                if(this.type == 'create') {
+			onSelect() {
+				// this.$store.dispatch('saveWalletType', type)
                     uni.navigateTo({
-					    url: '../safetyTips/safetyTips'
-				    })
-                }
-				
-				if(this.type == 'import') {
-                    uni.navigateTo({
-					    url: '../importMnemonic/importMnemonic'
-				    })
-                }				
+					    url: '../transfer/newAddress'
+				    })				
 			}
 		}
 	}
 </script>
-
 <style lang="scss" scoped>
-	.chooseType {
+	.chooseAddress {
         overflow: hidden;
-        color: #000;
-        margin-top: 32rpx;
+		color: #000;
 		.header {
             margin: 60rpx 40rpx 0;
             // position: absolute;

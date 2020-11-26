@@ -10,7 +10,7 @@
 			</view>
 		</view>
 		
-		<view class="clearBG cellMark" @click="navigate('../log/log')" style="position:absolute;top:310px;left:16px;">
+		<view class="clearBG cellMark" @click="navigate('../log/log')" style="position:absolute;top:330px;left:16px;">
 			<view class="circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">
@@ -28,7 +28,7 @@
 			<view class="boder"></view>
 		</view>
 		
-		<view class="clearBG cellMark" @click="checkUpdate" style="position:absolute;top:360px;left:16px;">
+		<view class="clearBG cellMark" @click="checkUpdate" style="position:absolute;top:380px;left:16px;">
 			<view class=" circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">
@@ -49,7 +49,7 @@
 		<!-- <view class="gap"></view> -->
 		
 		<u-link href="https://www.hschain.io/">
-			<view class="clearBG cellMark" style="position:absolute;top:410px;left:16px;">
+			<view class="clearBG cellMark" style="position:absolute;top:430px;left:16px;">
 				<view class=" circle">
 					<view class="boxLeft">
 						<view class="leftWrapper">

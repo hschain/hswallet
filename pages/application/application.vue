@@ -113,11 +113,11 @@
 
 			}
 		},
-		mounted(){
-			document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
-			document.querySelector('uni-page').style.background = '#F7F7F7';
-			document.querySelector('uni-page-body').style.background = '#F7F7F7';
-		},
+		// mounted(){
+		// 	document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
+		// 	document.querySelector('uni-page').style.background = '#F7F7F7';
+		// 	document.querySelector('uni-page-body').style.background = '#F7F7F7';
+		// },
 		methods: {
 			info() {
 				plus.nativeUI.toast('敬请期待')
@@ -125,7 +125,11 @@
 		}
 	}
 </script>
-
+<style>
+	page,html{
+		background:#F7F7F7;
+	}
+</style>
 <style lang="scss" scoped>
 	.margin{
 		margin: 32rpx 0;

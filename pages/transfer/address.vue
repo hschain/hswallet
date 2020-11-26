@@ -52,7 +52,7 @@
 			if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))) this.addrList = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
 		},
 		onNavigationBarButtonTap() {
-			uni.navigateTo({url: 'newAddress'})
+			uni.navigateTo({url: "newAddress"})
 		},
 		methods:{
 			//裁剪地址

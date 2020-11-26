@@ -120,13 +120,13 @@
 			    }
 			});
 		},
-		mounted(){
-			document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
-			document.querySelectorAll('.u-cell')[1].style.padding= '13px 0';
-			document.querySelectorAll('.u-cell')[2].style.padding= '13px 0';
-			document.querySelectorAll('.uni-input-input')[1].style.color= '#1f1f1f';
-			document.querySelectorAll('.uni-input-input')[2].style.color= '#1f1f1f';
-		},
+		// mounted(){
+		// 	document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
+		// 	document.querySelectorAll('.u-cell')[1].style.padding= '13px 0';
+		// 	document.querySelectorAll('.u-cell')[2].style.padding= '13px 0';
+		// 	document.querySelectorAll('.uni-input-input')[1].style.color= '#1f1f1f';
+		// 	document.querySelectorAll('.uni-input-input')[2].style.color= '#1f1f1f';
+		// },
 		methods:{
 			//添加新地址
 			addAddress() {
@@ -218,7 +218,11 @@
 		}
 	}
 </script>
-
+<style >
+	html{
+		background: #F7F7F7;
+	}
+</style>
 <style lang="scss">
 	.transparent{
 		opacity: 0.4;

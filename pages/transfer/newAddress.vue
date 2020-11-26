@@ -1,10 +1,11 @@
 <template>
 	<view class="newAddress">
-		<view class="greenContainer">
-			<view class="containerWrap">
+		<view class="addressName">
+			<view class="containerWrap" @click="goto">
 				<u-cell-group>
 					<u-cell-item :title="newAddr.denom" :arrow="false" :border-bottom="false"  hover-class="none">
 						<u-image class="addrImg" slot="icon" width="60" height="60" :src="src" shape="circle" :fade="false"></u-image>
+						<image class="rightImg" src="../../static/common/arrow_right.png" mode="" ></image>	
 					</u-cell-item>
 				</u-cell-group>
 			</view>
@@ -12,7 +13,7 @@
 		<view class="addrInfo">
 			地址信息
 		</view>
-		<view class="greenContainer">
+		<view class="detailed">
 			<view class="containerWrap tableBar">
 				<u-cell-group>
 					<u-cell-item :arrow="false" title-width="600" hover-class="none">
@@ -31,7 +32,11 @@
 		<u-top-tips ref="uTips"></u-top-tips>
 	</view>
 </template>
-
+<style>
+    html,body{
+        background: #f7f7f7;
+    }
+</style>
 <script>
 	export default {
 		name: 'newAddress',
@@ -135,6 +140,9 @@
 			addAddress() {
 				uni.navigateTo({url: 'address'})
 			},
+			goto(){
+				uni.navigateTo({url: '../chooseAddress/chooseAddress'})
+			},
 			openScan() {
 				let _this = this
 				uni.scanCode({
@@ -154,11 +162,23 @@
 		/deep/ .u-cell-item-box {
 			background-color: transparent;
 		}
+		.addressName{
+			background: #fff;
+			.rightImg{
+				width: 32rpx;
+				height: 32rpx;
+			}
+		}
 		.addrImg {
 			margin-right: 20rpx;
 		}
 		.addrInfo {
 			margin: 30rpx 5vw 10rpx;
+			color: #1f1f1f;
+			background: #f7f7f7;
+		}
+		.detailed{
+			background: #fff;
 		}
 	}
 </style>

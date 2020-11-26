@@ -13,7 +13,7 @@
 				<view class="showAddressBox" @click="onCopy">
 					{{ addr }}
 				</view>
-				<view class="copyBtn" v-clipboard:copy="addr" v-clipboard:success="onCopy">复制</view>
+				<view class="copyBtn" @click="onCopy">复制</view>
 			</view>
 		</view>
 	</view>
@@ -46,11 +46,10 @@
 			  return value.slice(0, 10) + " … " + value.slice(-10);
 			},
 		},
-		 mounted(){
-			document.querySelector('uni-page').style.background = '#1F1F1F';
-			document.querySelector('.uni-page-head').style.background = '#1F1F1F';
-			document.querySelector('.uni-page-head').style.color = '#fff';
-			document.querySelector('.uni-btn-icon').style.color = '#fff';
+		created(){
+			// document.querySelector('.uni-page-head').style.background = '#1F1F1F';
+			// document.querySelector('.uni-page-head').style.color = '#fff';
+			// document.querySelector('.uni-btn-icon').style.color = '#fff';
 		},
 		methods: {
 			// 复制地址
@@ -71,7 +70,12 @@
 	}
 </script>
 
-<style lang="scss">
+<style>
+	html {
+		background-color:#1F1F1F;
+	}
+</style>
+<style lang="scss" scoped>
 	.receipt {
 		background: #1F1F1F;
 		.containerBox {
@@ -84,6 +88,7 @@
 			flex-direction: column;
 			margin: 64rpx;
 			background: #fff;
+			position: relative;
 			.boxWrapper {
 				.content {
 					color: #bcbcbc;

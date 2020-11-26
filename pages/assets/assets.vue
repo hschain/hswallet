@@ -62,8 +62,14 @@
 		</swiper>
 		
 		<view class="bottomBar">
-			<view class="createBtn" :custom-style="customStyle" @click="receipt">收款</view>
-			<view class="importBtn" type="primary" @click="transfer">转账</view>
+			<view class="collection">
+				<u-icon class="icon" name="../../static/common/ic_deposit.png" custom-prefix="project-icon" size="30"></u-icon>
+				<view class="createBtn" :custom-style="customStyle" @click="receipt">收款</view>
+			</view>
+			<view class="transfer">
+				<u-icon class="icon" name="../../static/common/ic_withdraw.png"  custom-prefix="project-icon" size="30"></u-icon>
+				<view class="importBtn" type="primary" @click="transfer">转账</view>
+			</view>
 			<image class="btnLogo" src="../../static/common/img_taichi.png" mode=""></image>
 		</view>
 	</view>
@@ -75,9 +81,11 @@
 		name: 'assets',
 		data() {
 			return {
+				btnIconColor: '#bea41e',
 				customStyle: {
 					color: 'white',
-					backgroundColor: '#67c8e5'
+					backgroundColor: '#67c8e5',
+					
 				},
 				menu: [
 					{
@@ -379,16 +387,32 @@
 		.bottomBar {
 			position: fixed;
 			left: 0;
-			bottom: 60px;
+			bottom: 120rpx;
 			z-index: 998;
 			display: flex;
 			justify-content: space-between;
 			width: 100vw;
 			padding: 10rpx 5vw;
+			.transfer{
+				.icon{
+					z-index: 22;
+					position: absolute;
+						left: 460rpx;
+						top: 38rpx;
+				}
+			}
+			.collection{
+				.icon{
+					z-index: 22;
+					position: absolute;
+					left: 140rpx;
+					top: 38rpx;
+				}
+			}
 			.createBtn {
 				font-size: 30rpx;
 				width: 50%;
-				height: 44px;
+				height: 88rpx;
 				color: #fff;
 				text-align: center;
 				line-height: 44px;
@@ -401,7 +425,7 @@
 			.importBtn {
 				font-size: 30rpx;
 				width: 46%;
-				height: 44px;
+				height: 88rpx;
 				background: #fff;
 				color: #000;
 				text-align: center;
@@ -413,10 +437,10 @@
 			}
 			.btnLogo{
 				width: 44px;
-				height: 42px;
+				height: 46px;
 				position: absolute;
 				left: 50%;
-				top: 6px;
+				top:12rpx;
 				transform: translate(-50%,0);
 			}
 		}

@@ -3,7 +3,8 @@
 		{
 			"path": "pages/main/main",
 			"style": {
-				"navigationStyle": "custom"//导航栏样式，仅支持default/custom。custom即取消默认的原生导航栏
+				"navigationStyle": "custom",//导航栏样式，仅支持default/custom。custom即取消默认的原生导航栏
+				"titleNView":"false"
 			}
 		}, {
 			"path": "pages/application/application",
@@ -30,48 +31,61 @@
 		}, {
 			"path": "pages/home/home",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"titleNView":"false"
 			}
 		},{
 			"path": "pages/chooseType/chooseType",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationBarTextStyle":"white",
+				"titleNView":"false"
+			}
+		},{
+			"path": "pages/chooseAddress/chooseAddress",
+			"style": {
+				"navigationBarTextStyle":"white",
+				"titleNView":"false"
 			}
 		},{
 			"path": "pages/safetyTips/safetyTips",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"titleNView":"false"
 			}
 		}, {
 			"path": "pages/importMnemonic/importMnemonic",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationBarTextStyle":"white",
+				"titleNView":"false"
 			}
 		}, {
 			"path": "pages/createMnemonic/createMnemonic",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationBarTextStyle":"white",
+				"titleNView":"false"
 			}
 		}, {
 			"path": "pages/setPw/setPw",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"titleNView":"false"
 			}
 		}, {
 			"path": "pages/addCurrency/addCurrency",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationBarTextStyle":"white"
 			}
 		},{
 			"path": "pages/walletList/walletList",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationBarTextStyle":"white",
+				"titleNView":"false"
 			}
 		}, {
 			"path": "pages/transfer/transfer",
 			"style": {
 				"navigationBarTitleText": "转账",
-				"app-plus": {//设置编译到App平台的特定样式
+				"app-plus": {//设置编译到App平台的特定样式	
 					"titleNView": {//导航栏设置
 						"buttons": [{//自定义按钮
 							"text": "\ue601",//使用字体图标时unicode字符表示必须'\u'开头
@@ -91,7 +105,7 @@
 						"buttons": [{
 							"text": "\u002B",
 							"fontSize": "27px",
-							"color": "#FFFFFF"
+							"color": "#000"
 						}]
 					}
 				}
@@ -105,7 +119,7 @@
 						"buttons": [{
 							"text": "保存",
 							"fontSize": "16px",
-							"color": "#FFFFFF",
+							"color": "#000",
 							"width": "44px"
 						}]
 					}
@@ -129,7 +143,9 @@
 		}, {
 			"path": "pages/receipt/receipt",
 			"style": {
-				"navigationBarTitleText": "收款"
+				"navigationBarTitleText": "收款",
+				"navigationBarBackgroundColor":"#000",
+				"navigationBarTextStyle":"white"
 			}
 		}, {
 			"path": "pages/about/about",
@@ -150,8 +166,7 @@
 		"app-plus": {  
 			"background": "#000",
 			"animationType": "slide-in-right",
-			"titleNView":{  
-				
+			"titleNView":{  	
 			} 
 		}
 	},

@@ -24,16 +24,15 @@
 					</view>
 				</view>
 				<image class="btnLogo" src="../../static/common/img_taichi.png" mode=""></image>
-				<view class="containerWrapBottom">
-					
+				<view class="containerWrapBottom">	
 					<view class="transfer" @click="navigate('../transfer/transfer')">
-						<u-icon class="icon" name="../../static/common/ic_deposit.png" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
+						<u-icon class="icon" name="../../static/common/ic_withdraw.png" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
 						<view class="contents">
 							转账
 						</view>
 					</view>
 					<view class="collection" @click="navigate('../receipt/receipt')">
-						<u-icon class="icon" name="../../static/common/ic_withdraw.png" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
+						<u-icon class="icon" name="../../static/common/ic_deposit.png" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
 						<view class="contents">
 							收款
 						</view>
@@ -297,17 +296,21 @@
 			}
 		}
 	}
-</script>
+</script>F
+<style>
 
+</style>
 <style lang="scss">
 	.content {
+		width: 100%;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		margin-top: 44rpx;
 		.top{
 			width: 100%;
-			height: 530rpx;
+			height: 550rpx;
 			background: #3C3C3D;
 			.headerWrapper {
 				display: flex;
@@ -321,7 +324,7 @@
 					border-radius: 16px;
 					box-sizing: border-box;
 					position: absolute;
-					top: 100rpx;
+					top: 140rpx;
 					left: 50%;
 					transform: translate(-50%,0);
 					.walletName {
@@ -340,11 +343,11 @@
 					}
 				}
 				.btnLogo{
-				width: 44px;
-				height: 42px;
+				width: 88rpx;
+				height: 87rpx;
 				position: absolute;
 				left: 50%;
-				top: 393rpx;
+				top: 432rpx;
 				transform: translate(-50%,0);
 				z-index: 1;
 			}
@@ -355,7 +358,7 @@
 					display: flex;
 					justify-content: center;
 					position: absolute;
-					top: 390rpx;
+					top: 430rpx;
 					font-size: 32rpx;
 					.contents{
 						text-align: center;
@@ -435,7 +438,7 @@
 				margin-top: 20rpx;
 			}
 			.assetsList {
-				margin: 40rpx;
+				margin-top: 40rpx;
 				.table {
 					border-radius: 10rpx;
 					margin: 0 0 30rpx;

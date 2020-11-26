@@ -191,9 +191,10 @@
 	.walletList {
         // height: 1624rpx;
         overflow: hidden;
-		// color: #000;
+        // color: #000;
+        margin-top: 32rpx;
 		.header {
-            margin: 100rpx 40rpx 0;
+            margin: 60rpx 40rpx 0;
 			.back {
 				width: 40rpx;
 				height: 32rpx;

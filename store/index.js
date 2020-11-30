@@ -15,6 +15,7 @@ const store = new Vuex.Store({
 		socketTask: null, //websocket方法
 		socketIsOpen: false, //是否已开启websocket
 		walletType: '', // 选择的钱包类型
+		ETHassetsList:[],//ETH钱包资产列表
 	},
 	getters: {
 		
@@ -107,6 +108,9 @@ const store = new Vuex.Store({
 		},
 		SAVE_WALLET_TYPE:  (state, value) => {
 			state.walletType = value
+		},
+		SET_ETHASSETSLIST:(state,value)=>{
+			state.ETHassetsList=value;
 		},
 	},
 	actions: {

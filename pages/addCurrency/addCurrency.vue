@@ -4,33 +4,49 @@
             <image @click="back" class="back" src="../../static/common/ic_back.png" mode=""></image>
             <view class="topTitle">添加币种</view>
         </view>
-        <u-input v-model="value"
+        <u-input v-model="keyword"
                  type="text" 
-                 :border="true" 
-                 border-color="#DDDDE0" 
                  placeholder="请输入Token名称或合约地址" 
                  :height="96" 
-                 :focus="true" />
-        <view>
+                 :custom-style="{border:'1px solid #DDDDE0',borderRadius:'24px',paddingLeft:'48px',paddingRigth:'18px'}" 
+                 @input="onSearch" :focus="true" />
+        <view v-show="!keyword">
             <view class="title">首页资产</view>
             <view class="assetsList">
-                        <view  v-for="item in assetsList" :key="item.denom" class="table ">
+                        <view  v-for="(item,index) in walletName=='HST'?assetsList:(ETHassetsList?ETHassetsList:$store.state.ETHassetsList)" :key="item.denom" class="table ">
                             <view class="tableWrapper">
                                 <view class="tableLeft">
-                                    <image class="icon" v-if="item.denom === 'HST'" src="../../static/common/logo.png" mode=""></image>
-                                    <image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
-                                    <text class="denom">{{item.denom}}</text>
-                                </view>
-                                <view class="tableRight">
-                                    <text>{{hideBalance ? '****' : item.amount + ' '}}</text>
-                                    <text>{{hideBalance ? '****' : '$ ' + item.value}}</text>
+                                    <image class="icon" v-if="walletName=='HST'" src="../../static/common/logo.png" mode=""></image>
+								    <image class="icon" v-else-if="walletName === 'ETH'" :src="item.logo" mode=""></image>
+								    <image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
+                                    <text class="denom">{{walletName=='HST'?item.denom:item.label}}</text>
+                                    <view class="addre">{{addr | hash}}</view>
                                 </view>
                             </view>
+                            <image class="assetsEdit"  src="../../static/common/ic_remove.png" mode="" @click="removeAssets(index)"></image>
                             <view class="border"></view>
                         </view>
-                </view>
             </view>
-        
+        </view> 
+
+        <view v-show="keyword">
+                <view class="assetsList tokenList">
+                    <view v-if="isEmpty" class="isEmpty">
+                        <u-empty text="暂无数据" mode="search" src="../../static/common/img_blank.png"></u-empty>
+                    </view>
+                    <view v-for="(item,index) in tokenList" :key="item.value" class="table">
+                        <view class="tableWrapper">
+                            <view class="tableLeft">
+                                <image class="icon" :src="item.logo" mode="widthFix" lazy-load></image>
+                                    <text class="denom">{{item.label}}</text>
+                                    <text class="addre">{{ item.value | hash}}</text>
+                            </view>
+                        </view>
+                        <image class="assetsEdit" src="../../static/common/circlePlus.png" mode="" @click="addAssets(index)"></image>
+                        <view class="border"></view>
+                    </view>
+                </view>
+		</view>
     </view>
 </template>
 <script>
@@ -41,14 +57,21 @@ export default {
             walletName: '', //钱包名称
             value: '',
             addr: '', 
+            keyword: '',
             assetsList:[{
                 value:0,
             }],
             userWallet: [],
+            tokenList: [],
+            isEmpty: false,
+            addAssetsList:[],
+            ETHassetsList:[],
         }
     },
     onShow() {
-			this.addr = uni.getStorageSync('userAddress')
+            this.addr = uni.getStorageSync('userAddress')
+            this.ETHassetsList=uni.getStorageSync('ETHassetsList')
+            this.addAssetsList=this.$store.state.ETHassetsList;
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
 				this.walletName = acc[this.addr].name
@@ -64,7 +87,8 @@ export default {
 				this.walletName = this.$store.state.walletName
 				this.userWallet = this.$store.state.userWallet
 			}
-			console.log("钱包列表",this.userWallet);
+            console.log("钱包列表",this.userWallet);
+            
 			//是否隐藏资金
 			uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
 			
@@ -72,18 +96,13 @@ export default {
 			if (uni.getStorageSync('account')) {
 				this.getAssets()
 			}
-			
 			//如果vuex存在助记词缓存，则清空助记词
 			if (this.$store.state.mnemonic) this.$store.dispatch('saveMnemonic', '')
 		},
-    mounted(){
-            document.querySelector('.u-input').style.borderRadius = '24px';
-            document.querySelector('.u-input').style.width = '91.46%';
-            document.querySelector('.u-input').style.position = 'absolute';
-            document.querySelector('.u-input').style.left = '50%';
-            document.querySelector('.u-input').style.transform = 'translate(-50%,0)';
-            document.querySelector('.u-input').style.marginTop = '16px';
-            document.querySelector('.u-input').style.paddingLeft = '17.5%';
+    filters: {
+			hash: function (value) {
+			  return value.slice(0, 12) + " … " + value.slice(-12);
+			},
 		},
     methods:{
         back() {
@@ -101,15 +120,86 @@ export default {
 						item.value = (item.price*item.amount).toFixed(6)
 					});
 				})
-		},
+        },
+        onSearch(event) {
+				this.tokenList = []
+				this.isEmtpy = false
+
+				if (!this.keyword) {
+					return
+				}
+
+				let preKeyword = this.keyword
+				this.lastTimestamp = event.timeStamp
+
+				var _that = this
+				setTimeout(function() {
+					if (preKeyword != _that.keyword) {
+						return
+					}
+					uni.showLoading()
+					uni.request({
+						url: 'https://cn.etherscan.com/searchHandler',
+						data: {
+							term: _that.keyword,
+							filterby: 2,
+						},
+						success: (res) => {
+							uni.hideLoading()
+							let tokens = res.data
+							tokens.map(item => {
+								if (item.split('\t')[1]) {
+									_that.tokenList.push({
+										label: item.split('\t')[0],
+										value: item.split('\t')[1],
+										desc: item.split('\t')[2],
+										typeval: item.split('\t')[3],
+										checkMark: item.split('\t')[4],
+										logo: "https://cn.etherscan.com/token/images/" + item.split('\t')[5]
+									})
+								}
+							})
+							_that.isEmpty = !_that.tokenList.length
+						}
+					})
+				}, 1000)
+            },
+            addAssets(index){
+                // console.log(this.tokenList[index]);
+                this.addAssetsList.push(this.tokenList[index]);
+                // this.$store.commit('SET_ETHASSETSLIST', this.addAssetsList);
+                uni.setStorageSync('ETHassetsList',this.addAssetsList)
+                uni.showToast({
+					title: '添加成功'
+				})
+            },
+            removeAssets(index){
+                this.ETHassetsList.splice(index, 1);
+                uni.setStorageSync('ETHassetsList',this.ETHassetsList)
+                uni.showToast({
+					title: '删除成功'
+				})
+            },
     }
 }
 </script>
-
+<style>
+   .u-input{
+       border-radius: 50%;
+       width: 686rpx;
+       position: absolute;
+       left: 50%;
+       transform:translate(-50%,0);
+       margin-top: 32rpx;
+   } 
+</style>
 <style lang="scss" scoped>
-
+$hei: 100vh;
     .addCurrency{
         overflow: hidden;
+        margin-top: 44rpx;
+        position: relative;
+        // padding-top: 44rpx;
         .top{
             width: 100%;
             height: 118rpx;
@@ -140,44 +230,78 @@ export default {
             position: absolute;
             top: 280rpx;
             left: 32rpx;
+            z-index: 11;
         } 
         
 		.assetsList {
-                // margin: 40rpx;
-               position: absolute;
-               top: 168px;
-            //    left: 16px;
+            &.tokenList {
+				top: 128px;
+				width: 100%;
+				.isEmpty {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					height: calc(#{$hei} - 680rpx);
+					border: 2px solid #fff;
+				}
+			}
+            z-index: 22;
+            // margin: 100rpx;
+            margin-top: 100rpx;
 				.table {
-                    width: 686rpx;
+                    width: 100%;
+                    height: 128rpx;
 					border-radius: 10rpx;
-                    margin: 0 0 30rpx;
+                    // margin: 0 0 30rpx;
+                    position: relative;
                     .border{
                         width: 644rpx;
-                        height: 4rpx;
+                        height: 3rpx;
                         background: #F3F3F7;
-                        margin-left: 110rpx;
+                        position: absolute;
+                        top: 124rpx;
+                        right: 0;
                     }
 					.tableWrapper {
-						// width: 750rpx;
-						padding: 50rpx 0rpx;
+                        // width: 750rpx;
+                        height: 120rpx;
+						padding: 20rpx 32rpx;
 						display: flex;
                         justify-content: space-between;
-                        margin-left: 32rpx;
+                        position: absolute;
+                        left: 0px;
+                        // margin-left: 32rpx;
 						// background-color: transparent;
 						.tableLeft {
                             display: flex;
                             color: #1F1F1F;
+                            width: 600rpx;
 							.icon {
-								width: 60rpx;
-								height: 60rpx;
-								border-radius: 50px;
-								margin-right: 20rpx;
+								width: 64rpx;
+								height: 64rpx;
+                                border-radius: 50px;
+                                margin-top: 6px;
+								margin-right: 30rpx;
 							}
 							.denom {
 								font-size: 32rpx;
 								line-height: 60rpx;
-							}
+                            }
+                            .address {
+                                font-size: 24rpx;
+                                color: #909195;
+						    }
+                            .addre{
+                                font-size: 12px;
+                                font-family: Gilroy-Regular, Gilroy;
+                                font-weight: 400;
+                                color: #909195;
+                                position: absolute;
+                                top: 64rpx;
+                                left: 124rpx;
+                            }
 						}
+                       
 						.tableRight {
 							display: flex;
 							flex-direction: column;
@@ -185,9 +309,18 @@ export default {
                             color: #1F1F1F;
 						}
 					}
+                    .assetsEdit{
+                            width: 44rpx;
+                            height: 44rpx;
+                            position: absolute;
+                            right: 34rpx;
+                            top: 50%;
+                            transform: translate(0,-50%);
+                    }
 				}
 		}
 		
     }
         
 </style>
+

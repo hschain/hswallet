@@ -55,7 +55,8 @@
 <style lang="scss" scoped>
 	.chooseAddress {
         overflow: hidden;
-		color: #000;
+        color: #000;
+        margin-top: 20rpx;
 		.header {
             margin: 60rpx 40rpx 0;
             // position: absolute;

@@ -73,7 +73,8 @@
 		}, {
 			"path": "pages/addCurrency/addCurrency",
 			"style": {
-				"navigationBarTextStyle":"white"
+				"navigationBarTextStyle":"white",
+				"titleNView":"false"
 			}
 		},{
 			"path": "pages/walletList/walletList",

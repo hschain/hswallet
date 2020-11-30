@@ -4,13 +4,12 @@
 			<view class="timer">
 				{{item.time}}
 			</view>
-			<view class="greenContainer">
-				<view class="containerWrap contentBox">
-					<view class="content">
+			<view class=" contentBox">
+				<view class="content">
 						{{item.content}}						
-					</view>
 				</view>
 			</view>
+			<view class="border"></view>
 		</view>
 	</view>
 </template>
@@ -31,7 +30,7 @@
 				this.publishData = [
 					{
 						content: 'HSWallet 初始版本发布',
-						time: '2020-10-28 11:50:56'
+						time: '2020-12-05 11:50:56'
 					},
 				]
 			},
@@ -45,12 +44,24 @@
 		.tipBlock {
 			padding: 0 40rpx 40rpx;
 			.timer {
-				padding: 20rpx 40rpx;
+				// padding: 20rpx 0rpx;
+				color: #909195;
+				font-size: 24rpx;
 			}
 			.contentBox {
-				padding: 20rpx;
+				width: 100%;
+				// padding: 20rpx 0;
 				.content {
+					color: #1F1F1F;
+					font-size: 32rpx;
 				}
+			}
+			.border{
+				width: 718rpx;
+				height: 3rpx;
+				background: #F3F3F7;
+				// background: #1F1F1F;
+				margin-top: 20rpx;
 			}
 		}
 	}

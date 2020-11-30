@@ -37,7 +37,7 @@
 					<scroll-view scroll-y="true" class="assetsList " @scrolltolower="getAssetsList(true)" scroll-with-animation="true">
 						<view class="listWrapper">
 							<view v-if="!assetsList[name].length" class="isEmpty">
-								<u-empty text="暂无信息" mode="data"></u-empty>
+								<u-empty text="暂无数据" mode="data" src="../../static/common/img_blank.png"></u-empty>
 							</view>
 							<view v-else @click="navigate(item)" v-for="(item, i) in assetsList[name]" :key="i + 'key'" class="table">
 								<view class="tableLeft">
@@ -113,6 +113,7 @@
 				balance: 0, //账户总额
 				hideBalance: false ,//隐藏余额
 				denom: '', //货币单位
+				currencyName:'',
 			}
 		},
 		onLoad(value) {
@@ -121,6 +122,7 @@
 			 	title: value.val
 			 })
 			 this.denom = 'u' + value.val.toLowerCase()
+			 this.currencyName=value.val
 		},
 		onShow() {
 			this.$store.commit('SET_QUERY_INFO_FLAG', true)
@@ -167,46 +169,59 @@
 			},
 			// 获取最新资产详情
 			queryNewAssetsList() {
-				let params = {
-					limit: this.limit,
-					address: uni.getStorageSync('userAddress'),
-					timetable: 'now',
-					denom: this.denom
-				}
-				this.$u.api.getAssetsList(params).then(res => {
-					if (res.data) {
-						res.data.reverse()
-						res.data.forEach(item => {
-							let obj = {
-								denom: '',
-								time: formatTime(item.timestamp, true),
-								value: 0,
-								type: '',
-								success: item.messages[0].success,
-								txHash: item.tx_hash
-							}
-							item.messages[0].events.message.sender === uni.getStorageSync('userAddress') ? obj.type = 'out' : obj.type = 'in'
-							if (/^u/i.test(item.messages[0].events.transfer.denom)) {
-								obj.denom = item.messages[0].events.transfer.denom.slice(1);
-								obj.value = (item.messages[0].events.transfer.amount / 1000000).toFixed(6);
-							}
-							this.assetsList.all.unshift(obj)
-						})
-						// this.assetsList.all.forEach(item => {
-						// 	item.type === 'out' ? this.assetsList.out.push(item) : this.assetsList.in.push(item)
-						// 	if (!item.success) this.assetsList.err.push(item)
-						// })
-						this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
-						this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
-						this.assetsList.err = this.assetsList.all.filter(item => !item.success)
+				if(this.currencyName=='HST'){
+					let params = {
+						limit: this.limit,
+						address: uni.getStorageSync('userAddress'),
+						timetable: 'now',
+						denom: this.denom
 					}
-				}).finally(() => {
-					setTimeout(() => {
-						if (this.$store.state.queryNewInfoflag) {
-							this.queryNewAssetsList()
+					this.$u.api.getAssetsList(params).then(res => {
+						if (res.data) {
+							res.data.reverse()
+							res.data.forEach(item => {
+								let obj = {
+									denom: '',
+									time: formatTime(item.timestamp, true),
+									value: 0,
+									type: '',
+									success: item.messages[0].success,
+									txHash: item.tx_hash
+								}
+								item.messages[0].events.message.sender === uni.getStorageSync('userAddress') ? obj.type = 'out' : obj.type = 'in'
+								if (/^u/i.test(item.messages[0].events.transfer.denom)) {
+									obj.denom = item.messages[0].events.transfer.denom.slice(1);
+									obj.value = (item.messages[0].events.transfer.amount / 1000000).toFixed(6);
+								}
+								this.assetsList.all.unshift(obj)
+							})
+							// this.assetsList.all.forEach(item => {
+							// 	item.type === 'out' ? this.assetsList.out.push(item) : this.assetsList.in.push(item)
+							// 	if (!item.success) this.assetsList.err.push(item)
+							// })
+							this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
+							this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
+							this.assetsList.err = this.assetsList.all.filter(item => !item.success)
 						}
-					}, 5000)
-				})
+					}).finally(() => {
+						setTimeout(() => {
+							if (this.$store.state.queryNewInfoflag) {
+								this.queryNewAssetsList()
+							}
+						}, 5000)
+					})
+				}else if(this.currencyName=='ETH'){
+					uni.request({
+						url:'http://8.129.187.233:25676/eth/access/eth_list',
+						data:{limit: this.limit,start:1,type:'ALL',address:'0x85464b207d7c1fce8da13d2f3d950c796e399a9c'},
+						header: {
+							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
+						},
+						success: (res) => {
+							console.log("交易明细",res);
+						},
+					})
+				}
 			},
 			//请求资产详情
 			queryAssetsList(lazyLoad,loadStatus,params){
@@ -395,18 +410,22 @@
 			padding: 10rpx 5vw;
 			.transfer{
 				.icon{
+					width: 44rpx;
+					height: 44rpx;
 					z-index: 22;
 					position: absolute;
-						left: 460rpx;
-						top: 38rpx;
+						left: 464rpx;
+						top: 34rpx;
 				}
 			}
 			.collection{
 				.icon{
+					width: 44rpx;
+					height: 44rpx;
 					z-index: 22;
 					position: absolute;
 					left: 140rpx;
-					top: 38rpx;
+					top: 34rpx;
 				}
 			}
 			.createBtn {
@@ -436,8 +455,8 @@
 				right: 16px;
 			}
 			.btnLogo{
-				width: 44px;
-				height: 46px;
+				width: 88rpx;
+				height: 84rpx;
 				position: absolute;
 				left: 50%;
 				top:12rpx;

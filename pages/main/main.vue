@@ -5,22 +5,29 @@
 			<view class="headerWrapper">
 				<view class="containerWrapTop">
 					<view class="walletName">
+						<image v-show="walletName=='ETH'" class="walletIcon" src="../../static/common/chain_eth_small.png" mode=""></image>
+						<image v-show="walletName=='HST'" class="walletIcon" src="../../static/common/chain_hst_small.png" mode=""></image>
 						<u-section
 							font-size="42"
 							:show-line="false"
 							color="#fff"
 							sub-color="#fff"
 							:title="walletName"
-							sub-title="..."
+							sub-title=""
 							:arrow="false"
 							@click="navigate('../management/management')"
 						></u-section>
+						<image class="more" src="../../static/common/ic_more.png" mode="" @click="navigate('../management/management')"></image>
 					</view>
 					<view class="address" @click="onCopy()">
 						{{addr | hash}}
+						<image class="copyIcon" src="../../static/common/ic_copy_small.png" mode=""></image>
 					</view>
 					<view class="cash">
-						{{hideBalance ? '****' : '$ ' + assetsList[0].value}}
+						<text class="symbol">{{hideBalance ? '****' : '$ '}}</text>
+						{{hideBalance ? '' : assetsList[0].value}}
+						<image v-if="hideBalance" class="seed" src="../../static/common/ic_eye_close.png" mode="" @click="hidden"></image>
+						<image v-else class="seed" src="../../static/common/ic_eye_open.png" mode="" @click="hidden"></image>
 					</view>
 				</view>
 				<image class="btnLogo" src="../../static/common/img_taichi.png" mode=""></image>
@@ -52,19 +59,34 @@
 				<view class="title">
 					<text>资产</text>
 				</view>
-				<u-icon class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000" @click="gotoAddCurrency"></u-icon>
+				<u-icon v-if="walletName!='HST'" class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000" @click="gotoAddCurrency"></u-icon>
 				<view class="assetsList">
-					<view @click="enterAssets(item)" v-for="item in assetsList" :key="item.denom" class="table">
+					<!-- <view @click="enterAssets(item)" class="table" v-for="item in ETHassets" :key="item.label">
 						<view class="tableWrapper">
 							<view class="tableLeft">
-								<image class="icon" v-if="item.denom === 'HST'" src="../../static/common/logo.png" mode=""></image>
-								<image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
-								<text class="denom">{{item.denom}}</text>
+								<image class="icon" v-show="walletName=='ETH'" src="../../static/common/图标／币种／ETH.png" mode=""></image>
+								<text class="denom">{{item.label}}</text>
 							</view>
 							<view class="tableRight">
-								<text>{{hideBalance ? '****' : item.amount + ' '}}</text>
-								<text>{{hideBalance ? '****' : '$ ' + item.value}}</text>
+								<text>{{hideBalance ? '****' : "0.0000"}}</text>
+								<text>{{hideBalance ? '****' : "$ "+0}}</text>
 							</view>
+							<view class="border"></view>
+						</view>
+					</view> -->
+					<view @click="enterAssets(item)" v-for="item in walletName=='HST'?assetsList:(ETHassetsList?ETHassetsList:$store.state.ETHassetsList)" :key="item.denom" class="table">
+						<view class="tableWrapper">
+							<view class="tableLeft">
+								<image class="icon" v-if="walletName=='HST'" src="../../static/common/logo.png" mode=""></image>
+								<image class="icon" v-else-if="walletName === 'ETH'" :src="item.logo" mode=""></image>
+								<image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
+								<text class="denom">{{walletName=='HST'?item.denom:item.label}}</text>
+							</view>
+							<view class="tableRight">
+								<text>{{hideBalance ? '****' : walletName=='HST'?item.amount:"0.0000"}}</text>
+								<text>{{hideBalance ? '****' : walletName=='HST'?'$ ' + item.value:"$ "+0}}</text>
+							</view>
+							<view class="border"></view>
 						</view>
 					</view>
 				</view>
@@ -117,6 +139,11 @@
 						value: 0
 					}
 				],
+				ETHassets:[{
+					label:"ETH",
+					value:this.addr,
+					logo:'../../static/common/图标／币种／ETH.png'
+				}],
 				hideBalance: false ,//隐藏余额
 				newestUpdate: false, //是否为最新版本
 				backupMnemonic: uni.getStorageSync('backupMnemonic') || false, //是否已备份助记词
@@ -138,6 +165,7 @@
 				],
 				btnIconColor: '#bea41e',
 				userWallet: [], //当前用户多个钱包信息
+				ETHassetsList:[],
 			}
 		},
 		onLoad() {
@@ -147,7 +175,14 @@
 			}, 500)
 		},
 		onShow() {
-			this.addr = uni.getStorageSync('userAddress')
+			this.addr = uni.getStorageSync('userAddress');
+			this.$store.commit('SET_ETHASSETSLIST', this.ETHassets);
+			// let balance = await this.$wallet("ETH").getBalance(this.addr)
+			// this.$wallet("ETH").getTokenBalance("0xfd9c93ecfb779f0187e31c1be6fffe61f59a4fba", "0xdac17f958d2ee523a2206206994597c13d831ec7").then(res=>{
+			// 	console.log('资产余额',res);
+			// })
+			this.ETHassetsList=uni.getStorageSync('ETHassetsList');
+			// console.log('资产余额',balance);
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
 				this.walletName = acc[this.addr].name
@@ -157,7 +192,7 @@
 						addr: idx,
 						name: acc[idx].name,
 						type: acc[idx].type
-					})
+					}) 
 				}
 				this.$store.commit('SAVE_USER_WALLET', this.userWallet)
 				this.$store.commit('SET_WALLETNAME', this.walletName)
@@ -168,6 +203,7 @@
 				this.walletType = this.$store.state.walletType
 			}
 			console.log("钱包列表",this.userWallet);
+			console.log("资产列表",this.ETHassetsList);
 			//是否隐藏资金
 			uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
 			
@@ -205,7 +241,7 @@
 		},
 		methods: {
 			enterAssets(item) {
-				uni.navigateTo({ url: `/pages/assets/assets?val=${item.denom}` })
+				uni.navigateTo({ url: `/pages/assets/assets?val=${this.walletName=='HST'?item.denom:item.label}` })
 			},
 			navigate(url) {
 				uni.navigateTo({url})
@@ -293,10 +329,20 @@
 				uni.reLaunch({
 					url: '../main/main'
 				})
+			},
+			hidden(){
+				if (uni.getStorageSync('hideBalance')) {
+					this.hideBalance=false;
+					uni.setStorageSync("hideBalance",false)
+				} else if (!uni.getStorageSync('hideBalance')) {
+					this.hideBalance=true;
+					uni.setStorageSync("hideBalance",true)
+				}
+				
 			}
 		}
 	}
-</script>F
+</script>
 <style>
 
 </style>
@@ -307,11 +353,12 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		margin-top: 44rpx;
+		margin-top: 28px;
 		.top{
 			width: 100%;
-			height: 550rpx;
+			height: 520rpx;
 			background: #3C3C3D;
+			position: relative;
 			.headerWrapper {
 				display: flex;
 				flex-direction: column;
@@ -324,22 +371,53 @@
 					border-radius: 16px;
 					box-sizing: border-box;
 					position: absolute;
-					top: 140rpx;
+					top: 110rpx;
 					left: 50%;
 					transform: translate(-50%,0);
 					.walletName {
-						margin: 30rpx;
+						// margin: 30rpx
+						margin-top: 30rpx;
+						margin-left: 80rpx;
+						margin-right: 30rpx;
+						.walletIcon{
+							width: 32rpx;
+							height: 32rpx;
+							position: absolute;
+							left: 14px;
+							top: 36rpx;
+						}
+						.more{
+							width: 44rpx;
+							height: 44rpx;
+							position: absolute;
+							top: 32rpx;
+							right: 32rpx;
+						}
 					}
 					.address {
-						margin: 10rpx 30rpx;
+						margin: 10rpx 82rpx;
 						font-size: 28rpx;
-						color: #FCC350;
+						color: #FFFFFF;
+						.copyIcon{
+							width: 24rpx;
+							height: 24rpx;
+							margin-left: 6rpx;
+						}
 					}
 					.cash {
 						display: flex;
-						justify-content: flex-end;
+						// justify-content: flex-end;
 						margin: 30rpx 30rpx 40rpx;
 						font-size: 40rpx;
+						.symbol{
+							margin-right: 32rpx;
+						}
+						.seed{
+							width: 44rpx;
+							height: 44rpx;
+							position: absolute;
+							right: 32rpx;
+						}
 					}
 				}
 				.btnLogo{
@@ -347,7 +425,7 @@
 				height: 87rpx;
 				position: absolute;
 				left: 50%;
-				top: 432rpx;
+				bottom: 48rpx;
 				transform: translate(-50%,0);
 				z-index: 1;
 			}
@@ -358,35 +436,39 @@
 					display: flex;
 					justify-content: center;
 					position: absolute;
-					top: 430rpx;
+					bottom: 48rpx;
 					font-size: 32rpx;
 					.contents{
 						text-align: center;
 						line-height: 88rpx;
 					}	
 					.transfer{
-						width: 340rpx;
+						width: 343rpx;
 						height: 88rpx;
 						background: #1F1F1F;
 						border-radius: 22px 0px 0px 22px;
 						border: 1px solid #1F1F1F;
 						.icon {
+							width: 44rpx;
+							height: 44rpx;
 							position: absolute;
-							left: 140rpx;
-							top: 30rpx;
+							left: 130rpx;
+							top: 24rpx;
 						}
 					}
 					.collection{
-						width: 340rpx;
+						width: 343rpx;
 						height: 88rpx;
 						background: #fff;
 						border-radius: 0px 22px 22px 0px;
 						border: 1px solid #1F1F1F;
 						color: #1F1F1F;
 						.icon {
+							width: 44rpx;
+							height: 44rpx;
 							position: absolute;
-							left: 450rpx;
-							top: 30rpx;
+							left: 470rpx;
+							top: 24rpx;
 						}
 					}
 					// .boxWrapper {
@@ -440,14 +522,15 @@
 			.assetsList {
 				margin-top: 40rpx;
 				.table {
+					height: 128rpx;
 					border-radius: 10rpx;
-					margin: 0 0 30rpx;
+					// margin: 0 0 30rpx;
 					.tableWrapper {
 						width: 750rpx;
 						padding: 50rpx 32rpx;
-
 						display: flex;
 						justify-content: space-between;
+						position: relative;
 						// background-color: transparent;
 						.tableLeft {
 							display: flex;
@@ -466,6 +549,14 @@
 							display: flex;
 							flex-direction: column;
 							align-items: flex-end;
+						}
+						.border{
+							width: 640rpx;
+							height: 3rpx;
+							background: #F3F3F7;
+							position: absolute;
+							right: 0;
+							bottom: 20rpx;
 						}
 					}
 				}

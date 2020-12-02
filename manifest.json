@@ -1,6 +1,6 @@
 {
     "name" : "HSWallet",
-    "appid" : "__UNI__2CCB410",
+    "appid" : "__UNI__33D511E",
     "description" : "HSWallet",
     "versionName" : "1.0.2",
     "versionCode" : "100",
@@ -109,12 +109,12 @@
                 "iosStyle" : "storyboard",
                 "androidStyle" : "default",
                 "ios" : {
-                    "storyboard" : "unpackage/res/storyboard.zip"
+                    "storyboard" : ""
                 },
                 "android" : {
-                    "hdpi" : "unpackage/res/run/480762_2.9.png",
-                    "xhdpi" : "unpackage/res/run/720_1242.9.png",
-                    "xxhdpi" : "unpackage/res/run/1080_1882_.9.png"
+                    "hdpi" : "F:/HSTLOGO.png",
+                    "xhdpi" : "F:/HSTLOGO.png",
+                    "xxhdpi" : "F:/HSTLOGO.png"
                 }
             }
         }

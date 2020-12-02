@@ -1,10 +1,10 @@
-import { ethers } from "ethers"
+import { ethers } from "@/common/js/ethers.js"
 import hschain from 'hschainjs'
 import abi from "@/common/js/abi"
 
 let Wallet = function(chain) {
 	this.chain = chain;
-	this.provider = ethers.getDefaultProvider("homestead");
+	this.provider = new ethers.providers.JsonRpcProvider('http://47.242.155.204:8545');
 }
 
 function create(chain) {
@@ -22,7 +22,7 @@ Wallet.prototype.getAddress = function(mnemonic) {
 }
 
 Wallet.prototype.getBalance = function(address) {
-	return this.provider.getBalance(address);
+	return this.provider.getBalance(address)
 }
 
 Wallet.prototype.getTokenBalance = function(address, token) {

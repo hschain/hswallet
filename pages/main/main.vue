@@ -64,7 +64,7 @@
 					<!-- <view @click="enterAssets(item)" class="table" v-for="item in ETHassets" :key="item.label">
 						<view class="tableWrapper">
 							<view class="tableLeft">
-								<image class="icon" v-show="walletName=='ETH'" src="../../static/common/图标／币种／ETH.png" mode=""></image>
+								<image class="icon" v-show="walletName=='ETH'" src="../../static/common/ETH.png" mode=""></image>
 								<text class="denom">{{item.label}}</text>
 							</view>
 							<view class="tableRight">
@@ -142,7 +142,7 @@
 				ETHassets:[{
 					label:"ETH",
 					value:this.addr,
-					logo:'../../static/common/图标／币种／ETH.png'
+					logo:'../../static/common/ETH.png'
 				}],
 				hideBalance: false ,//隐藏余额
 				newestUpdate: false, //是否为最新版本

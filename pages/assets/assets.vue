@@ -2,7 +2,8 @@
 	<view class="content">
 		<!-- <view style="height: var(--status-bar-height);background-color: var(--mainColor);"></view> -->
 		<view class="introduce ">
-			<image class="walletIcon" src="../../static/common/chain_hst.png" mode=""></image>
+			<image v-show="walletName=='HST'" class="walletIcon" src="../../static/common/chain_hst.png" mode=""></image>
+			<image v-show="walletName=='ETH'" class="walletIcon" src="../../static/common/ETH.png" mode=""></image>
 			<view class="detail ">
 				<view class="value">
 					{{hideBalance ? "****" : this.balance}}
@@ -39,20 +40,23 @@
 							<view v-if="!assetsList[name].length" class="isEmpty">
 								<u-empty text="暂无数据" mode="data" src="../../static/common/img_blank.png"></u-empty>
 							</view>
-							<view v-else @click="navigate(item)" v-for="(item, i) in assetsList[name]" :key="i + 'key'" class="table">
+							<view v-else @click="walletName=='HST'?navigate(item):ETHnavigate(i)" v-for="(item, i) in assetsList[name]" :key="i + 'key'" class="table">
 								<view class="tableLeft">
 									<view class="tabTop">
-										<image class="icon" v-if="item.denom === 'HST'" src="../../static/common/logo.png" mode=""></image>
-										<image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
-										<text class="denom">{{item.denom}}</text>
+										<image class="icon" v-show="item.type=='in'" src="../../static/common/ic_deposit.png" mode=""></image>
+										<image v-show="item.type=='out'" class="icon" src="../../static/common/ic_withdraw.png" mode=""></image>
+										<image v-show="item.result=='ERROR'" class="icon" src="../../static/common/ic_failed.png" mode=""></image>
+										<text v-show="walletName=='HST'" class="denom">{{item.denom}}</text>
+										<view class="address" v-show="walletName=='ETH'" >{{item.to | hash}}</view>
+										<view class="tiem">{{item.time}}</view>
 									</view>
-									<view class="tabBottom">
-										{{item.time}}
-									</view>
+									<!-- <view class="tabBottom">{{item.time}}</view> -->
 								</view>
 								<view class="tableRight">
-									<text>{{item.type === 'in' ? '+' : '-'}} {{hideBalance ? "****" : item.value}}</text>
+									<text v-show="walletName=='HST'">{{item.type === 'in' ? '+' : '-'}} {{hideBalance ? "****" : item.value}}</text>
+									<text v-show="walletName=='ETH'">{{item.type === 'in' ? '+' : '-'}} {{hideBalance ? "****" : item.amount}}</text>
 								</view>
+								<view class="border"></view>
 							</view>
 							<u-loadmore style="display: -webkit-box" v-if="assetsList[name].length" :status="loadStatus" margin-bottom="30" :load-text="loadText" @loadmore="getAssetsList(true)" icon-type="flower"/>	
 						</view>
@@ -114,6 +118,7 @@
 				hideBalance: false ,//隐藏余额
 				denom: '', //货币单位
 				currencyName:'',
+				walletName:''
 			}
 		},
 		onLoad(value) {
@@ -125,6 +130,7 @@
 			 this.currencyName=value.val
 		},
 		onShow() {
+			this.walletName=this.$store.state.walletName;
 			this.$store.commit('SET_QUERY_INFO_FLAG', true)
 			this.assetsList = {
 				all: [],
@@ -147,7 +153,26 @@
 			this.$store.commit('SET_QUERY_INFO_FLAG', false)
 			// this.wsSendMsg('out')
 		},
+		filters: {
+			hash: function (value) {
+			  return value.slice(0, 6) + " … " + value.slice(-6);
+			},
+		},
 		methods: {
+			formatDate(date) {
+				if (date) {
+					var date = new Date(date*1);
+					var YY = date.getFullYear() + '-';
+					var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+					var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
+					var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+					var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+					var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+					return YY + MM + DD +" "+hh + mm + ss;
+				} else {
+					return ''
+				}
+			},
 			back() {
 				uni.navigateBack()
 			},
@@ -218,7 +243,27 @@
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
 						success: (res) => {
-							console.log("交易明细",res);
+							console.log("交易明细",res.data);
+							if (res.data) {
+								// res.data.reverse();
+								res.data.content.forEach(item => {
+									let obj = {
+										fee:item.fee,
+										txHash: item.tx_hash,
+										result:item.result,
+										from:item.from,
+										to:item.to,
+										amount:item.amount,
+										type:item.to=="0x85464b207d7c1fce8da13d2f3d950c796e399a9c"?'in':'out',
+										time: this.formatDate(item.tx_timestamp, true)
+									}
+									this.assetsList.all.unshift(obj)
+								})
+								this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
+								this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
+								this.assetsList.err = this.assetsList.all.filter(item => item.result=='ERROR')
+								console.log('全',this.assetsList);
+							}
 						},
 					})
 				}
@@ -285,6 +330,9 @@
 			navigate(item) {
 				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail?hash=${item.txHash}` })
 			},
+			ETHnavigate(i){
+				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail?i=${i}` })
+			},
 			//转账
 			transfer() {
 				uni.navigateTo({ url: '../transfer/transfer' })
@@ -302,7 +350,8 @@
 					signal
 				}
 				this.$store.dispatch('websocketSend', wsParams)
-			}
+			},
+			
 		}
 	}
 </script>
@@ -367,8 +416,9 @@
 						display: flex;
 						justify-content: space-between;
 						padding: 40rpx 50rpx 30rpx;
-						box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
-						border-radius: 5px;
+						// box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+						// border-radius: 5px;
+						position: relative;
 						.tableLeft {
 							display: flex;
 							flex-direction: column;
@@ -376,24 +426,44 @@
 								display: flex;
 								margin-bottom: 20rpx;
 								.icon {
-									width: 60rpx;
-									height: 60rpx;
+									width: 44rpx;
+									height: 44rpx;
 									border-radius: 50px;
 									margin-right: 20rpx;
 								}
 								.denom {
 									font-size: 32rpx;
 									line-height: 60rpx;
-								}							
+								}	
+								.address{
+									margin-left: 9px;
+									color: #1f1f1f;
+								}	
+								.tiem{
+									color: #1f1f1f;
+									position: absolute;
+									top: 80rpx;
+									left: 130rpx;
+								}					
 							}
 							.tabBottom {
 								margin-left: 10rpx;
+								color: #1f1f1f;
 							}
 						}
 						.tableRight {
 							font-size: 36rpx;
 							display: flex;
 							align-items: center;
+							color: #1f1f1f;
+						}
+						.border{
+							width: 610rpx;
+							height: 3rpx;
+							background: #F3F3F7;
+							position: absolute;
+							right: 0;
+							bottom: 0rpx;
 						}
 					}
 				}

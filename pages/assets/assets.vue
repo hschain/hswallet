@@ -13,7 +13,7 @@
 				</view>
 			</view>
 		</view>
-		
+		<view class="separated"></view>
 		<!-- 切换菜单 -->
 		<view class="tabMenu">
 			<u-tabs-swiper 
@@ -30,7 +30,7 @@
 				@change="changeIndex"
 			></u-tabs-swiper>
 		</view>
-		
+		<view class="swiperBorder"></view>
 		<!-- 菜单列表 -->
 		<swiper class="swiperCard" :current="swiperCurrent" @transition="transition" @animationfinish="animationfinish">
 			<swiper-item v-for="(sub, name) in assetsList" :key="name">
@@ -40,14 +40,14 @@
 							<view v-if="!assetsList[name].length" class="isEmpty">
 								<u-empty text="暂无数据" mode="data" src="../../static/common/img_blank.png"></u-empty>
 							</view>
-							<view v-else @click="walletName=='HST'?navigate(item):ETHnavigate(i)" v-for="(item, i) in assetsList[name]" :key="i + 'key'" class="table">
+							<view v-else @click="walletName=='HST'?navigate(item):ETHnavigate(item)" v-for="(item, i) in assetsList[name]" :key="i + 'key'" class="table">
 								<view class="tableLeft">
 									<view class="tabTop">
-										<image class="icon" v-show="item.type=='in'" src="../../static/common/ic_deposit.png" mode=""></image>
-										<image v-show="item.type=='out'" class="icon" src="../../static/common/ic_withdraw.png" mode=""></image>
-										<image v-show="item.result=='ERROR'" class="icon" src="../../static/common/ic_failed.png" mode=""></image>
+										<image class="icon" v-show="item.type=='in'" src="../../static/svg/ic_deposit.svg" mode=""></image>
+										<image v-show="item.type=='out'" class="icon" src="../../static/svg/ic_withdraw.svg" mode=""></image>
+										<image v-show="item.result=='ERROR'" class="icon" src="../../static/svg/ic_failed.svg" mode=""></image>
 										<text v-show="walletName=='HST'" class="denom">{{item.denom}}</text>
-										<view class="address" v-show="walletName=='ETH'" >{{item.to | hash}}</view>
+										<view class="address" v-show="walletName=='ETH'" >{{item.from | hash}}</view>
 										<view class="tiem">{{item.time}}</view>
 									</view>
 									<!-- <view class="tabBottom">{{item.time}}</view> -->
@@ -67,14 +67,14 @@
 		
 		<view class="bottomBar">
 			<view class="collection">
-				<u-icon class="icon" name="../../static/common/ic_deposit.png" custom-prefix="project-icon" size="30"></u-icon>
+				<u-icon class="icon" name="../../static/svg/ic_deposit.svg" custom-prefix="project-icon" size="30"></u-icon>
 				<view class="createBtn" :custom-style="customStyle" @click="receipt">收款</view>
 			</view>
 			<view class="transfer">
-				<u-icon class="icon" name="../../static/common/ic_withdraw.png"  custom-prefix="project-icon" size="30"></u-icon>
+				<u-icon class="icon" name="../../static/svg/ic_withdraw.svg"  custom-prefix="project-icon" size="30"></u-icon>
 				<view class="importBtn" type="primary" @click="transfer">转账</view>
 			</view>
-			<image class="btnLogo" src="../../static/common/img_taichi.png" mode=""></image>
+			<image class="btnLogo" src="../../static/svg/img_taichi.svg" mode=""></image>
 		</view>
 	</view>
 </template>
@@ -128,6 +128,7 @@
 			 })
 			 this.denom = 'u' + value.val.toLowerCase()
 			 this.currencyName=value.val
+
 		},
 		onShow() {
 			this.walletName=this.$store.state.walletName;
@@ -238,7 +239,7 @@
 				}else if(this.currencyName=='ETH'){
 					uni.request({
 						url:'http://8.129.187.233:25676/eth/access/eth_list',
-						data:{limit: this.limit,start:1,type:'ALL',address:'0x85464b207d7c1fce8da13d2f3d950c796e399a9c'},
+						data:{limit: this.limit,start:1,type:'ALL',address:uni.getStorageSync('userAddress')},
 						header: {
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
@@ -246,6 +247,7 @@
 							console.log("交易明细",res.data);
 							if (res.data) {
 								// res.data.reverse();
+								let i=0;
 								res.data.content.forEach(item => {
 									let obj = {
 										fee:item.fee,
@@ -254,15 +256,48 @@
 										from:item.from,
 										to:item.to,
 										amount:item.amount,
-										type:item.to=="0x85464b207d7c1fce8da13d2f3d950c796e399a9c"?'in':'out',
-										time: this.formatDate(item.tx_timestamp, true)
+										type:item.to==uni.getStorageSync('userAddress')?'in':'out',
+										time: this.formatDate(item.tx_timestamp, true),
+										id:i++
 									}
-									this.assetsList.all.unshift(obj)
+									this.assetsList.all.push(obj)
 								})
 								this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
 								this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
 								this.assetsList.err = this.assetsList.all.filter(item => item.result=='ERROR')
 								console.log('全',this.assetsList);
+							}
+						},
+					})
+				}else{
+					uni.request({
+						url:'http://8.129.187.233:25676/eth/access/rc20_list',
+						data:{limit: this.limit,start:1,type:'ALL',address:uni.getStorageSync('userAddress'),contract_address:uni.getStorageSync('ERC20addr')},
+						header: {
+							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
+						},
+						success: (res) => {
+							console.log("ERC20交易明细",res.data);
+							if (res.data) {
+								// res.data.reverse();
+								let i=0;
+								res.data.content.forEach(item => {
+									let obj = {
+										fee:item.fee,
+										txHash: item.tx_hash,
+										result:item.result,
+										from:item.from,
+										to:item.to,
+										amount:item.amount,
+										type:item.to==uni.getStorageSync('userAddress')?'in':'out',
+										time: this.formatDate(item.tx_timestamp, true),
+										id:i++
+									}
+									this.assetsList.all.push(obj)
+								})
+								this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
+								this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
+								this.assetsList.err = this.assetsList.all.filter(item => item.result=='ERROR')
 							}
 						},
 					})
@@ -330,11 +365,15 @@
 			navigate(item) {
 				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail?hash=${item.txHash}` })
 			},
-			ETHnavigate(i){
-				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail?i=${i}` })
+			ETHnavigate(item){
+				this.$store.commit('SET_INDEX', item.id)
+				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail` })
 			},
 			//转账
 			transfer() {
+				if (this.currencyName!='ETH' && this.currencyName=='HST') {
+					uni.setStorageSync('ERC20transfer',true)
+				}
 				uni.navigateTo({ url: '../transfer/transfer' })
 			},
 			//收款
@@ -390,6 +429,18 @@
 				}
 			}
 		}
+		.separated{
+			width: 750rpx;
+			height: 32rpx;
+			background: #F7F7F7;
+			margin-bottom: 20rpx;
+		}
+		.swiperBorder{
+			width: 100%;
+			height: 3rpx;
+			background: #F3F3F7;
+			margin-top: -6rpx;
+		}
 		.tabMenu{
 			width: 90%;
 		}
@@ -434,13 +485,15 @@
 								.denom {
 									font-size: 32rpx;
 									line-height: 60rpx;
+									color: #1f1f1f;
+									margin-left: 9px;
 								}	
 								.address{
 									margin-left: 9px;
 									color: #1f1f1f;
 								}	
 								.tiem{
-									color: #1f1f1f;
+									color: #909195;
 									position: absolute;
 									top: 80rpx;
 									left: 130rpx;

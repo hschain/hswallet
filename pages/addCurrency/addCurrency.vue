@@ -4,13 +4,18 @@
             <image @click="back" class="back" src="../../static/common/ic_back.png" mode=""></image>
             <view class="topTitle">添加币种</view>
         </view>
-        <u-input v-model="keyword"
+        <view class="inputs">
+            <image class="search" src="../../static/svg/ico_search.svg" ></image>
+            <u-input v-model="keyword"
                  type="text" 
                  placeholder="请输入Token名称或合约地址" 
                  :height="96" 
-                 :custom-style="{border:'1px solid #DDDDE0',borderRadius:'24px',paddingLeft:'48px',paddingRigth:'18px'}" 
-                 @input="onSearch" :focus="true" />
-        <view v-show="!keyword">
+                 :custom-style="{borderRadius:'24px',paddingLeft:'36px'}" 
+                 @input="onSearch" :focus="true"/>
+                 
+        </view>
+        
+        <view v-if="!keyword">
             <view class="title">首页资产</view>
             <view class="assetsList">
                         <view  v-for="(item,index) in walletName=='HST'?assetsList:(ETHassetsList?ETHassetsList:$store.state.ETHassetsList)" :key="item.denom" class="table ">
@@ -23,15 +28,15 @@
                                     <view class="addre">{{addr | hash}}</view>
                                 </view>
                             </view>
-                            <image class="assetsEdit"  src="../../static/common/ic_remove.png" mode="" @click="removeAssets(index)"></image>
+                            <image class="assetsEdit"  src="../../static/svg/ic_remove.svg" mode="" @click="removeAssets(index)"></image>
                             <view class="border"></view>
                         </view>
             </view>
         </view> 
 
-        <view v-show="keyword">
+        <view v-if="keyword">
                 <view class="assetsList tokenList">
-                    <view v-if="isEmpty" class="isEmpty">
+                    <view v-if="!tokenList" class="isEmpty">
                         <u-empty text="暂无数据" mode="search" src="../../static/common/img_blank.png"></u-empty>
                     </view>
                     <view v-for="(item,index) in tokenList" :key="item.value" class="table">
@@ -42,7 +47,7 @@
                                     <text class="addre">{{ item.value | hash}}</text>
                             </view>
                         </view>
-                        <image class="assetsEdit" src="../../static/common/circlePlus.png" mode="" @click="addAssets(index)"></image>
+                        <image class="assetsEdit" src="../../static/svg/ic_add.svg" mode="" @click="addAssets(index)"></image>
                         <view class="border"></view>
                     </view>
                 </view>
@@ -70,8 +75,8 @@ export default {
     },
     onShow() {
             this.addr = uni.getStorageSync('userAddress')
-            this.ETHassetsList=uni.getStorageSync('ETHassetsList')
-            this.addAssetsList=this.$store.state.ETHassetsList;
+            this.ETHassetsList=uni.getStorageSync(this.addr)?uni.getStorageSync(this.addr):this.$store.state.ETHassetsList;
+            this.addAssetsList=uni.getStorageSync(this.addr)?uni.getStorageSync(this.addr):this.$store.state.ETHassetsList;
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
 				this.walletName = acc[this.addr].name
@@ -147,15 +152,17 @@ export default {
 						success: (res) => {
 							uni.hideLoading()
 							let tokens = res.data
-							tokens.map(item => {
+							tokens.map(async (item) => {
 								if (item.split('\t')[1]) {
+                                //   let res=await _that.$wallet("ETH").getTokenBalance(_that.addr,item.split('\t')[1]);
 									_that.tokenList.push({
 										label: item.split('\t')[0],
 										value: item.split('\t')[1],
 										desc: item.split('\t')[2],
 										typeval: item.split('\t')[3],
 										checkMark: item.split('\t')[4],
-										logo: "https://cn.etherscan.com/token/images/" + item.split('\t')[5]
+                                        logo: "https://cn.etherscan.com/token/images/" + item.split('\t')[5],
+                                        // balance:res._hex
 									})
 								}
 							})
@@ -164,18 +171,28 @@ export default {
 					})
 				}, 1000)
             },
-            addAssets(index){
-                // console.log(this.tokenList[index]);
-                this.addAssetsList.push(this.tokenList[index]);
+           async addAssets(index){
+                let res=await this.$wallet("ETH").getTokenBalance(this.addr,this.tokenList[index].value);
+                let obj={
+                    label: this.tokenList[index].label,
+					value: this.tokenList[index].value,
+					desc: this.tokenList[index].desc,
+					typeval: this.tokenList[index].typeval,
+					checkMark: this.tokenList[index].checkMark,
+                    logo: this.tokenList[index].logo,
+                    balance:res._hex
+                }
+                this.addAssetsList.push(obj);
                 // this.$store.commit('SET_ETHASSETSLIST', this.addAssetsList);
-                uni.setStorageSync('ETHassetsList',this.addAssetsList)
+                console.log(this.addAssetsList);
+                uni.setStorageSync(this.addr,Array.from(new Set(this.addAssetsList)))
                 uni.showToast({
 					title: '添加成功'
 				})
             },
             removeAssets(index){
                 this.ETHassetsList.splice(index, 1);
-                uni.setStorageSync('ETHassetsList',this.ETHassetsList)
+                uni.setStorageSync(this.addr,this.ETHassetsList)
                 uni.showToast({
 					title: '删除成功'
 				})
@@ -184,14 +201,7 @@ export default {
 }
 </script>
 <style>
-   .u-input{
-       border-radius: 50%;
-       width: 686rpx;
-       position: absolute;
-       left: 50%;
-       transform:translate(-50%,0);
-       margin-top: 32rpx;
-   } 
+   
 </style>
 <style lang="scss" scoped>
 $hei: 100vh;
@@ -222,6 +232,24 @@ $hei: 100vh;
                 transform: translate(-50%,0);
             }
         }
+        .inputs{
+            border-radius: 24px;
+            width: 686rpx;
+            position: relative;
+            left: 50%;
+            transform:translate(-50%,0);
+            border:1px solid #DDDDE0;
+            margin-top: 32rpx;
+            padding-right: 20rpx;
+            .search{
+                width: 44rpx;
+                height: 44rpx;
+                position: absolute;
+                top: 24rpx;
+                left: 20rpx;
+            }
+        } 
+        
         .title{
             color: #1F1F1F;
             font-size: 32rpx;

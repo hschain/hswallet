@@ -1,10 +1,11 @@
 <template>
 	<view class="application ">
-		<view class="cellMark"  @click="info" :style="{marginTop:'48rpx'}">
+		<view class="cellMark"  @click="onBrowser('https://scan.hschain.io/#/dashboard')" :style="{marginTop:'48rpx'}">
 			<view class=" circle">
 				<view class="boxLeft">
-					<image class="leftIcon" src="../../static/application/ecology_browser.png" mode=""></image>
+					<image class="leftIcon" src="../../static/svg/ecology_browser.svg" mode=""></image>
 					<view class="leftWrapper">
+						<!-- https://scan.hschain.io/#/dashboard -->
 						<view class="title">
 							HSC区块链浏览器
 						</view>
@@ -12,7 +13,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>
 					</view>
 				</view>
 			</view>
@@ -20,7 +21,7 @@
 		<view class="margin cellMark"  @click="info">
 			<view class=" circle">
 				<view class="boxLeft">
-					<image class="leftIcon" src="../../static/application/ecology_coin.png" mode=""></image>
+					<image class="leftIcon" src="../../static/svg/ecology_coin.svg" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title ">
 							一键发币
@@ -29,7 +30,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>
 					</view>
 				</view>
 			</view>
@@ -37,7 +38,7 @@
 		<view class=" cellMark"  @click="info">
 			<view class=" circle">
 				<view class="boxLeft">
-					<image class="leftIcon" src="../../static/application/ecology_district.png" mode=""></image>
+					<image class="leftIcon" src="../../static/svg/ecology_district.svg" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title ">
 							链上商圈
@@ -46,7 +47,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>						
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>						
 					</view>
 				</view>
 			</view>
@@ -54,7 +55,7 @@
 		<view class=" cellMark"  @click="info">
 			<view class=" circle">
 				<view class="boxLeft">
-					<image class="leftIcon" src="../../static/application/ecology_mall.png" mode=""></image>
+					<image class="leftIcon" src="../../static/svg/ecology_mall.svg" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title ">
 							链上商城
@@ -63,7 +64,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>						
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>						
 					</view>
 				</view>
 			</view>
@@ -71,7 +72,7 @@
 		<view class="cellMark"  @click="info">
 			<view class=" circle">
 				<view class="boxLeft">
-					<image class="leftIcon" src="../../static/application/ecology_life.png" mode=""></image>
+					<image class="leftIcon" src="../../static/svg/ecology_life.svg" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title ">
 							链上生活
@@ -80,7 +81,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>						
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>						
 					</view>
 				</view>
 			</view>
@@ -88,7 +89,7 @@
 		<view class=" cellMark"  @click="info">
 			<view class=" circle">
 				<view class="boxLeft">
-					<image class="leftIcon" src="../../static/application/ecology_game.png" mode=""></image>
+					<image class="leftIcon" src="../../static/svg/ecology_game.svg" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title ">
 							链上游戏
@@ -97,7 +98,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>						
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>						
 					</view>
 				</view>
 			</view>
@@ -121,6 +122,11 @@
 		methods: {
 			info() {
 				plus.nativeUI.toast('敬请期待')
+			},
+			onBrowser(url) {
+				uni.navigateTo({
+					url: '/pages/browser/browser?url=' + url
+				})
 			}
 		}
 	}

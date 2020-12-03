@@ -17,7 +17,7 @@
 							:arrow="false"
 							@click="navigate('../management/management')"
 						></u-section>
-						<image class="more" src="../../static/common/ic_more.png" mode="" @click="navigate('../management/management')"></image>
+						<image class="more" src="../../static/svg/ic_more.svg" mode="" @click="navigate('../management/management')"></image>
 					</view>
 					<view class="address" @click="onCopy()">
 						{{addr | hash}}
@@ -27,21 +27,21 @@
 						<text class="symbol">{{hideBalance ? '****' : '$ '}}</text>
 						{{hideBalance ? '' : assetsList[0].value}}
 						<image v-if="hideBalance" class="seed" src="../../static/common/ic_eye_close.png" mode="" @click="hidden"></image>
-						<image v-else class="seed" src="../../static/common/ic_eye_open.png" mode="" @click="hidden"></image>
+						<image v-else class="seed" src="../../static/svg/ic_eye_open.svg" mode="" @click="hidden"></image>
 					</view>
 				</view>
-				<image class="btnLogo" src="../../static/common/img_taichi.png" mode=""></image>
+				<image class="btnLogo" src="../../static/svg/img_taichi.svg" mode=""></image>
 				<view class="containerWrapBottom">	
-					<view class="transfer" @click="navigate('../transfer/transfer')">
-						<u-icon class="icon" name="../../static/common/ic_withdraw.png" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
-						<view class="contents">
-							转账
-						</view>
-					</view>
-					<view class="collection" @click="navigate('../receipt/receipt')">
-						<u-icon class="icon" name="../../static/common/ic_deposit.png" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
+					<view class="transfer" @click="navigate('../receipt/receipt')">
+						<u-icon class="icon" name="../../static/svg/ic_deposit.svg" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
 						<view class="contents">
 							收款
+						</view>
+					</view>
+					<view class="collection" @click="navigate('../transfer/transfer')">
+						<u-icon class="icon" name="../../static/svg/ic_withdraw.svg" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
+						<view class="contents">
+							转账
 						</view>
 					</view>
 					<!-- <view class="boxWrapper" @click="info">
@@ -61,33 +61,21 @@
 				</view>
 				<u-icon v-if="walletName!='HST'" class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000" @click="gotoAddCurrency"></u-icon>
 				<view class="assetsList">
-					<!-- <view @click="enterAssets(item)" class="table" v-for="item in ETHassets" :key="item.label">
-						<view class="tableWrapper">
-							<view class="tableLeft">
-								<image class="icon" v-show="walletName=='ETH'" src="../../static/common/ETH.png" mode=""></image>
-								<text class="denom">{{item.label}}</text>
-							</view>
-							<view class="tableRight">
-								<text>{{hideBalance ? '****' : "0.0000"}}</text>
-								<text>{{hideBalance ? '****' : "$ "+0}}</text>
-							</view>
-							<view class="border"></view>
-						</view>
-					</view> -->
 					<view @click="enterAssets(item)" v-for="item in walletName=='HST'?assetsList:(ETHassetsList?ETHassetsList:$store.state.ETHassetsList)" :key="item.denom" class="table">
 						<view class="tableWrapper">
 							<view class="tableLeft">
 								<image class="icon" v-if="walletName=='HST'" src="../../static/common/logo.png" mode=""></image>
 								<image class="icon" v-else-if="walletName === 'ETH'" :src="item.logo" mode=""></image>
 								<image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
-								<text class="denom">{{walletName=='HST'?item.denom:item.label}}</text>
+								<text class="denom">{{walletName=='HST'?'HST':item.label}}</text>
 							</view>
 							<view class="tableRight">
-								<text>{{hideBalance ? '****' : walletName=='HST'?item.amount:"0.0000"}}</text>
+								<text>{{hideBalance ? '****' : walletName=='HST'?item.amount:item.balance}}</text>
 								<text>{{hideBalance ? '****' : walletName=='HST'?'$ ' + item.value:"$ "+0}}</text>
 							</view>
-							<view class="border"></view>
+							
 						</view>
+						<view class="border"></view>
 					</view>
 				</view>
 			</view>
@@ -126,6 +114,7 @@
 
 <script>
 	import updateTip from '../../components/updateTip.vue'
+	import {ethers} from 'ethers'
 	export default {
 		name: 'mainPage',
 		components: { updateTip },
@@ -139,11 +128,6 @@
 						value: 0
 					}
 				],
-				ETHassets:[{
-					label:"ETH",
-					value:this.addr,
-					logo:'../../static/common/ETH.png'
-				}],
 				hideBalance: false ,//隐藏余额
 				newestUpdate: false, //是否为最新版本
 				backupMnemonic: uni.getStorageSync('backupMnemonic') || false, //是否已备份助记词
@@ -166,6 +150,7 @@
 				btnIconColor: '#bea41e',
 				userWallet: [], //当前用户多个钱包信息
 				ETHassetsList:[],
+				balance:{},
 			}
 		},
 		onLoad() {
@@ -174,15 +159,21 @@
 				this.getUpdate()			
 			}, 500)
 		},
-		onShow() {
+	async onShow() {
 			this.addr = uni.getStorageSync('userAddress');
-			this.$store.commit('SET_ETHASSETSLIST', this.ETHassets);
+			uni.setStorageSync('ERC20transfer',false)
 			// let balance = await this.$wallet("ETH").getBalance(this.addr)
 			// this.$wallet("ETH").getTokenBalance("0xfd9c93ecfb779f0187e31c1be6fffe61f59a4fba", "0xdac17f958d2ee523a2206206994597c13d831ec7").then(res=>{
 			// 	console.log('资产余额',res);
 			// })
-			this.ETHassetsList=uni.getStorageSync('ETHassetsList');
-			// console.log('资产余额',balance);
+			let res = await this.$wallet('ETH').getBalance(this.addr)
+			this.$store.commit('SET_ETHASSETSLIST',[{
+					label:"ETH",
+					value:uni.getStorageSync('userAddress'),
+					logo:'../../static/common/ETH.png',
+					balance: ethers.utils.formatEther(res)
+				}]);	
+			this.ETHassetsList=uni.getStorageSync(this.addr)||this.$store.state.ETHassetsList;
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
 				this.walletName = acc[this.addr].name
@@ -210,7 +201,7 @@
 			//如果用户已注册账户地址，则执行接下来的命令
 			if (uni.getStorageSync('account')) {
 				this.getAssets()
-				
+				console.log('assetsList',this.assetsList);
 				// if (!this.$store.state.socketIsOpen) {
 				// 	this.$store.dispatch('websocketInit', "wss://testnet.hschain.io/api/v1/ws")
 				// 	let _this = this
@@ -230,7 +221,6 @@
 				// 	})
 				// }
 			}
-			
 			//如果vuex存在助记词缓存，则清空助记词
 			if (this.$store.state.mnemonic) this.$store.dispatch('saveMnemonic', '')
 		},
@@ -241,6 +231,9 @@
 		},
 		methods: {
 			enterAssets(item) {
+				if(item.label!='ETH') {
+					uni.setStorageSync('ERC20addr',item.value)
+				}
 				uni.navigateTo({ url: `/pages/assets/assets?val=${this.walletName=='HST'?item.denom:item.label}` })
 			},
 			navigate(url) {
@@ -353,7 +346,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		margin-top: 28px;
+		margin-top: 58rpx;
 		.top{
 			width: 100%;
 			height: 520rpx;
@@ -507,6 +500,8 @@
 			display: flex;
 			flex-direction: column;
 			color: #1F1F1F;
+			margin-top: 20rpx;
+			margin-bottom: 20px;
 			.title {
 				font-size: 32rpx;
 				font-weight: 500;
@@ -520,17 +515,20 @@
 				margin-top: 20rpx;
 			}
 			.assetsList {
-				margin-top: 40rpx;
+				margin-top: 100rpx;
+				
 				.table {
 					height: 128rpx;
 					border-radius: 10rpx;
+					position: relative;
 					// margin: 0 0 30rpx;
+					// border: 1px solid #000;
 					.tableWrapper {
 						width: 750rpx;
-						padding: 50rpx 32rpx;
+						padding: 0rpx 32rpx;
 						display: flex;
 						justify-content: space-between;
-						position: relative;
+						
 						// background-color: transparent;
 						.tableLeft {
 							display: flex;
@@ -550,15 +548,16 @@
 							flex-direction: column;
 							align-items: flex-end;
 						}
-						.border{
+						
+					}
+					.border{
 							width: 640rpx;
 							height: 3rpx;
 							background: #F3F3F7;
 							position: absolute;
 							right: 0;
-							bottom: 20rpx;
+							bottom: 30rpx;
 						}
-					}
 				}
 			}
 		}

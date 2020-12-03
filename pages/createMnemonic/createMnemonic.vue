@@ -15,13 +15,10 @@
 				</view>
 			</view>
 			<view class="bottomSize">
+				<u-button class="copy" @click="onCopy">复制</u-button>
 				<view>
 					<!-- #ifdef H5-->
-					<u-button
-						class="copy" 
-						v-clipboard:copy="mnemonic"
-						v-clipboard:success="onCopy"
-					>复制</u-button>
+					
 					<!-- #endif -->
 					<!-- #ifndef H5 -->
 					<!-- <u-button class="copy" @click="onCopy">复制</u-button> -->
@@ -361,8 +358,9 @@
 			.copy {
 				width: 686rpx;
 				height: 96rpx;
-				margin: 0 auto 40rpx;
+				margin: 80rpx auto 40rpx;
 				color: #000;
+				border: 2rpx solid #1f1f1f;
 			}
 			.backup {
 				width: 686rpx;

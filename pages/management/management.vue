@@ -33,7 +33,7 @@
 						<view class="rightValue ">
 							{{account[addr].name}}
 						</view>
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>
 					</view>
 				</view>
 			</view>
@@ -53,7 +53,7 @@
 						<view class="rightValue">
 							{{backupMnemonic ? '' : '未备份'}}
 						</view>
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>
 					</view>
 				</view>
 			</view>

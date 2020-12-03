@@ -158,7 +158,13 @@
 			"style": {
 				"navigationBarTitleText": "版本日志"
 			}
-		}
+		},
+		{
+			"path": "pages/browser/browser",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		}		
 	],
 	"globalStyle": {//用于设置应用的状态、导航条、标题、窗口颜色背景
 		"navigationBarTextStyle": "black",//导航栏标题颜色及状态栏前景颜色，仅限black/white

@@ -1,6 +1,40 @@
 <template>
 <view>
-	<view class="content" v-show="walletName=='ETH'">
+	<view class="content" v-if="walletName=='HST'">
+		<view class="detail">
+			<view class="showDetail">
+				<image v-if="assetData.success" class="icon" src="../../static/common/img_success.png" mode=""></image>
+				<image v-else class="icon" src="../../static/common/img_fail.png" mode=""></image>
+				<text :class="['tip',assetData.success?'green':'red']">{{assetData.success? '成功' : '失败'}}</text>
+				<text class="time">{{assetData.tx_timestamp}}</text>
+				<text class="amount">{{assetData.type === 'in' ? '+ ' : '- '}}{{assetData.value+' HST'}}</text>
+			</view>
+		</view>
+		
+		<view class="amountDetail ">
+			<view class="fee">
+				<text class="title">矿工费</text>
+				<text class="number">{{0.2222+' HST'}}</text>
+				<view class="calculation">GasPrice(24.00 GWEI) * Gas(112,956)</view>
+				<view class="border"></view>
+			</view>
+			<view class="collection">
+				<text class="title">收款地址</text>
+				<text class="addr">{{assetData.details.to.value}}</text>
+			</view>
+			<view class="transfer">
+				<text class="title">付款地址</text>
+				<text class="addr">{{assetData.details.from.value}}</text>
+				<view class="border"></view>
+			</view>
+			<view class="hash">
+				<text class="title">交易哈希</text>
+				<view class="addre">{{assetData.details.txHash.value}}</view>
+			</view>
+			<view class="check">查询详细信息></view>
+		</view>
+	</view>
+	<view class="content" v-else-if="walletName=='ETH'">
 		<view class="detail">
 			<view class="showDetail">
 				<image v-if="details.result=='SUCCESS'" class="icon" src="../../static/common/img_success.png" mode=""></image>
@@ -45,7 +79,6 @@
 		data() {
 			return {
 				title: '',
-				index:0,
 				assetData: {},
 				walletName:'',
 				details:{}
@@ -53,9 +86,10 @@
 		},
 		onShow(){
 			this.walletName=this.$store.state.walletName;
-			uni.request({
+			if (this.walletName=='ETH') {
+				uni.request({
 						url:'http://8.129.187.233:25676/eth/access/eth_list',
-						data:{limit: 10,start:1,type:'ALL',address:'0x85464b207d7c1fce8da13d2f3d950c796e399a9c'},
+						data:{limit: 10,start:1,type:'ALL',address:uni.getStorageSync('userAddress')},
 						header: {
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
@@ -69,10 +103,33 @@
 								// this.details.from=res.data.content[this.index].from;
 								// this.details.fee=res.data.content[this.index].fee;
 								// this.details.type=res.data.content[this.index].to=='0x85464b207d7c1fce8da13d2f3d950c796e399a9c'?'in':'out';
-								this.details=res.data.content[this.index];
+								this.details=res.data.content[this.$store.state.index];
 							}
 						},
 					})
+			}else{
+				uni.request({
+						url:'http://8.129.187.233:25676/eth/access/eth_list',
+						data:{limit: 10,start:1,type:'ALL',address:uni.getStorageSync('userAddress'),contract_address:uni.getStorageSync('ERC20addr')},
+						header: {
+							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
+						},
+						success: (res) => {
+							if (res.data) {
+								// this.details.result=res.data.content[this.index].result;
+								// this.details.time=res.data.content[this.index].time;
+								// this.details.amount=res.data.content[this.index].amount;
+								// this.details.hash=res.data.content[this.index].tx_hash;
+								// this.details.to=res.data.content[this.index].to;
+								// this.details.from=res.data.content[this.index].from;
+								// this.details.fee=res.data.content[this.index].fee;
+								// this.details.type=res.data.content[this.index].to=='0x85464b207d7c1fce8da13d2f3d950c796e399a9c'?'in':'out';
+								this.details=res.data.content[this.$store.state.index];
+							}
+						},
+					})
+			}
+			
 					
 			},
 		onLoad(value) {
@@ -119,8 +176,7 @@
 					}
 				})
 			}else if (this.walletName=='ETH') {
-				this.index=value.i	
-				console.log('index',this.index);	
+					
 		}
 	}
 }
@@ -134,8 +190,8 @@
 		color: #D04B63;
 	}
 	.border{
-		width: 359px;
-		height: 2px;
+		width: 718rpx;
+		height: 2rpx;
 		background: #F3F3F7;
 		position: absolute;
 		bottom: 0;
@@ -148,7 +204,7 @@
 		color: #909195;
 	}
 	.addr{
-		width: 247px;
+		width: 494rpx;
 		font-size: 24rpx;
 		font-family: Gilroy-Regular, Gilroy;
 		font-weight: 400;
@@ -156,6 +212,9 @@
 		margin-left: 96rpx;
 		// word-break: break-all;
 		// overflow: hidden;
+		position: absolute;
+		top: 40rpx;
+		left: 130rpx;
 	}
 	.content {
 		display: flex;
@@ -195,14 +254,14 @@
 			.fee{
 				height: 144rpx;
 				padding: 40rpx 32rpx;
-				border: 1px solid #000;
+				// border: 1px solid #000;
 				position: relative;
 				.number{
 					font-size: 24rpx;
 					font-family: Gilroy-Regular, Gilroy;
 					font-weight: 400;
 					color: #1F1F1F;
-					margin-left: 120rpx;
+					margin-left: 126rpx;
 				}
 				.calculation{
 					font-size: 24rpx;
@@ -215,18 +274,19 @@
 			.collection{
 				height: 144rpx;
 				padding: 40rpx 32rpx;
-				border: 1px solid #000;
+				// border: 1px solid #000;
+				position: relative;
 			}
 			.transfer{
 				height: 144rpx;
 				padding: 40rpx 32rpx;
-				border: 1px solid #000;
+				// border: 1px solid #000;
 				position: relative;
 			}
 			.hash{
 				height: 144rpx;
 				padding: 40rpx 32rpx;
-				border: 1px solid #000;
+				// border: 1px solid #000;
 				position: relative;
 				.addre{
 					width: 247px;
@@ -237,7 +297,7 @@
 					word-break: break-all;
 					position: absolute;
 					top: 40rpx;
-					left: 220rpx;
+					left: 226rpx;
 				}
 			}
 			.check{

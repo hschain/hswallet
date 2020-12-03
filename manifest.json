@@ -106,15 +106,15 @@
                 }
             },
             "splashscreen" : {
-                "iosStyle" : "storyboard",
+                "iosStyle" : "common",
                 "androidStyle" : "default",
                 "ios" : {
                     "storyboard" : ""
                 },
                 "android" : {
-                    "hdpi" : "F:/HSTLOGO.png",
-                    "xhdpi" : "F:/HSTLOGO.png",
-                    "xxhdpi" : "F:/HSTLOGO.png"
+                    "hdpi" : "/Users/masc/Desktop/HSTLOGO.png",
+                    "xhdpi" : "/Users/masc/Desktop/HSTLOGO.png",
+                    "xxhdpi" : "/Users/masc/Desktop/HSTLOGO.png"
                 }
             }
         }

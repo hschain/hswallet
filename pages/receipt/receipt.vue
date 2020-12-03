@@ -16,6 +16,10 @@
 				<view class="copyBtn" @click="onCopy">复制</view>
 			</view>
 		</view>
+		<view class="bottom">
+			<image class="bottomLogo" src="../../static/svg/img_logo_gray.svg" mode=""></image>
+			<view class="bottomTitle">HS Wallet</view>
+		</view>
 	</view>
 </template>
 
@@ -118,11 +122,28 @@
 				.copyBtn{
 					width: 526rpx;
 					height: 96rpx;
-					background: url('../../static/common/button_gold.png');
+					background: url('../../static/common/button_gold.png') no-repeat;
+					background-size: 100% 100%;
 					text-align: center;
 					line-height: 96rpx;
 					position:absolute;
 				}
+			}
+		}
+		.bottom{
+			width: 100%;
+			// background: olivedrab;
+			margin-top: 240rpx;
+			text-align: center;
+			.bottomLogo{
+				width: 80rpx;
+				height: 80rpx;
+			}
+			.bottomTitle{
+				font-size: 32rpx;
+				font-family: Gilroy-Regular, Gilroy;
+				font-weight: 400;
+				color: #404040;
 			}
 		}
 	}

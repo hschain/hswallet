@@ -1,7 +1,7 @@
 <template>
 	<view class="about">
 		<view class="headerLogo">
-			<image class="logo" src="../../static/common/logo.png" mode=""></image>
+			<image class="logo" src="../../static/svg/img_logo.svg" mode=""></image>
 			<view class="title">
 				HSWallet
 			</view>
@@ -10,7 +10,7 @@
 			</view>
 		</view>
 		
-		<view class="clearBG cellMark" @click="navigate('../log/log')" style="position:absolute;top:330px;left:16px;">
+		<view class="clearBG cellMark" @click="navigate('../log/log')" style="position:absolute;top:600rpx;left:16px;">
 			<view class="circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">
@@ -21,14 +21,14 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightIcon" src="../../static/common/arrow_right.png" mode=""></image>						
+						<image class="rightIcon" src="../../static/svg/arrow_right.svg" mode=""></image>						
 					</view>
 				</view>
 			</view>
 			<view class="boder"></view>
 		</view>
 		
-		<view class="clearBG cellMark" @click="checkUpdate" style="position:absolute;top:380px;left:16px;">
+		<view class="clearBG cellMark" @click="checkUpdate" style="position:absolute;top:700rpx;left:16px;">
 			<view class=" circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">
@@ -39,7 +39,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightIcon" src="../../static/common/arrow_right.png" mode=""></image>						
+						<image class="rightIcon" src="../../static/svg/arrow_right.svg" mode=""></image>						
 					</view>
 				</view>
 			</view>
@@ -49,7 +49,7 @@
 		<!-- <view class="gap"></view> -->
 		
 		<u-link href="https://www.hschain.io/">
-			<view class="clearBG cellMark" style="position:absolute;top:430px;left:16px;">
+			<view class="clearBG cellMark" style="position:absolute;top:800rpx;left:16px;">
 				<view class=" circle">
 					<view class="boxLeft">
 						<view class="leftWrapper">
@@ -65,7 +65,7 @@
 					</view>
 					<view class="boxRight">
 						<view class="rightWrapper">
-							<image class="rightIcon" src="../../static/common/arrow_right.png" mode=""></image>						
+							<image class="rightIcon" src="../../static/svg/arrow_right.svg" mode=""></image>						
 						</view>
 					</view>
 				</view>
@@ -139,7 +139,7 @@
 	.about {
 		height: 1536rpx;
 		overflow: hidden;
-		background: url('../../static/common/bg_taichi.png') no-repeat;
+		background: url('../../static/common/bg_taichi.png');
 		background-size: 100% 100%;
 		.rightIcon{
 			width: 32rpx;

@@ -278,13 +278,13 @@
         }
         .footer{
             width: 100%;
-            height: 168rpx;           
+            height: 148rpx;           
             background: rgba(255, 255, 255, 0.9);
             border-top: 2px solid rgba(0, 0, 0, 0.16);
             display: flex;
             justify-content: center;
             position: fixed;
-            bottom: 0;
+            bottom: 0rpx;
             left: 0;
             .createIcon{
                 width: 44rpx;
@@ -296,7 +296,7 @@
             .create{
                 width: 50%;
                 height: 100%;
-                line-height: 168rpx;
+                line-height: 148rpx;
                 display: flex;
                 justify-content: center;
                 color: #000;
@@ -304,13 +304,13 @@
             .import{
                 width: 50%;
                 height: 100%;
-                line-height: 168rpx;
+                line-height: 148rpx;
                 display: flex;
                 justify-content: center;
                 color: #000;
             }
             .border{
-                width: 4rpx;
+                width: 2rpx;
                 height: 58rpx;
                 background: #F3F3F7;
                 position: absolute;

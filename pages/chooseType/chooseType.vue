@@ -12,7 +12,7 @@
                     <view class="HSTwallet">HST</view>
                     <view class="small">HSchain</view>
                 </view>
-                <image  class="arrowRight" src="../../static/common/arrow_right.png" mode=""></image>
+                <image  class="arrowRight" src="../../static/svg/arrow_right.svg" mode=""></image>
                 <view class="shortBoder"></view>
             </view>
             <view class="eth" @click="onSelect('ETH')">
@@ -21,7 +21,7 @@
                     <view class="HSTwallet">ETH</view>
                     <view class="small">Ethereum</view>
                 </view>
-                <image  class="arrowRight" src="../../static/common/arrow_right.png" mode=""></image>
+                <image  class="arrowRight" src="../../static/svg/arrow_right.svg" mode=""></image>
                 <view class="shortBoder"></view>
             </view>
         </view>

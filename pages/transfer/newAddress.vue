@@ -5,7 +5,7 @@
 				<u-cell-group>
 					<u-cell-item :title="newAddr.denom" :arrow="false" :border-bottom="false"  hover-class="none">
 						<u-image class="addrImg" slot="icon" width="60" height="60" :src="src" shape="circle" :fade="false"></u-image>
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode="" ></image>	
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode="" ></image>	
 					</u-cell-item>
 				</u-cell-group>
 			</view>
@@ -14,17 +14,17 @@
 			地址信息
 		</view>
 		<view class="detailed">
-			<view class="containerWrap tableBar">
+			<view class="containerWrap ">
 				<u-cell-group>
 					<u-cell-item :arrow="false" title-width="600" hover-class="none">
-						<u-input style="width: 500rpx;" v-model="newAddr.addr" slot="title" placeholder="请输入地址" :clearable="false"></u-input>
+						<u-input :custom-style="{color: '#1f1f1f'}" v-model="newAddr.addr" slot="title" placeholder="请输入地址" :clearable="false"></u-input>
 						<u-icon slot="right-icon" name="scan" custom-prefix="project-icon" @click="openScan()" size="50"></u-icon>
 					</u-cell-item>
 					<u-cell-item :arrow="false" title-width="600" hover-class="none">
-						<u-input v-model="newAddr.name" slot="title" placeholder="名称" :clearable="false"></u-input>
+						<u-input style="color: #1f1f1f;" v-model="newAddr.name" slot="title" placeholder="名称" :clearable="false"></u-input>
 					</u-cell-item>
 					<u-cell-item :arrow="false" title-width="600" hover-class="none" :border-bottom="false">
-						<u-input v-model="newAddr.description" slot="title" placeholder="描述 (选填)" :clearable="false"></u-input>
+						<u-input style="color: #1f1f1f;" v-model="newAddr.description" slot="title" placeholder="描述 (选填)" :clearable="false"></u-input>
 					</u-cell-item>
 				</u-cell-group>
 			</view>
@@ -35,7 +35,10 @@
 <style>
     html,body{
         background: #f7f7f7;
-    }
+	}
+	.u-input{
+		color: #1f1f1f;
+	}
 </style>
 <script>
 	export default {
@@ -173,12 +176,13 @@
 			margin-right: 20rpx;
 		}
 		.addrInfo {
-			margin: 30rpx 5vw 10rpx;
+			margin: 30rpx;
 			color: #1f1f1f;
 			background: #f7f7f7;
 		}
 		.detailed{
 			background: #fff;
+			color: #1f1f1f;
 		}
 	}
 </style>

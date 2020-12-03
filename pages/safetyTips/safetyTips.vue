@@ -137,7 +137,7 @@
 				border-radius: 4px;
 				font-size: 32rpx;
 				text-align: center;
-				line-height: 80rpx;
+				line-height: 96rpx;
 				border: 1px solid #1F1F1F;
 				position: absolute;
 				top: 460px;

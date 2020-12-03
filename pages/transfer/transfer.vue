@@ -5,7 +5,7 @@
 		</view>
 		<view class="Container">
 			<view class="containerWrap">
-				<view class=" addrInput">
+				<view class="addrInput">
 					<u-input :custom-style="{fontSize: '32rpx',background:'#fff'}" class="input" v-model="addr" :placeholder="$store.state.walletType + '地址'" :clearable="false" :border="false"/>
 					<image @click="addAddress" class="addrImg" src="../../static/common/ic_address.png" mode=""></image>
 				</view>
@@ -21,13 +21,13 @@
 		</view>
 		<view class="Container">
 			<view class="containerWrap">
-				<view class="tableBar">
+				<view class="">
 					<u-cell-group>
 						<u-cell-item :arrow="false" hover-class="none">
-							<u-input slot="title" :custom-style="{fontSize: '46rpx'}" v-model="cash" placeholder="0" :clearable="false" type="number" />
+							<u-input class="table" slot="title" :custom-style="{fontSize: '46rpx'}" v-model="cash" placeholder="0" :clearable="false" type="text" />
 						</u-cell-item>
 						<u-cell-item :arrow="false" hover-class="none">
-							<u-input slot="title" :custom-style="{fontSize: '32rpx'}" v-model="memo" placeholder="备注" :clearable="false" />
+							<u-input class="table" slot="title" :custom-style="{fontSize: '32rpx'}" v-model="memo" placeholder="备注" :clearable="false" />
 						</u-cell-item>
 					</u-cell-group>
 				</view>
@@ -102,6 +102,7 @@
 			if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))) this.addrBook = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
 		},
 		onShow() {
+			console.log('walletName',this.$store.state.walletName);
 			if (this.$store.state.addrData) {
 				this.addr = this.$store.state.addrData.addr
 			}
@@ -120,13 +121,7 @@
 			    }
 			});
 		},
-		// mounted(){
-		// 	document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
-		// 	document.querySelectorAll('.u-cell')[1].style.padding= '13px 0';
-		// 	document.querySelectorAll('.u-cell')[2].style.padding= '13px 0';
-		// 	document.querySelectorAll('.uni-input-input')[1].style.color= '#1f1f1f';
-		// 	document.querySelectorAll('.uni-input-input')[2].style.color= '#1f1f1f';
-		// },
+		
 		methods:{
 			//添加新地址
 			addAddress() {
@@ -155,66 +150,103 @@
 			},
 			// 验证正确后开启交易
 			correct(val) {
+				console.log(111111111);
 				if (val) {
+					console.log(2222);
 					this.transation()
 				}
 			},
 			//验证成功后下一步开启交易
 			transation() {
-				const mnemonic = this.account[this.myAddr].key
-				const hschain = this.$chain(this.$url, this.$chainId)
-				hschain.setPath(this.$path)
-				const ecpairPriv = hschain.getECPairPriv(mnemonic)
-				this.$u.api.getAccounts(this.myAddr).then(res => {
-					let stdSignMsg = hschain.newStdMsg({
-						msgs: [
-							{
-								type: "cosmos-sdk/MsgSend",
-								value: {
-									amount: [
-										{
-											amount: String(this.cash*1000000),
-											denom: "uhst"
-										}
-									],
-									from_address: this.myAddr,
-									to_address: this.addr
+				
+				if (this.$store.state.walletName==='HST') {
+					console.log(333333);
+					const mnemonic = this.account[this.myAddr].key
+					const hschain = this.$chain(this.$url, this.$chainId)
+					hschain.setPath(this.$path)
+					const ecpairPriv = hschain.getECPairPriv(mnemonic)
+					this.$u.api.getAccounts(this.myAddr).then(res => {
+						let stdSignMsg = hschain.newStdMsg({
+							msgs: [
+								{
+									type: "cosmos-sdk/MsgSend",
+									value: {
+										amount: [
+											{
+												amount: String(this.cash*1000000),
+												denom: "uhst"
+											}
+										],
+										from_address: this.myAddr,
+										to_address: this.addr
+									}
 								}
+							],
+							chain_id: 'test',
+							fee: { amount: [ ], gas: String(this.cash*200000) },
+							memo: this.memo,
+							account_number: String(res.result.value.account_number),
+							sequence: String(res.result.value.sequence)
+						});
+						const signedTx = hschain.sign(stdSignMsg, ecpairPriv)
+						this.$u.api.broadcast(signedTx).then(res => {
+							if (JSON.parse(res.raw_log)[0].success) {
+								this.$refs.uToast.show({
+									title: '交易正在处理中',
+									type: 'default',
+									position: 'bottom',
+									duration: 2000
+								})
+								setTimeout(() => {
+									uni.navigateBack()
+								},2000)
+							} else {
+								this.$refs.uToast.show({
+									title: JSON.parse(res.raw_log).message,
+									type: 'default',
+									position: 'bottom',
+									duration: 4000
+								})
 							}
-						],
-						chain_id: 'test',
-						fee: { amount: [ ], gas: String(this.cash*200000) },
-						memo: this.memo,
-						account_number: String(res.result.value.account_number),
-						sequence: String(res.result.value.sequence)
-					});
-					const signedTx = hschain.sign(stdSignMsg, ecpairPriv)
-					this.$u.api.broadcast(signedTx).then(res => {
-						if (JSON.parse(res.raw_log)[0].success) {
-							this.$refs.uToast.show({
-								title: '交易正在处理中',
-								type: 'default',
-								position: 'bottom',
-								duration: 2000
-							})
-							setTimeout(() => {
-								uni.navigateBack()
-							},2000)
-						} else {
-							this.$refs.uToast.show({
-								title: JSON.parse(res.raw_log).message,
-								type: 'default',
-								position: 'bottom',
-								duration: 4000
-							})
-						}
+						}).catch(err => {
+							console.log(err, 'err');
+						})
 					}).catch(err => {
-						console.log(err, 'err');
+						console.log(err);
 					})
-				}).catch(err => {
-					console.log(err);
-				})
-			}
+				}else if (this.$store.state.walletName==='ETH' &&!uni.getStorageSync('ERC20transfer')) {
+
+					const mnemonic = this.account[uni.getStorageSync('userAddress')].key;
+					console.log(mnemonic,this.addr,this.cash);
+					this.$wallet('ETH').sendETH(mnemonic,this.addr,this.cash).then(res=>{
+						uni.showToast({
+							title: '交易成功'
+						})
+					}).catch(err=>{
+						uni.showToast({
+							title: '交易失败'	
+						})
+						console.log(err);
+					})
+					uni.showToast({
+						title: '交易正在处理中'
+					})
+				}else if (this.$store.state.walletName==='ETH' &&uni.getStorageSync('ERC20transfer')) {
+					const mnemonic = this.account[uni.getStorageSync('userAddress')].key;
+					this.$wallet("ETH").sendToken(mnemonic,uni.getStorageSync('ERC20addr'),this.addr,this.cash).then(res=>{
+						uni.showToast({
+							title: '交易成功'
+						})
+					},err=>{
+						uni.showToast({
+							title: '交易失败'
+						})
+					});
+					uni.showToast({
+						title: '交易正在处理中'
+					})
+				}
+			},
 		}
 	}
 </script>
@@ -222,10 +254,13 @@
 	html{
 		background: #F7F7F7;
 	}
+	.u-input{
+		color: #1f1f1f;
+	}
 </style>
 <style lang="scss">
 	.transparent{
-		opacity: 0.4;
+		opacity: 0.6;
 	}
 	.opaque{
 		opacity: 1;
@@ -242,6 +277,10 @@
 		}
 		.Container{
 			padding: 0 32rpx;
+			
+		}
+		.table{
+				margin-left: -26rpx;
 		}
 		// /deep/.u-input__input {
 		// 	font-size: 36rpx;
@@ -267,7 +306,8 @@
 			left: 5vw;
 			width: 686rpx;
 			height: 96rpx;
-			background: url('../../static/common/button_gold.png');
+			background: url('../../static/common/button_gold.png') no-repeat;
+			background-size: 100% 100%;
 			text-align: center;
 			line-height: 96rpx;
 		}

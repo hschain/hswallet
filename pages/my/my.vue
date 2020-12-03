@@ -12,7 +12,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>						
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>						
 					</view>
 				</view>
 			</view>
@@ -21,7 +21,7 @@
 		<view class=" cellMark" @click="navigate('../usingSetting/usingSetting')" style="margin-bottom:32rpx">
 			<view class=" circle">
 				<view class="boxLeft">
-					<image class="leftIcon" src="../../static/my/me_setting.png" mode=""></image>
+					<image class="leftIcon" src="../../static/svg/me_setting.svg" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title ">
 							使用设置
@@ -30,7 +30,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>						
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>						
 					</view>
 				</view>
 			</view>
@@ -42,7 +42,7 @@
 		<view class=" cellMark" @click="info">
 			<view class=" circle">
 				<view class="boxLeft">
-					<image class="leftIcon" src="../../static/my/me_help.png" mode=""></image>
+					<image class="leftIcon" src="../../static/svg/me_help.svg" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title ">
 							帮助与反馈
@@ -51,7 +51,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>						
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>						
 					</view>
 				</view>
 			</view>
@@ -60,7 +60,7 @@
 		<view class=" cellMark" @click="info">
 			<view class=" circle">
 				<view class="boxLeft">
-					<image class="leftIcon" src="../../static/my/me_protocol.png" mode=""></image>
+					<image class="leftIcon" src="../../static/svg/me_protocol.svg" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title ">
 							用户协议
@@ -69,7 +69,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>						
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>						
 					</view>
 				</view>
 			</view>
@@ -78,7 +78,7 @@
 		<view class=" cellMark" @click="navigate('../about/about')">
 			<view class=" circle">
 				<view class="boxLeft">
-					<image class="leftIcon" src="../../static/my/me_about.png" mode=""></image>
+					<image class="leftIcon" src="../../static/svg/me_about.svg" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title ">
 							关于我们
@@ -87,7 +87,7 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<image class="rightImg" src="../../static/common/arrow_right.png" mode=""></image>						
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>						
 					</view>
 				</view>
 			</view>

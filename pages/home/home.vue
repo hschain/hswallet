@@ -2,14 +2,21 @@
 	<view class="home">
 		<!-- <image class="bg" src='../../static/common/bg_taichi.png'></image> -->
 		<view class="tip">
-			<image class="logo" src="../../static/common/img_logo.png" mode=""></image>
-			HS Wallet
+			<image class="logo" src="../../static/svg/img_logo.svg" mode=""></image>
+		<text class="walletName">HS Wallet</text>
 		</view>
 		<view class="title">欢迎使用HSWallet，下一步您可以创建钱包或导入已有钱包</view>
 		<view class="bottomSize">
-			<view class="createBtn" @click="create">创建钱包</view>
-			<view class="importBtn" @click="importWallet">导入钱包</view>
-			<image class="btnLogo" src="../../static/common/img_taichi.png" mode=""></image>
+			<view>
+				<image class="btnicon1" src="../../static/svg/ic_create_green.svg" mode=""></image>
+				<view class="createBtn" @click="create">创建钱包</view>
+			</view>
+			<view>
+				<view class="importBtn" @click="importWallet">导入钱包</view>
+				<image class="btnicon2" src="../../static/svg/ic_import_blue.svg" mode=""></image>
+			</view>
+			<image class="btnLogo" src="../../static/svg/img_taichi.svg" mode=""></image>
+			
 		</view>
 	</view>
 </template>
@@ -61,10 +68,11 @@
 		overflow: hidden;
 		width: 100%;
 		height: 1624rpx;
-		background: url('../../static/common/bg_taichi.png') no-repeat;
+		background: url('../../static/svg/bg_taichi.svg') no-repeat;
 		background-size:100% 100%;
 		position: relative;
 		.tip {
+			width: 300rpx;
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -74,60 +82,79 @@
 			flex-direction: column;
 			color: #fff;
 			position: absolute;
-			top: 126px;
+			top: 252rpx;
 			left: 50%;
 			transform: translate(-50%,0);
 			.logo {
 				width: 128rpx;
 				height: 128rpx;
-				margin-bottom: 20px;
+				margin-bottom: 40rpx;
+			}
+			.walletName{
+				width: 220rpx;
 			}
 		}
 		.title{
-			font-size: 16px;
+			font-size: 32rpx;
 			z-index: 10;
 			color: #000;
 			text-align: center;
-			padding: 0 16px;
+			padding: 0 32rpx;
 			position: absolute;
-			top: 356px;
+			top: 712rpx;
 		}
 		.bottomSize {
 			width: 100%;
 			position: absolute;
-			top: 416px;
+			top: 832rpx;
+			.btnicon1{
+				width: 44rpx;
+				height: 44rpx;
+				position: absolute;
+				top: 18rpx;
+				left: 112rpx;
+				z-index: 22;
+			}
+			.btnicon2{
+				width: 44rpx;
+				height: 44rpx;
+				position: absolute;
+				top: 18rpx;
+				right: 266rpx;
+				z-index: 25;
+			}
 			.createBtn {
 				font-size: 30rpx;
 				width: 50%;
-				height: 44px;
+				height: 88rpx;
 				color: #fff;
 				text-align: center;
-				line-height: 44px;
+				line-height: 88rpx;
 				background: #1F1F1F;
 				border-radius: 22px 0px 0px 22px;
-				border: 1px solid #1F1F1F;
+				border: 2rpx solid #1F1F1F;
 				position: absolute;
-				left: 16px;
+				left: 32rpx;
 			}
 			.importBtn {
 				font-size: 30rpx;
 				width: 46%;
-				height: 44px;
+				height: 88rpx;
 				background: #fff;
 				color: #000;
 				text-align: center;
-				line-height: 44px;
+				line-height: 88rpx;
 				border-radius: 0px 22px 22px 0px;
-				border: 1px solid #1F1F1F;
+				border: 2rpx solid #1F1F1F;
 				position: absolute;
-				right: 16px;
+				right: 32rpx;
 			}
 			.btnLogo{
-				width: 44px;
-				height: 42px;
+				width: 88rpx;
+				height: 84rpx;
 				position: absolute;
 				left: 50%;
-				top: 1px;
+				top: 2rpx;
 				transform: translate(-50%,0);
 			}
 		}

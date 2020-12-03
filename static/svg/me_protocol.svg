@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>me_protocol</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#ECDBB9" offset="0%"></stop>
+            <stop stop-color="#D4B483" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="我的" transform="translate(-16.000000, -313.000000)">
+            <g id="编组备份-3" transform="translate(0.000000, 296.000000)">
+                <g id="me_protocol" transform="translate(16.000000, 17.000000)">
+                    <rect id="矩形" x="0" y="0" width="22" height="22"></rect>
+                    <path d="M18,1 C19.1045695,1 20,1.8954305 20,3 L20,19 C20,20.1045695 19.1045695,21 18,21 L4,21 C2.8954305,21 2,20.1045695 2,19 L2,3 C2,1.8954305 2.8954305,1 4,1 L18,1 Z M12,3 L6,3 C5.44771525,3 5,3.44771525 5,4 L5,12 L5.00593493,12.1118423 C5.08426422,12.8419811 5.92179093,13.2539898 6.5547002,12.8320503 L9,11.202 L11.4452998,12.8320503 C12.1098545,13.2750868 13,12.7986954 13,12 L13,4 C13,3.44771525 12.5522847,3 12,3 Z M11,5 L11,10.131 L9.5547002,9.16794971 L9.439246,9.1015992 C9.12281157,8.94678137 8.74387706,8.9688982 8.4452998,9.16794971 L7,10.13 L7,5 L11,5 Z" id="形状" fill="url(#linearGradient-1)"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,11 +1,11 @@
 <template>
 	<view class="address">
-		<u-empty v-show="!addrList.length" margin-top="300" text="暂无数据" mode="list"></u-empty>
+		<u-empty v-show="!addrList.length" margin-top="300" text="暂无数据" src="../../static/common/img_blank.png" mode="list"></u-empty>
 		
-		<view v-show="addrList.length" class="greenContainer">
+		<view v-show="addrList.length" class="">
 			<view class="containerWrap">
 				<u-cell-group class="tableList">
-					<u-cell-item v-for="(item, index) in addrList" :key="index" @click="choose(index)" :arrow="false" :label="item.description" :value="fliterAddr(item.addr)" :title="item.name" :title-style="{color: '#fff'}" hover-class="none">
+					<u-cell-item v-for="(item, index) in addrList" :key="index" @click="choose(index)" :arrow="false" :label="item.description" :value="fliterAddr(item.addr)" :title="item.name" :title-style="{color: '#909195'}" hover-class="none">
 						<u-image class="addrImg" slot="icon" width="60" height="60" src="../../static/common/logo.png" shape="circle" :fade="false"></u-image>
 					</u-cell-item>
 				</u-cell-group>

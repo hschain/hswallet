@@ -1,7 +1,7 @@
 <template>
 	<view class="safetyTips">
 		<view class="header">
-			<image @click="back" class="back" src="../../static/common/ic_back.png" mode=""></image>
+			<image @click="back" class="back" src="../../static/svg/ic_back.svg" mode=""></image>
 		</view>
 		<view class="tip">
 			<text class="headerTip">安全第一</text>
@@ -44,6 +44,8 @@
 			},
 			//稍后备份
 			later() {
+				console.log(111);
+				uni.setStorageSync('backupMnemonic', false)
 				if (uni.getStorageSync('account')) {
 					let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
 					let account = this.secret.decrypt(uni.getStorageSync('account'))

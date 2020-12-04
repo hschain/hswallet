@@ -50,8 +50,8 @@
 				</view>
 				<view class="boxRight">
 					<view class="rightWrapper">
-						<view class="rightValue">
-							{{backupMnemonic ? '' : '未备份'}}
+						<view class="rightValue" style="color:#1f1f1f">
+							{{backupMnemonic ? 'yi' : '未备份'}}
 						</view>
 						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>
 					</view>
@@ -108,7 +108,7 @@
 		components: { qrCode, inputPassword },
 		data() {
 			return {
-				addr: uni.getStorageSync('userAddress') || '',
+				addr:'',
 				account: {},
 				modifyName: false, //修改钱包名称弹框
 				value: this.$store.state.walletName || '', //修改的名称
@@ -118,7 +118,7 @@
 				backupMnemonic: uni.getStorageSync('backupMnemonic') || false, //是否已备份助记词
 				inputPwOption: '', //根据入口，判断输入密码成功后的操作
 				quitDialog: false, //未备份退出提示弹框
-				walletList:this.$store.state.userWallet||'',
+				walletList:[],
 				type:''
 			}
 		},
@@ -135,16 +135,20 @@
 			uni.setStorageSync('isAccount', true)//管理界面标识
 			
 		},
+		onShow(){
+			this.walletList=this.$store.state.userWallet;
+			this.addr=uni.getStorageSync('userAddress');
+		},
 		onBackPress() {
 			if (this.showAddr) {
 				this.showAddr = false
 				return true //return true的意思是禁止返回到上一个界面
 			}
 		},
-		mounted(){
-			document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
-			document.querySelector('.u-model__footer__button').style.background = '#000';
-		},
+		// mounted(){
+		// 	document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
+		// 	document.querySelector('.u-model__footer__button').style.background = '#000';
+		// },
 		methods: {
 			back() {
 				uni.navigateBack()
@@ -216,14 +220,36 @@
 						uni.navigateTo({
 							url: '../home/home'
 						})
+					}else if(this.inputPwOption==='dele'){
+						var newArr = this.walletList.filter(item => {
+							if(this.addr !== item.addr) {
+								return true
+							}
+						})
+						this.$store.commit('SAVE_USER_WALLET', newArr)
+						let acc = this.secret.decrypt(uni.getStorageSync('account'));
+						for(var key in acc){
+							if (key==this.addr) {
+								delete (acc[key])
+							}
+						}
+						uni.setStorageSync('account', this.secret.encrypt(acc))
+						uni.navigateTo({
+							url: '../walletList/walletList'
+						})
 					}
 				}
 			},
 			// 退出账户
 			quitAccount() {
-				this.inputPwOption = 'quit'
+				if(uni.getStorageSync('account')){
+					this.inputPwOption = 'dele'
+				}else{
+					this.inputPwOption === 'quit'
+				}
 				this.$refs.inputPwNav.showDialog()
-			}
+				
+			},
 		}
 	}
 </script>

@@ -1,7 +1,7 @@
 <template>
 	<view class="walletList">
 		<view class="header">
-			<image @click="back" class="back" src="../../static/common/ic_back.png" mode=""></image>
+			<image @click="back" class="back" src="../../static/svg/ic_back.svg" mode=""></image>
             <text class="title">选择钱包</text>
 		</view>
 			<view class="changeWalletDialog">
@@ -25,11 +25,11 @@
 			</view>
             <view class="footer">
                 <view class="create" @click="createWallet">
-                     <image  class="createIcon" src="../../static/common/ic_create_gray.png" mode=""></image>
+                     <image  class="createIcon" src="../../static/svg/ic_create_gray.svg" mode=""></image>
                     创建钱包
                 </view>
                 <view class="import" @click="importWallet">
-                    <image  class="createIcon" src="../../static/common/ic_import_gray.png" mode=""></image>
+                    <image  class="createIcon" src="../../static/svg/ic_import_gray.svg" mode=""></image>
                     导入钱包
                 </view>
                 <view class="border"></view>
@@ -292,7 +292,7 @@
                 width: 44rpx;
                 height: 44rpx;
                 // position: absolute;
-                margin-top: 60rpx;
+                margin-top: 46rpx;
                 margin-right: 20rpx;
             }
             .create{

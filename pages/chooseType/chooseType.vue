@@ -1,7 +1,7 @@
 <template>
 	<view class="chooseType">
 		<view class="header">
-			<image @click="back" class="back" src="../../static/common/ic_back.png" mode=""></image>
+			<image @click="back" class="back" src="../../static/svg/ic_back.svg" mode=""></image>
             <text class="title">选择钱包类型</text>
 		</view>
         <view class="topBoder"></view>

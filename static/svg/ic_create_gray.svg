@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="22px" viewBox="0 0 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>ic_create_gray</title>
+    <g id="页面-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="选择钱包" transform="translate(-47.000000, -742.000000)">
+            <g id="Bars/Tab-Bar/Compact/Dark---3-Tabs" transform="translate(0.000000, 728.000000)">
+                <g id="编组-5" transform="translate(16.000000, 3.000000)">
+                    <g id="ic_create_gray" transform="translate(31.000000, 11.000000)">
+                        <rect id="矩形" x="0" y="0" width="22" height="22"></rect>
+                        <path d="M11,2 C11.5128358,2 11.9355072,2.38604019 11.9932723,2.88337887 L12,3 L12,10 L19,10 C19.5522847,10 20,10.4477153 20,11 C20,11.5128358 19.6139598,11.9355072 19.1166211,11.9932723 L19,12 L12,12 L12,19 C12,19.5522847 11.5522847,20 11,20 C10.4871642,20 10.0644928,19.6139598 10.0067277,19.1166211 L10,19 L10,12 L3,12 C2.44771525,12 2,11.5522847 2,11 C2,10.4871642 2.38604019,10.0644928 2.88337887,10.0067277 L3,10 L10,10 L10,3 C10,2.44771525 10.4477153,2 11,2 Z" id="路径" fill="#666666" fill-rule="nonzero"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

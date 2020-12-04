@@ -6,7 +6,7 @@
 			<image v-show="walletName=='ETH'" class="walletIcon" src="../../static/common/ETH.png" mode=""></image>
 			<view class="detail ">
 				<view class="value">
-					{{hideBalance ? "****" : this.balance}}
+					{{hideBalance ? "****" : account}}
 				</view>
 				<view class="title">
 					账户总额
@@ -81,6 +81,7 @@
 
 <script>
 	import { formatTime } from '../../common/js/common.js'
+	import { ethers } from "@/common/js/ethers.js"
 	export default {
 		name: 'assets',
 		data() {
@@ -118,7 +119,8 @@
 				hideBalance: false ,//隐藏余额
 				denom: '', //货币单位
 				currencyName:'',
-				walletName:''
+				walletName:'',
+				account:0
 			}
 		},
 		onLoad(value) {
@@ -130,8 +132,18 @@
 			 this.currencyName=value.val
 
 		},
-		onShow() {
+		async onShow() {
 			this.walletName=this.$store.state.walletName;
+			if (this.currencyName!='HST' && this.currencyName!='ETH') {
+				let result=await this.$wallet("ETH").getTokenBalance(uni.getStorageSync('userAddress'),uni.getStorageSync('ERC20addr'))
+				this.account=ethers.utils.formatEther(result)
+			}else if(this.currencyName=='ETH'){
+				let result=await this.$wallet('ETH').getBalance(uni.getStorageSync('userAddress'))
+				
+				this.account=ethers.utils.formatEther(result)
+				
+			}
+			
 			this.$store.commit('SET_QUERY_INFO_FLAG', true)
 			this.assetsList = {
 				all: [],

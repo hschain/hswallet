@@ -25,7 +25,7 @@
 					</view>
 					<view class="cash">
 						<text class="symbol">{{hideBalance ? '****' : '$ '}}</text>
-						<text class="Totalassets">{{hideBalance ? '' : assetsList[0].value}}</text>
+						<text class="Totalassets">{{hideBalance ? '' : walletName=='HST'?assetsList[0].value:balance}}</text>
 						<image v-if="hideBalance" class="seed" src="../../static/common/ic_eye_close.png" mode="" @click="hidden"></image>
 						<image v-else class="seed" src="../../static/svg/ic_eye_open.svg" mode="" @click="hidden"></image>
 					</view>
@@ -114,7 +114,7 @@
 
 <script>
 	import updateTip from '../../components/updateTip.vue'
-	import {ethers} from 'ethers'
+	import { ethers } from "@/common/js/ethers.js"
 	export default {
 		name: 'mainPage',
 		components: { updateTip },
@@ -149,8 +149,10 @@
 				],
 				btnIconColor: '#bea41e',
 				userWallet: [], //当前用户多个钱包信息
-				ETHassetsList:[],
-				ETHassets:[]
+				ETHassetsList:[
+				],
+				ETHassets:[],
+				balance:0
 			}
 		},
 		onLoad() {
@@ -162,11 +164,7 @@
 	async onShow() {
 			this.addr = uni.getStorageSync('userAddress');
 			uni.setStorageSync('ERC20transfer',false)
-			// let balance = await this.$wallet("ETH").getBalance(this.addr)
-			// this.$wallet("ETH").getTokenBalance("0xfd9c93ecfb779f0187e31c1be6fffe61f59a4fba", "0xdac17f958d2ee523a2206206994597c13d831ec7").then(res=>{
-			// 	console.log('资产余额',res);
-			// })
-			 this.$wallet('ETH').getBalance(this.addr)
+			this.$wallet('ETH').getBalance(this.addr)
 			this.$store.commit('SET_ETHASSETSLIST',[{
 					label:"ETH",
 					value:uni.getStorageSync('userAddress'),
@@ -185,7 +183,7 @@
 								balance: ethers.utils.formatEther(res)
 						 }
 						 arr.push(obj)
-					 
+					// this.balance= ethers.utils.formatEther(res);
 				}else{
 					let res=await this.$wallet("ETH").getTokenBalance(this.addr,item.value)
 						let obj={

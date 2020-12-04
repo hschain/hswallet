@@ -1,7 +1,7 @@
 <template>
 	<view class="setPw">
 		<view class="header">
-			<image @click="back" class="back" src="../../static/common/ic_back.png" mode=""></image>
+			<image @click="back" class="back" src="../../static/svg/ic_back.svg" mode=""></image>
 		</view>
 		<view class="inputPassword">
 			<view class="pinTip">{{secondCheck ? '再次验证密码' : '设置密码'}}</view>

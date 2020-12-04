@@ -25,7 +25,7 @@
 					</view>
 					<view class="cash">
 						<text class="symbol">{{hideBalance ? '****' : '$ '}}</text>
-						{{hideBalance ? '' : assetsList[0].value}}
+						<text class="Totalassets">{{hideBalance ? '' : assetsList[0].value}}</text>
 						<image v-if="hideBalance" class="seed" src="../../static/common/ic_eye_close.png" mode="" @click="hidden"></image>
 						<image v-else class="seed" src="../../static/svg/ic_eye_open.svg" mode="" @click="hidden"></image>
 					</view>
@@ -150,7 +150,7 @@
 				btnIconColor: '#bea41e',
 				userWallet: [], //当前用户多个钱包信息
 				ETHassetsList:[],
-				balance:{},
+				ETHassets:[]
 			}
 		},
 		onLoad() {
@@ -166,14 +166,41 @@
 			// this.$wallet("ETH").getTokenBalance("0xfd9c93ecfb779f0187e31c1be6fffe61f59a4fba", "0xdac17f958d2ee523a2206206994597c13d831ec7").then(res=>{
 			// 	console.log('资产余额',res);
 			// })
-			let res = await this.$wallet('ETH').getBalance(this.addr)
+			 this.$wallet('ETH').getBalance(this.addr)
 			this.$store.commit('SET_ETHASSETSLIST',[{
 					label:"ETH",
 					value:uni.getStorageSync('userAddress'),
 					logo:'../../static/common/ETH.png',
-					balance: ethers.utils.formatEther(res)
 				}]);	
-			this.ETHassetsList=uni.getStorageSync(this.addr)||this.$store.state.ETHassetsList;
+			this.ETHassets=uni.getStorageSync(this.addr)||this.$store.state.ETHassetsList;
+			console.log("ETHassets",this.ETHassets);
+			let arr=[];
+			this.ETHassets.forEach(async item=>{
+				if(item.label=='ETH'){
+				let res=await this.$wallet('ETH').getBalance(this.addr)
+						 let obj={
+							    label:item.label,
+								value:item.value,
+								logo:item.logo,
+								balance: ethers.utils.formatEther(res)
+						 }
+						 arr.push(obj)
+					 
+				}else{
+					let res=await this.$wallet("ETH").getTokenBalance(this.addr,item.value)
+						let obj={
+								label: item.label,
+								value: item.value,
+								desc: item.desc,
+								typeval: item.typeval,
+								checkMark: item.checkMark,
+								logo: item.logo,
+								balance:ethers.utils.formatEther(res)
+							}
+							arr.push(obj)			
+				}
+			})
+			this.ETHassetsList=arr;
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
 				this.walletName = acc[this.addr].name
@@ -391,6 +418,7 @@
 						margin: 10rpx 82rpx;
 						font-size: 28rpx;
 						color: #FFFFFF;
+						font-family: gilroy-regular;
 						.copyIcon{
 							width: 24rpx;
 							height: 24rpx;
@@ -404,6 +432,9 @@
 						font-size: 40rpx;
 						.symbol{
 							margin-right: 32rpx;
+						}
+						.Totalassets{
+							font-family: gilroy-bold;
 						}
 						.seed{
 							width: 44rpx;
@@ -532,6 +563,7 @@
 						// background-color: transparent;
 						.tableLeft {
 							display: flex;
+							font-family: gilroy-regular;
 							.icon {
 								width: 60rpx;
 								height: 60rpx;
@@ -547,6 +579,7 @@
 							display: flex;
 							flex-direction: column;
 							align-items: flex-end;
+							font-family: gilroy-regular;
 						}
 						
 					}

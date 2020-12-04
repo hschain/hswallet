@@ -306,7 +306,7 @@
 						height: 80rpx;
 						.count{
 							font-size: 32rpx;
-							font-family: Gilroy-Regular, Gilroy;
+							font-family: gilroy-bold;
 							font-weight: 400;
 							color: #909195;
 							padding: 0 34rpx;
@@ -336,11 +336,13 @@
 				.inputBox {
 					padding: 20rpx;
 					min-height: 256rpx;
+					font-family: gilroy-regular;
 				}
 			}
 			
 			.randBox {
 				margin: 20rpx 5vw;
+				font-family: gilroy-regular;
 			}
 			.tag {
 				margin: 15rpx;

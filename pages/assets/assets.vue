@@ -423,6 +423,7 @@
 					margin-bottom: 20rpx;
 					font-size: 50rpx;
 					color: #C19A5F;
+					font-family: gilroy-regular;
 				}
 				.title{
 					color: #909195;
@@ -491,6 +492,7 @@
 								.address{
 									margin-left: 9px;
 									color: #1f1f1f;
+									font-family: gilroy-regular;
 								}	
 								.tiem{
 									color: #909195;
@@ -509,6 +511,7 @@
 							display: flex;
 							align-items: center;
 							color: #1f1f1f;
+							font-family: gilroy-regular;
 						}
 						.border{
 							width: 610rpx;

@@ -260,6 +260,7 @@
 				width: 100%;
 				word-wrap: break-word;
 				text-align: center;
+				font-family: gilroy-regular;
 			}
 		}
 		.quitAccount {

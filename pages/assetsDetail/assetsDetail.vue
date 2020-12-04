@@ -243,6 +243,7 @@
 				}
 				.amount{
 					margin-top: 48rpx;
+					font-family: gilroy-regular;
 				}
 			}
 		}
@@ -251,6 +252,7 @@
 			margin: 30rpx 40rpx;
 			font-size: 28rpx;
 			margin-top: 64rpx;
+			font-family: gilroy-regular;
 			.fee{
 				height: 144rpx;
 				padding: 40rpx 32rpx;

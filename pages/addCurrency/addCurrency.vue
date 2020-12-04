@@ -171,20 +171,8 @@ export default {
 					})
 				}, 1000)
             },
-           async addAssets(index){
-                let res=await this.$wallet("ETH").getTokenBalance(this.addr,this.tokenList[index].value);
-                let obj={
-                    label: this.tokenList[index].label,
-					value: this.tokenList[index].value,
-					desc: this.tokenList[index].desc,
-					typeval: this.tokenList[index].typeval,
-					checkMark: this.tokenList[index].checkMark,
-                    logo: this.tokenList[index].logo,
-                    balance:res._hex
-                }
-                this.addAssetsList.push(obj);
-                // this.$store.commit('SET_ETHASSETSLIST', this.addAssetsList);
-                console.log(this.addAssetsList);
+            addAssets(index){
+                this.addAssetsList.push(this.tokenList[index]);
                 uni.setStorageSync(this.addr,Array.from(new Set(this.addAssetsList)))
                 uni.showToast({
 					title: '添加成功'
@@ -304,6 +292,7 @@ $hei: 100vh;
                             display: flex;
                             color: #1F1F1F;
                             width: 600rpx;
+                            font-family: gilroy-regular;
 							.icon {
 								width: 64rpx;
 								height: 64rpx;

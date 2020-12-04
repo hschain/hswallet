@@ -67,7 +67,7 @@
 	.home {
 		overflow: hidden;
 		width: 100%;
-		height: 1624rpx;
+		min-height: 1624rpx;
 		background: url('../../static/svg/bg_taichi.svg') no-repeat;
 		background-size:100% 100%;
 		position: relative;
@@ -92,6 +92,7 @@
 			}
 			.walletName{
 				width: 220rpx;
+				font-family: gilroy-bold;
 			}
 		}
 		.title{

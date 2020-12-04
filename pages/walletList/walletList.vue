@@ -8,9 +8,9 @@
 				<scroll-view scroll-y="true" class="containerBox">
 					<view class="addressBox" v-for="(item, index) in userWallet" :key="index + 'name'" @click="switchUserAddress(item)">
 						<view :class="['containerWrap',selected==item.addr?'hei':'bai']">
-                            <image v-if="item.type=='HST'" class="icons" src="../../static/common/chain_hst.png" mode=""></image>
-                            <image v-else-if="item.type=='ETH'" class="icons" src="../../static/common/chain_eth.png" mode=""></image>
-                            <image v-if="selected==item.addr" class="selected" src="../../static/common/ic_checked.png" mode=""></image>
+                            <image v-if="item.type=='HST'" class="icons" src="../../static/svg/chain_hst.svg" mode=""></image>
+                            <image v-else-if="item.type=='ETH'" class="icons" src="../../static/svg/chain_eth.svg" mode=""></image>
+                            <image v-if="selected==item.addr" class="selected" src="../../static/svg/ic_checked.svg" mode=""></image>
 							<view class="walletInfo">
 								<view class="name">
 									{{item.name}}
@@ -260,9 +260,10 @@
 						.name {
                             font-size: 36rpx;
                             margin-left: 80rpx;
+                            font-family: Gilroy-Medium, Gilroy;
                             position: absolute;
                             left: 40rpx;
-                            top:44rpx;
+                            top:36rpx;
 						}
 						.addr {
                             text-align: end;
@@ -271,6 +272,7 @@
                             top:84rpx;
                             color: #909195;
                             font-size: 24rpx;
+                            font-family: gilroy-regular;
 						}
 					}
 				}

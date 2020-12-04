@@ -171,6 +171,7 @@
 			.title {
 				font-size: 40rpx;
 				margin: 30rpx 0 20rpx;
+				font-family: gilroy-bold;
 			}
 			.version {
 				color: #aaa;

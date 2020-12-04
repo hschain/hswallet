@@ -118,6 +118,7 @@
 					text-align: center;
 					font-size: 36rpx;
 					color: #1F1F1F;
+					font-family:gilroy-bold;
 				}
 				.copyBtn{
 					width: 526rpx;

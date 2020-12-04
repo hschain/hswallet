@@ -38,12 +38,17 @@
 	@import "uview-ui/index.scss";
 	@import './common/css/common.scss';
 	@font-face{
-	  font-family: 'content-font';
-	  // src:url('~@/static/font/simply.ttf');
+	  font-family: 'gilroy-bold';
+	  src:url('~@/static/font/gilroy-bold-4.otf');
 	  font-weight: normal;
 	  font-style: normal;
 	}
-	
+	@font-face{
+	  font-family: 'gilroy-regular';
+	  src:url('~@/static/font/gilroy-regular-3.otf');
+	  font-weight: normal;
+	  font-style: normal;
+	}
 	:root {
 		--mainColor: #020e46;
 	}

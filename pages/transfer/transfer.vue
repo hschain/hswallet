@@ -6,7 +6,7 @@
 		<view class="Container">
 			<view class="containerWrap">
 				<view class="addrInput">
-					<u-input :custom-style="{fontSize: '32rpx',background:'#fff'}" class="input" v-model="addr" :placeholder="$store.state.walletType + '地址'" :clearable="false" :border="false"/>
+					<u-input :custom-style="{fontSize: '32rpx',background:'#fff',fontFamily:'gilroy-bold'}" class="input" v-model="addr" :placeholder="$store.state.walletType + '地址'" :clearable="false" :border="false"/>
 					<image @click="addAddress" class="addrImg" src="../../static/common/ic_address.png" mode=""></image>
 				</view>
 				<u-cell-group v-show="Object.keys(addrData).length">
@@ -24,7 +24,7 @@
 				<view class="">
 					<u-cell-group>
 						<u-cell-item :arrow="false" hover-class="none">
-							<u-input class="table" slot="title" :custom-style="{fontSize: '46rpx'}" v-model="cash" placeholder="0" :clearable="false" type="text" />
+							<u-input class="table" slot="title" :custom-style="{fontSize: '46rpx',fontFamily:'gilroy-bold'}" v-model="cash" placeholder="0" :clearable="false" type="text" />
 						</u-cell-item>
 						<u-cell-item :arrow="false" hover-class="none">
 							<u-input class="table" slot="title" :custom-style="{fontSize: '32rpx'}" v-model="memo" placeholder="备注" :clearable="false" />

@@ -73,11 +73,11 @@
             // top: 100rpx;
             // left: 40rpx;
 			.back {
-				width: 20px;
-				height: 16px;
+				width: 40rpx;
+				height: 32rpx;
             } 
             .title{
-                font-size: 17px;
+                font-size: 34rpx;
                 font-family: PingFangSC-Semibold, PingFang SC;
                 font-weight: 600;
                 color: #1F1F1F;
@@ -90,35 +90,36 @@
                 width: 100%;
                 height: 1px;
                 box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.16);
-                margin-top: 10px;
+                margin-top: 20rpx;
             }
             .typeList{
+                font-family: gilroy-regular;
                 .hst{
                     width: 100%;
-                    height: 64px;
-                    padding: 16px;
+                    height: 128rpx;
+                    padding: 32rpx;
                     position: relative;
                     box-sizing: border-box;
                     .hstLogo{
-                        width: 32px;
-                        height: 32px;
+                        width: 64rpx;
+                        height: 64rpx;
                     }
                     .walletTitle{
                         position: absolute;
-                        left: 64px;
-                        top: 16px;
+                        left: 128rpx;
+                        top: 32rpx;
                         .HSTwallet{
-                            font-size: 16px;
+                            font-size: 32rpx;
                             font-family: Gilroy-Regular, Gilroy;
                             font-weight: 400;
                             color: #1F1F1F;
                         }
                         .small{
-                            font-size: 12px;
+                            font-size: 24rpx;
                             font-family: Gilroy-Regular, Gilroy;
                             font-weight: 400;
                             color: #909195;
-                            margin-top: -5px;
+                            margin-top: 10rpx;
                         }
                         
                     }
@@ -126,11 +127,11 @@
                             width: 16px;
                             height: 16px;
                             position: absolute;
-                            top: 24px;
-                            right: 16px;
+                            top: 48rpx;
+                            right: 32rpx;
                         }
                     .shortBoder{
-                        width: 80%;
+                        width: 620rpx;
                         height: 1px;
                         background: #F3F3F7;
                         position: absolute;
@@ -140,42 +141,42 @@
                 }
                 .eth{
                     width: 100%;
-                    height: 64px;
-                    padding: 16px;
+                    height: 128rpx;
+                    padding: 32rpx;
                     position: relative;
                     box-sizing: border-box;
                     .hstLogo{
-                        width: 32px;
-                        height: 32px;
+                        width: 64rpx;
+                        height: 64rpx;
                     }
                     .walletTitle{
                         position: absolute;
-                        left: 64px;
-                        top: 16px;
+                        left: 128rpx;
+                        top: 32rpx;
                         .HSTwallet{
-                            font-size: 16px;
+                            font-size: 32rpx;
                             font-family: Gilroy-Regular, Gilroy;
                             font-weight: 400;
                             color: #1F1F1F;
                         }
                         .small{
-                            font-size: 12px;
+                            font-size: 24rpx;
                             font-family: Gilroy-Regular, Gilroy;
                             font-weight: 400;
                             color: #909195;
-                            margin-top: -5px;
+                            margin-top: 10rpx;
                         }
                         
                     }
                     .arrowRight{
-                            width: 16px;
-                            height: 16px;
+                            width: 32rpx;
+                            height: 32rpx;
                             position: absolute;
-                            top: 24px;
-                            right: 16px;
+                            top: 48rpx;
+                            right: 32rpx;
                         }
                     .shortBoder{
-                        width: 80%;
+                        width: 620rpx;
                         height: 1px;
                         background: #F3F3F7;
                         position: absolute;

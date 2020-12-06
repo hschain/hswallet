@@ -162,6 +162,7 @@
 			}, 500)
 		},
 	async onShow() {
+		console.log(uni.getStorageSync('account'));
 			this.addr = uni.getStorageSync('userAddress');
 			uni.setStorageSync('ERC20transfer',false)
 			this.$wallet('ETH').getBalance(this.addr)
@@ -371,7 +372,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		margin-top: 58rpx;
+		margin-top: 62rpx;
 		.top{
 			width: 100%;
 			height: 520rpx;

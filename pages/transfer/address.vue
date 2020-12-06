@@ -1,14 +1,21 @@
 <template>
 	<view class="address">
-		<u-empty v-show="!addrList.length" margin-top="300" text="暂无数据" src="../../static/common/img_blank.png" mode="list"></u-empty>
+		<u-empty v-if="!addrList.length" margin-top="300" text="暂无数据" src="../../static/common/img_blank.png" mode="list"></u-empty>
 		
-		<view v-show="addrList.length" class="">
+		<view v-else-if="addrList.length" class="">
 			<view class="containerWrap">
-				<u-cell-group class="tableList">
-					<u-cell-item v-for="(item, index) in addrList" :key="index" @click="choose(index)" :arrow="false" :label="item.description" :value="fliterAddr(item.addr)" :title="item.name" :title-style="{color: '#909195'}" hover-class="none">
-						<u-image class="addrImg" slot="icon" width="60" height="60" src="../../static/common/logo.png" shape="circle" :fade="false"></u-image>
-					</u-cell-item>
-				</u-cell-group>
+				<!-- <u-cell-group class="tableList"> -->
+					<!-- <u-cell-item v-for="(item, index) in addrList" :key="index" @click="choose(index)" :arrow="false" :label="item.description" :value="fliterAddr(item.addr)" :title="item.name" :title-style="{color: '#909195'}" hover-class="none"> -->
+						<view class="tableList" v-for="(item, index) in addrList" :key="index" @click="choose(index)">
+							<image v-if="item.denom=='HST'" class="rightImg" src="../../static/svg/chain_hst.svg" mode="" ></image>
+							<image v-else class="rightImg" src="../../static/svg/chain_eth.svg" mode="" ></image>
+							<view class="name">{{item.name}}</view>
+							<view class="addr">{{item.addr}}</view>
+							<view class="description">{{item.description}}</view>
+						</view>
+						
+					<!-- </u-cell-item> -->
+				<!-- </u-cell-group> -->
 			</view>
 		</view>
 
@@ -40,6 +47,7 @@
 				],
 				delWarning: false, //删除确认弹框
 				showActionSheet: false,
+				AddressType:uni.getStorageSync('AddressType')||'HST'
 			}
 		},
 		onLoad() {
@@ -98,15 +106,41 @@
 		font-size: 32rpx;
 		margin: 0;		
 		padding-top: 40rpx;
-		// /deep/ .u-drawer-bottom {
-		// 	background-color: #000;
-		// 	border-top: 2rpx solid rgba(236, 238, 255, 0.3);
-		// 	padding: 0 40rpx;
-		// }
-		
 		.tableList {
-			.addrImg {
-				margin-right: 20rpx;
+			width: 750rpx;
+			height: 160rpx;
+			position: relative;
+			.rightImg {
+				width: 64rpx;
+                height: 64rpx;
+				margin-left: 32rpx;
+				position: absolute;
+				top: 50%;
+				transform: translate(0,-50%);
+				
+			}
+			.description{
+				color: #909195;
+				position: absolute;
+				left: 128rpx;
+				bottom: 24rpx;
+				font-size: 24rpx;
+			}
+			.name{
+				color: #909195;
+				position: absolute;
+				left: 128rpx;
+				top: 24rpx;
+				font-size: 28rpx;
+			}
+			.addr{
+				width: 590rpx;
+				color: #1F1F1F;
+				font-family: gilroy-regular;
+				position: absolute;
+				left: 128rpx;
+				top: 70rpx;
+				font-size: 28rpx;
 			}
 		}
 	}

@@ -6,22 +6,22 @@
 		</view>
         <view class="topBoder"></view>
         <view class="typeList">
-            <view class="hst" @click="onSelect()">
-                <image  class="hstLogo" src="../../static/common/chain_hst.png" mode=""></image>
+            <view class="hst" @click="onSelect('HST')">
+                <image  class="hstLogo" src="../../static/svg/chain_hst.svg" mode=""></image>
                 <view class="walletTitle">
                     <view class="HSTwallet">HST</view>
                     <view class="small">HSchain</view>
                 </view>
-                <image  class="arrowRight" src="../../static/svg/arrow_right.svg" mode=""></image>
+                <image v-if="AddressType=='HST'" class="arrowRight" src="../../static/svg/ic_checked.svg" mode=""></image>
                 <view class="shortBoder"></view>
             </view>
-            <view class="eth" @click="onSelect()">
-                <image  class="hstLogo" src="../../static/common/chain_eth.png" mode=""></image>
+            <view class="eth" @click="onSelect('ETH')">
+                <image  class="hstLogo" src="../../static/svg/chain_eth.svg" mode=""></image>
                 <view class="walletTitle">
                     <view class="HSTwallet">ETH</view>
                     <view class="small">Ethereum</view>
                 </view>
-                <image  class="arrowRight" src="../../static/svg/arrow_right.svg" mode=""></image>
+                <image v-if="AddressType=='ETH'" class="arrowRight" src="../../static/svg/ic_checked.svg" mode=""></image>
                 <view class="shortBoder"></view>
             </view>
         </view>
@@ -33,7 +33,8 @@
 		name: 'chooseAddress',
 		data() {
 			return {
-                type:''
+                type:'',
+                AddressType:uni.getStorageSync('AddressType')||'HST'
 			}
         },
         // onLoad(data) { //option为object类型，会序列化上个页面传递的参数
@@ -43,10 +44,11 @@
 			back() {
 				uni.navigateBack()
             },
-			onSelect() {
-				// this.$store.dispatch('saveWalletType', type)
+			onSelect(item) {
+                // this.$store.dispatch('saveWalletType', type)
+                uni.setStorageSync('AddressType',item),
                     uni.navigateTo({
-					    url: '../transfer/newAddress'
+					    url: `../transfer/newAddress`
 				    })				
 			}
 		}
@@ -85,18 +87,18 @@
             .typeList{
                 .hst{
                     width: 100%;
-                    height: 64px;
-                    padding: 16px;
+                    height: 128rpx;
+                    padding: 32rpx;
                     position: relative;
                     box-sizing: border-box;
                     .hstLogo{
-                        width: 32px;
-                        height: 32px;
+                        width: 64rpx;
+                        height: 64rpx;
                     }
                     .walletTitle{
                         position: absolute;
-                        left: 64px;
-                        top: 16px;
+                        left: 128rpx;
+                        top: 32rpx;
                         .HSTwallet{
                             font-size: 16px;
                             font-family: Gilroy-Regular, Gilroy;
@@ -108,19 +110,19 @@
                             font-family: Gilroy-Regular, Gilroy;
                             font-weight: 400;
                             color: #909195;
-                            margin-top: -5px;
+                            margin-top: 10rpx;
                         }
                         
                     }
                     .arrowRight{
-                            width: 16px;
-                            height: 16px;
+                            width: 32rpx;
+                            height: 32rpx;
                             position: absolute;
-                            top: 24px;
-                            right: 16px;
+                            top: 48rpx;
+                            right: 32rpx;
                         }
                     .shortBoder{
-                        width: 80%;
+                        width: 620rpx;
                         height: 1px;
                         background: #F3F3F7;
                         position: absolute;
@@ -130,18 +132,18 @@
                 }
                 .eth{
                     width: 100%;
-                    height: 64px;
-                    padding: 16px;
+                    height: 128rpx;
+                    padding: 32rpx;
                     position: relative;
                     box-sizing: border-box;
                     .hstLogo{
-                        width: 32px;
-                        height: 32px;
+                        width: 64rpx;
+                        height: 64rpx;
                     }
                     .walletTitle{
                         position: absolute;
-                        left: 64px;
-                        top: 16px;
+                        left: 128rpx;
+                        top: 32rpx;
                         .HSTwallet{
                             font-size: 16px;
                             font-family: Gilroy-Regular, Gilroy;
@@ -153,19 +155,19 @@
                             font-family: Gilroy-Regular, Gilroy;
                             font-weight: 400;
                             color: #909195;
-                            margin-top: -5px;
+                            margin-top: 10rpx;
                         }
                         
                     }
                     .arrowRight{
-                            width: 16px;
-                            height: 16px;
+                            width: 32rpx;
+                            height: 32rpx;
                             position: absolute;
-                            top: 24px;
-                            right: 16px;
+                            top: 48rpx;
+                            right: 32rpx;
                         }
                     .shortBoder{
-                        width: 80%;
+                        width: 620rpx;
                         height: 1px;
                         background: #F3F3F7;
                         position: absolute;

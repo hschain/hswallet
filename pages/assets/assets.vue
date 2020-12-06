@@ -43,11 +43,11 @@
 							<view v-else @click="walletName=='HST'?navigate(item):ETHnavigate(item)" v-for="(item, i) in assetsList[name]" :key="i + 'key'" class="table">
 								<view class="tableLeft">
 									<view class="tabTop">
-										<image class="icon" v-show="item.type=='in'" src="../../static/svg/ic_deposit.svg" mode=""></image>
-										<image v-show="item.type=='out'" class="icon" src="../../static/svg/ic_withdraw.svg" mode=""></image>
-										<image v-show="item.result=='ERROR'" class="icon" src="../../static/svg/ic_failed.svg" mode=""></image>
-										<text v-show="walletName=='HST'" class="denom">{{item.denom}}</text>
-										<view class="address" v-show="walletName=='ETH'" >{{item.from | hash}}</view>
+										<image class="icon" v-if="item.type=='in'" src="../../static/svg/ic_deposit.svg" mode=""></image>
+										<image v-if="item.type=='out'" class="icon" src="../../static/svg/ic_withdraw.svg" mode=""></image>
+										<image v-if="item.result=='ERROR'" class="icon" src="../../static/svg/ic_failed.svg" mode=""></image>
+										<text v-if="walletName=='HST'" class="denom">{{item.denom}}</text>
+										<view class="address" v-if="walletName=='ETH'" >{{item.from | hash}}</view>
 										<view class="tiem">{{item.time}}</view>
 									</view>
 									<!-- <view class="tabBottom">{{item.time}}</view> -->
@@ -208,9 +208,11 @@
 			// 获取最新资产详情
 			queryNewAssetsList() {
 				if(this.currencyName=='HST'){
+					console.log('zhou  HST');
 					let params = {
 						limit: this.limit,
-						address: uni.getStorageSync('userAddress'),
+						// address: uni.getStorageSync('userAddress'),
+						address:'hsc1wqznqd37hve7mdk759e25svw5597rw5gglle9f',
 						timetable: 'now',
 						denom: this.denom
 					}
@@ -352,7 +354,8 @@
 				uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
 				let params = {
 					limit: this.limit,
-					address: uni.getStorageSync('userAddress'),
+					// address: uni.getStorageSync('userAddress'),
+					address:'hsc1wqznqd37hve7mdk759e25svw5597rw5gglle9f',
 					timetable: 'history',
 					denom: this.denom
 				}
@@ -365,6 +368,7 @@
 							coins[0].amount = (coins[0].amount / 1000000).toFixed(6);
 						}
 						this.balance = coins[0].amount
+						console.log('res',res);
 					})
 				}
 				if (this.loadStatus === 'loadmore') {
@@ -383,7 +387,7 @@
 			},
 			//转账
 			transfer() {
-				if (this.currencyName!='ETH' && this.currencyName=='HST') {
+				if (this.currencyName!='ETH' && this.currencyName!='HST') {
 					uni.setStorageSync('ERC20transfer',true)
 				}
 				uni.navigateTo({ url: '../transfer/transfer' })
@@ -497,7 +501,7 @@
 								}
 								.denom {
 									font-size: 32rpx;
-									line-height: 60rpx;
+									// line-height: 60rpx;
 									color: #1f1f1f;
 									margin-left: 9px;
 								}	

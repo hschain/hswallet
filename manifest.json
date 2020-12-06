@@ -94,14 +94,14 @@
                         "spotlight@2x" : "unpackage/res/icons/80x80.png"
                     },
                     "iphone" : {
-                        "app@2x" : "unpackage/res/icons/120x120.png",
-                        "app@3x" : "unpackage/res/icons/180x180.png",
-                        "notification@2x" : "unpackage/res/icons/40x40.png",
-                        "notification@3x" : "unpackage/res/icons/60x60.png",
-                        "settings@2x" : "unpackage/res/icons/58x58.png",
-                        "settings@3x" : "unpackage/res/icons/87x87.png",
-                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
-                        "spotlight@3x" : "unpackage/res/icons/120x120.png"
+                        "app@2x" : "/Users/masc/Desktop/AppIcon/iOS/icon_60pt@2x.png",
+                        "app@3x" : "/Users/masc/Desktop/AppIcon/iOS/icon_60pt@3x.png",
+                        "notification@2x" : "/Users/masc/Desktop/AppIcon/iOS/icon_20pt@2x.png",
+                        "notification@3x" : "/Users/masc/Desktop/AppIcon/iOS/icon_20pt@3x.png",
+                        "settings@2x" : "/Users/masc/Desktop/AppIcon/iOS/icon_29pt@2x.png",
+                        "settings@3x" : "/Users/masc/Desktop/AppIcon/iOS/icon_29pt@3x.png",
+                        "spotlight@2x" : "/Users/masc/Desktop/AppIcon/iOS/icon_40pt@2x.png",
+                        "spotlight@3x" : "/Users/masc/Desktop/AppIcon/iOS/icon_40pt@3x.png"
                     }
                 }
             },
@@ -109,12 +109,21 @@
                 "iosStyle" : "common",
                 "androidStyle" : "default",
                 "ios" : {
-                    "storyboard" : ""
+                    "storyboard" : "",
+                    "iphone" : {
+                        "portrait-896h@3x" : "/Users/masc/Desktop/Startup/iOS/1242x2688.png",
+                        "portrait-896h@2x" : "/Users/masc/Desktop/Startup/iOS/828x1792.png",
+                        "iphonex" : "/Users/masc/Desktop/Startup/iOS/1125x2436.png",
+                        "retina55" : "/Users/masc/Desktop/Startup/iOS/1242x2208.png",
+                        "retina47" : "/Users/masc/Desktop/Startup/iOS/750x1334.png",
+                        "retina40" : "/Users/masc/Desktop/Startup/iOS/640x1136.png",
+                        "retina35" : "/Users/masc/Desktop/Startup/iOS/640x960.png"
+                    }
                 },
                 "android" : {
-                    "hdpi" : "/Users/masc/Desktop/Startup/Android/480x800.png",
-                    "xhdpi" : "/Users/masc/Desktop/Startup/Android/720x1280.png",
-                    "xxhdpi" : "/Users/masc/Desktop/Startup/Android/1080x1920.png"
+                    "hdpi" : "/Users/masc/Desktop/Startup/Android/480.9.png",
+                    "xhdpi" : "/Users/masc/Desktop/Startup/Android/720.9.png",
+                    "xxhdpi" : "/Users/masc/Desktop/Startup/Android/1080.9.png"
                 }
             }
         }

@@ -210,13 +210,7 @@
 						uni.navigateTo({
 							url: '../safetyTips/safetyTips'
 						})
-					} else if (this.inputPwOption === 'quit') {
-						uni.removeStorageSync('account')
-						uni.removeStorageSync('localPw')
-						uni.removeStorageSync('userAddress')
-						this.$store.dispatch('saveAddrData', {})
-						this.$store.commit('SET_WALLETNAME', '')
-						this.$store.dispatch('websocketClose', "wss://testnet.hschain.io/api/v1/ws")
+					} else if (this.inputPwOption === 'quit') {                                                        
 						uni.navigateTo({
 							url: '../home/home'
 						})
@@ -234,19 +228,28 @@
 							}
 						}
 						uni.setStorageSync('account', this.secret.encrypt(acc))
-						uni.navigateTo({
-							url: '../walletList/walletList'
-						})
+						if(uni.getStorageSync('account')){
+							uni.navigateTo({
+								url: '../walletList/walletList'
+							})
+						}else{
+							uni.removeStorageSync('account')
+							uni.removeStorageSync('localPw')
+							uni.removeStorageSync('userAddress')
+							this.$store.dispatch('saveAddrData', {})
+							this.$store.commit('SET_WALLETNAME', '')
+							this.$store.dispatch('websocketClose', "wss://testnet.hschain.io/api/v1/ws")
+							uni.navigateTo({
+								url: '../home/home'
+							})
+						}
 					}
 				}
 			},
 			// 退出账户
 			quitAccount() {
-				if(uni.getStorageSync('account')){
 					this.inputPwOption = 'dele'
-				}else{
-					this.inputPwOption === 'quit'
-				}
+				
 				this.$refs.inputPwNav.showDialog()
 				
 			},

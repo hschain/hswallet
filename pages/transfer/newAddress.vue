@@ -3,7 +3,7 @@
 		<view class="addressName">
 			<view class="containerWrap" @click="goto">
 				<u-cell-group>
-					<u-cell-item :title="newAddr.denom" :arrow="false" :border-bottom="false"  hover-class="none">
+					<u-cell-item :title="AddressType" :arrow="false" :border-bottom="false"  hover-class="none">
 						<u-image class="addrImg" slot="icon" width="60" height="60" :src="src" shape="circle" :fade="false"></u-image>
 						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode="" ></image>	
 					</u-cell-item>
@@ -46,17 +46,18 @@
 		data() {
 			return {
 				newAddr: {
-					denom: 'HST',
+					denom: uni.getStorageSync('AddressType')||'HST',
 					addr: '',
 					name: '',
 					description: ''
 				},
-				src: '../../static/common/logo.png',
+				src: '',
 				tips: {
 					type: 'error',
 					duration: '1500'
 				},
-				editIndex: -1
+				editIndex: -1,
+				AddressType:uni.getStorageSync('AddressType')||'HST'
 			}
 		},
 		onLoad(value) {
@@ -81,7 +82,7 @@
 					type: this.tips.type,
 					duration: this.tips.duration
 				})
-			} else if (!(/^hsc/i.test(this.newAddr.addr))) {
+			} else if (uni.getStorageSync('AddressType')=='HST'&& !(/^hsc/i.test(this.newAddr.addr))){
 				this.$refs.uTips.show({
 					title: '请输入正确的地址',
 					type: this.tips.type,
@@ -132,12 +133,19 @@
 					uni.showToast({
 						title: '保存成功',
 						success() {
-							setTimeout(() => uni.navigateBack(), 500)
+							uni.navigateTo({url: '../transfer/address'})
 						}
 					})
 				}
 			}
 			
+		},
+		onShow(){
+			if (this.AddressType=='HST') {
+				this.src='../../static/svg/chain_hst.svg'
+			}else if (this.AddressType=='ETH') {
+				this.src='../../static/svg/chain_eth.svg'
+			}
 		},
 		methods:{
 			addAddress() {

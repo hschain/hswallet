@@ -2,7 +2,7 @@
 	<view class="content">
 		<!-- <view style="height: var(--status-bar-height);background-color: var(--mainColor);"></view> -->
 		<view class="introduce ">
-			<image v-show="walletName=='HST'" class="walletIcon" src="../../static/common/chain_hst.png" mode=""></image>
+			<image v-show="walletName=='HST'" class="walletIcon" src="../../static/common/logo.png" mode=""></image>
 			<image v-show="walletName=='ETH'" class="walletIcon" src="../../static/common/ETH.png" mode=""></image>
 			<view class="detail ">
 				<view class="value">
@@ -67,11 +67,11 @@
 		
 		<view class="bottomBar">
 			<view class="collection">
-				<u-icon class="icon" name="../../static/svg/ic_deposit.svg" custom-prefix="project-icon" size="30"></u-icon>
+				<u-icon class="icon" name="../../static/svg/ic_deposit.svg" custom-prefix="project-icon" size="100"></u-icon>
 				<view class="createBtn" :custom-style="customStyle" @click="receipt">收款</view>
 			</view>
 			<view class="transfer">
-				<u-icon class="icon" name="../../static/svg/ic_withdraw.svg"  custom-prefix="project-icon" size="30"></u-icon>
+				<u-icon class="icon" name="../../static/svg/ic_withdraw.svg"  custom-prefix="project-icon" size="100"></u-icon>
 				<view class="importBtn" type="primary" @click="transfer">转账</view>
 			</view>
 			<image class="btnLogo" src="../../static/svg/img_taichi.svg" mode=""></image>
@@ -208,11 +208,10 @@
 			// 获取最新资产详情
 			queryNewAssetsList() {
 				if(this.currencyName=='HST'){
-					console.log('zhou  HST');
 					let params = {
 						limit: this.limit,
-						// address: uni.getStorageSync('userAddress'),
-						address:'hsc1wqznqd37hve7mdk759e25svw5597rw5gglle9f',
+						address: uni.getStorageSync('userAddress'),
+						// address:'hsc1wqznqd37hve7mdk759e25svw5597rw5gglle9f',
 						timetable: 'now',
 						denom: this.denom
 					}
@@ -354,31 +353,37 @@
 				uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
 				let params = {
 					limit: this.limit,
-					// address: uni.getStorageSync('userAddress'),
-					address:'hsc1wqznqd37hve7mdk759e25svw5597rw5gglle9f',
+					address: uni.getStorageSync('userAddress'),
+					// address:'hsc1wqznqd37hve7mdk759e25svw5597rw5gglle9f',
 					timetable: 'history',
 					denom: this.denom
 				}
 				if (lazyLoad) {
-					params.begin = this.paging.end - 1
+					console.log(lazyLoad);
+					params.begin = this.paging.end-1
+					console.log(this.paging);
 				} else {
+					console.log(2222222);
 					this.$u.api.getAssets(uni.getStorageSync('userAddress')).then(res => {
 						let coins = res.data.result.value.coins
 						if (/^u/i.test(coins[0].denom)) {
 							coins[0].amount = (coins[0].amount / 1000000).toFixed(6);
 						}
-						this.balance = coins[0].amount
+						this.account = coins[0].amount
 						console.log('res',res);
 					})
 				}
 				if (this.loadStatus === 'loadmore') {
 					this.loadStatus = 'loading'
+					console.log('loding',params);
 					this.queryAssetsList(lazyLoad,this.loadStatus,params);
 				}else{
-					this.queryAssetsList(lazyLoad,this.loadStatus,params);
+					console.log(params);
+					// this.queryAssetsList(lazyLoad,this.loadStatus,params);
 				}
 			},
 			navigate(item) {
+				console.log(item);
 				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail?hash=${item.txHash}` })
 			},
 			ETHnavigate(item){
@@ -552,22 +557,22 @@
 			padding: 10rpx 5vw;
 			.transfer{
 				.icon{
-					width: 44rpx;
-					height: 44rpx;
+					width: 22px;
+					height: 22px;
 					z-index: 22;
 					position: absolute;
-						left: 464rpx;
-						top: 34rpx;
+					left: 460rpx;
+					top: 30rpx;
 				}
 			}
 			.collection{
 				.icon{
-					width: 44rpx;
-					height: 44rpx;
+					width: 22px;
+					height: 22px;
 					z-index: 22;
 					position: absolute;
-					left: 140rpx;
-					top: 34rpx;
+					left: 136rpx;
+					top: 30rpx;
 				}
 			}
 			.createBtn {

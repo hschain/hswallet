@@ -158,9 +158,9 @@
 			},
 			//验证成功后下一步开启交易
 			transation() {
-				
+				console.log('准备交易');
 				if (this.$store.state.walletName==='HST') {
-					console.log(333333);
+					console.log('交易HST');
 					const mnemonic = this.account[this.myAddr].key
 					const hschain = this.$chain(this.$url, this.$chainId)
 					hschain.setPath(this.$path)
@@ -190,6 +190,7 @@
 						});
 						const signedTx = hschain.sign(stdSignMsg, ecpairPriv)
 						this.$u.api.broadcast(signedTx).then(res => {
+							console.log('res',res);
 							if (JSON.parse(res.raw_log)[0].success) {
 								this.$refs.uToast.show({
 									title: '交易正在处理中',

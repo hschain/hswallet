@@ -1599,6 +1599,7 @@ var createQrCodeImg = function(text, options) {
         qr = qrcode(typeNumber, errorCorrectLevel || 'M');
         qr.addData(text);
         qr.make();
+        console.log(111111);
     } catch (e) {
         if(typeNumber >= 40) {
             throw new Error('Text too long to encode');

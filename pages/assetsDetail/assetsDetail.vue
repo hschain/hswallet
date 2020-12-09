@@ -6,7 +6,7 @@
 				<image v-if="assetData.success" class="icon" src="../../static/common/img_success.png" mode=""></image>
 				<image v-else class="icon" src="../../static/common/img_fail.png" mode=""></image>
 				<text :class="['tip',assetData.success?'green':'red']">{{assetData.success? '成功' : '失败'}}</text>
-				<text class="time">{{assetData.tx_timestamp}}</text>
+				<text class="time">{{assetData.time}}</text>
 				<text class="amount">{{assetData.type === 'in' ? '+ ' : '- '}}{{assetData.value+' HST'}}</text>
 			</view>
 		</view>
@@ -86,6 +86,7 @@
 		},
 		onShow(){
 			this.walletName=this.$store.state.walletName;
+			console.log('show',this.walletName);
 			if (this.walletName=='ETH') {
 				uni.request({
 						url:'http://8.129.187.233:25676/eth/access/eth_list',
@@ -134,8 +135,13 @@
 			},
 		onLoad(value) {
 			//获取当前交易hash信息
+			this.walletName=this.$store.state.walletName;
+			console.log('55555555');
+			console.log(this.walletName);
 			if (this.walletName=='HST') {
+				console.log('HST');
 				this.$u.api.getAssetsList({}, '/' + value.hash).then(res => {
+					console.log('res',res.data);
 					if (res.data) {
 						res.data.forEach(item => {
 							this.assetData = {
@@ -167,6 +173,7 @@
 									}
 								}
 							}
+							console.log('this.assetData',this.assetData);
 							item.messages[0].events.message.sender === uni.getStorageSync('userAddress') ? this.assetData.type = 'out' : this.assetData.type = 'in'
 							if (/^u/i.test(item.messages[0].events.transfer.denom)) {
 								this.assetData.denom = item.messages[0].events.transfer.denom.slice(1);
@@ -174,6 +181,8 @@
 							}
 						})
 					}
+				}).catch(err=>{
+					console.log(err);
 				})
 			}else if (this.walletName=='ETH') {
 					
@@ -204,7 +213,7 @@
 		color: #909195;
 	}
 	.addr{
-		width: 494rpx;
+		width: 474rpx;
 		font-size: 24rpx;
 		font-family: Gilroy-Regular, Gilroy;
 		font-weight: 400;

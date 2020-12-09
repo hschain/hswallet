@@ -44,8 +44,8 @@
 			},
 			//稍后备份
 			later() {
-				console.log(111);
-				uni.setStorageSync('backupMnemonic', false)
+				let address = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
+				uni.setStorageSync(address+'backupMnemonic', false)
 				if (uni.getStorageSync('account')) {
 					let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
 					let account = this.secret.decrypt(uni.getStorageSync('account'))
@@ -105,17 +105,17 @@
 				font-weight: 600;
 			}
 			.circle{
-				width: 8px;
-				height: 8px;
+				width: 16rpx;
+				height: 16rpx;
 				border: 2px solid #909195;
 				border-radius: 50%;
 				position: relative;
-				top: 15px;
+				top: 30rpx;
 			}
 			.tipText {
 				margin-bottom: 40rpx;
 				font-size: 16px;
-				margin-left: 32px;
+				margin-left: 64rpx;
 			}
 		}
 		.bottomSize {
@@ -128,7 +128,7 @@
 				background-size: 100% 100%;
 				// box-shadow:inset 0px 4px 16px 0px rgba(212, 180, 131, 0.4), 0px 0px 3px 0px #F7DDB5;
 				position: absolute;
-				top: 400px;
+				top: 800rpx;
 				left: 50%;
 				transform: translate(-50%,0);
 			}
@@ -142,7 +142,7 @@
 				line-height: 96rpx;
 				border: 1px solid #1F1F1F;
 				position: absolute;
-				top: 460px;
+				top: 920rpx;
 				left: 50%;
 				transform: translate(-50%,0);
 			}

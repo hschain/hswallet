@@ -1,7 +1,8 @@
 <template>
 	<view class="walletList">
 		<view class="header">
-			<image @click="back" class="back" src="../../static/svg/ic_back.svg" mode=""></image>
+			<image v-if="!source" @click="back" class="back" src="../../static/svg/ic_back.svg" mode=""></image>
+            <image v-else class="back"></image>
             <text class="title">选择钱包</text>
 		</view>
 			<view class="changeWalletDialog">
@@ -46,7 +47,11 @@
                 userWallet: [],//钱包列表
                 walletName:'',//钱包名称
                 selected:'',
+                source:''
 			}
+        },
+        onLoad(value){
+            this.source=value.vel
         },
         onShow() {
                 this.selected=uni.getStorageSync('userAddress');

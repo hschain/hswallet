@@ -71,9 +71,9 @@
 						let value = this.form.value
 						this.$store.dispatch('saveMnemonic', value)
 						let addr = this.$wallet(this.$store.state.walletType).getAddress(value)						
-						if (uni.getStorageSync('mnemonicData') && this.secret.decrypt(uni.getStorageSync('mnemonicData'))[addr]) {
-							uni.setStorageSync('backupMnemonic', true)
-						}
+						// if (uni.getStorageSync('mnemonicData') && this.secret.decrypt(uni.getStorageSync('mnemonicData'))[addr]) {
+							uni.setStorageSync(addr+'backupMnemonic', true)
+						// }
 						
 						let _this = this
 						uni.showToast({
@@ -87,12 +87,14 @@
 										account[addr] = {
 											name: _this.$store.state.walletType, 
 											key: _this.$store.state.mnemonic,
+											type:_this.$store.state.walletType
 										}
 										let userWallet = []
 										for (let idx in account) {
 											userWallet.push({
 												addr: idx,
-												name: account[idx].name
+												name: account[idx].name,
+												type: account[idx].type
 											})
 										}
 										_this.$store.commit('SAVE_USER_WALLET', userWallet)

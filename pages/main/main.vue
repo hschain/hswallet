@@ -1,12 +1,13 @@
 <template>
-	<view class="content">
+	<view class="content" :style="{'margin-top':barHeight+'px'}">
+		<view class="status_bar"></view>
 		<view class="top">
 			<u-navbar back-icon-name="list" :custom-back="selectWallet" back-icon-color="#fff" style="font-weight: 600;" title-color="#fff" :border-bottom="false" title="钱包" :background="{background}"></u-navbar>
 			<view class="headerWrapper">
 				<view class="containerWrapTop">
 					<view class="walletName">
-						<image v-show="walletName=='ETH'" class="walletIcon" src="../../static/common/chain_eth_small.png" mode=""></image>
-						<image v-show="walletName=='HST'" class="walletIcon" src="../../static/common/chain_hst_small.png" mode=""></image>
+						<image v-show="walletName=='ETH'" class="walletIcon" src="../../static/svg/chain_eth_small.svg" mode=""></image>
+						<image v-show="walletName=='HST'" class="walletIcon" src="../../static/svg/chain_hst_small.svg" mode=""></image>
 						<u-section
 							font-size="42"
 							:show-line="false"
@@ -26,20 +27,20 @@
 					<view class="cash">
 						<text class="symbol">{{hideBalance ? '****' : '$ '}}</text>
 						<text class="Totalassets">{{hideBalance ? '' : walletName=='HST'?assetsList[0].value:balance}}</text>
-						<image v-if="hideBalance" class="seed" src="../../static/common/ic_eye_close.png" mode="" @click="hidden"></image>
+						<image v-if="hideBalance" class="seed" src="../../static/svg/ic_eye_close.svg" mode="" @click="hidden"></image>
 						<image v-else class="seed" src="../../static/svg/ic_eye_open.svg" mode="" @click="hidden"></image>
 					</view>
 				</view>
 				<image class="btnLogo" src="../../static/svg/img_taichi.svg" mode=""></image>
 				<view class="containerWrapBottom">	
 					<view class="transfer" @click="navigate('../receipt/receipt')">
-						<u-icon class="icon" name="../../static/svg/ic_deposit.svg" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
+						<u-icon class="icon" name="../../static/svg/ic_deposit.svg" :color="btnIconColor" custom-prefix="project-icon" size="100"></u-icon>
 						<view class="contents">
 							收款
 						</view>
 					</view>
 					<view class="collection" @click="navigate('../transfer/transfer')">
-						<u-icon class="icon" name="../../static/svg/ic_withdraw.svg" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
+						<u-icon class="icon" name="../../static/common/ic_withdraw.png" :color="btnIconColor" custom-prefix="project-icon" size="100"></u-icon>
 						<view class="contents">
 							转账
 						</view>
@@ -113,6 +114,7 @@
 </template>
 
 <script>
+	var _self;
 	import updateTip from '../../components/updateTip.vue'
 	import { ethers } from "@/common/js/ethers.js"
 	export default {
@@ -130,7 +132,7 @@
 				],
 				hideBalance: false ,//隐藏余额
 				newestUpdate: false, //是否为最新版本
-				backupMnemonic: uni.getStorageSync('backupMnemonic') || false, //是否已备份助记词
+				backupMnemonic: uni.getStorageSync(this.addr+'backupMnemonic') || false, //是否已备份助记词
 				background: {
 					backgroundColor: '#fff',
 				},
@@ -152,7 +154,8 @@
 				ETHassetsList:[
 				],
 				ETHassets:[],
-				balance:0
+				balance:0,
+				barHeight:25,
 			}
 		},
 		onLoad() {
@@ -160,9 +163,10 @@
 			setTimeout(() => {
 				this.getUpdate()			
 			}, 500)
+			_self = this;
+        	_self.getSystemStatusBarHeight();
 		},
 	async onShow() {
-		console.log(uni.getStorageSync('account'));
 			this.addr = uni.getStorageSync('userAddress');
 			uni.setStorageSync('ERC20transfer',false)
 			this.$wallet('ETH').getBalance(this.addr)
@@ -202,7 +206,9 @@
 			this.ETHassetsList=arr;
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
+				console.log(acc);
 				this.walletName = acc[this.addr].name
+				console.log(this.walletName);
 				this.walletType = acc[this.addr].type
 				for (let idx in acc) {
 					this.userWallet.push({
@@ -227,7 +233,7 @@
 			//如果用户已注册账户地址，则执行接下来的命令
 			if (uni.getStorageSync('account')) {
 				this.getAssets()
-				console.log('assetsList',this.assetsList);
+				
 				// if (!this.$store.state.socketIsOpen) {
 				// 	this.$store.dispatch('websocketInit', "wss://testnet.hschain.io/api/v1/ws")
 				// 	let _this = this
@@ -256,6 +262,11 @@
 			},
 		},
 		methods: {
+			 getSystemStatusBarHeight:function(){
+				var height = plus.navigator.getStatusbarHeight();
+				_self.barHeight = height;
+				_self.barHeight = 0;
+        },
 			enterAssets(item) {
 				if(item.label!='ETH') {
 					uni.setStorageSync('ERC20addr',item.value)
@@ -278,6 +289,7 @@
 			getAssets () {
 				this.$u.api.getAssets(this.addr).then(res => {
 					this.assetsList = res.data.result.value.coins
+					console.log('assetsList',this.assetsList);
 					this.assetsList.forEach((item) => {
 						if (/^u/i.test(item.denom)) {
 							item.denom = item.denom.slice(1).toUpperCase();
@@ -286,6 +298,8 @@
 						item.price = (item.price*1).toFixed(6)
 						item.value = (item.price*item.amount).toFixed(6)
 					});
+				}).catch(err=>{
+					console.log('err',err);
 				})
 			},
 			getUpdate() {
@@ -372,7 +386,11 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		margin-top: 62rpx;
+		.status_bar {  
+			height: var(--status-bar-height);  
+			width: 100%;  
+			background-color: #F8F8F8;  
+		} 
 		.top{
 			width: 100%;
 			height: 520rpx;
@@ -436,8 +454,8 @@
 							font-family: gilroy-bold;
 						}
 						.seed{
-							width: 44rpx;
-							height: 44rpx;
+							width: 22px;
+							height: 22px;
 							position: absolute;
 							right: 32rpx;
 						}
@@ -472,11 +490,11 @@
 						border-radius: 22px 0px 0px 22px;
 						border: 1px solid #1F1F1F;
 						.icon {
-							width: 44rpx;
-							height: 44rpx;
+							width: 22px;
+							height: 22px;
 							position: absolute;
-							left: 130rpx;
-							top: 24rpx;
+							left: 120rpx;
+							top: 20rpx;
 						}
 					}
 					.collection{
@@ -487,11 +505,11 @@
 						border: 1px solid #1F1F1F;
 						color: #1F1F1F;
 						.icon {
-							width: 44rpx;
-							height: 44rpx;
+							width: 22px;
+							height: 22px;
 							position: absolute;
-							left: 470rpx;
-							top: 24rpx;
+							left: 460rpx;
+							top: 20rpx;
 						}
 					}
 					// .boxWrapper {

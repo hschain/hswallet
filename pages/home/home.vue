@@ -1,5 +1,5 @@
 <template>
-	<view class="home">
+	<view class="home" :style="{height:scrollerHeight}">
 		<!-- <image class="bg" src='../../static/common/bg_taichi.png'></image> -->
 		<view class="tip">
 			<image class="logo" src="../../static/svg/img_logo.svg" mode=""></image>
@@ -26,8 +26,26 @@
 		name: 'home',
 		data() {
 			return {
-				first: null
+				first: null,
+				Height:0
 			}
+		},
+		computed:{
+			scrollerHeight(){
+				if (this.Height<800) {
+					return '790px'
+				}else{
+					return this.Height+'px'
+				}
+			}
+		},
+		onReady() {
+			uni.getSystemInfo({
+				success: function (res) {
+					console.log(res.windowHeight);
+					this.Height=res.windowHeight+'px'
+				}
+			})
 		},
 		onBackPress() {
 			//改变用户回退行为，否则会回退到main页面，无法再进入home页面
@@ -67,9 +85,10 @@
 	.home {
 		overflow: hidden;
 		width: 100%;
-		min-height: 1624rpx;
-		background: url('../../static/svg/bg_taichi.svg') no-repeat;
+		// min-height: 1624rpx;
+		background: url('../../static/common/bg_taichi.png') no-repeat;
 		background-size:100% 100%;
+		// background-position-x: -6rpx;
 		position: relative;
 		.tip {
 			width: 300rpx;
@@ -91,8 +110,9 @@
 				margin-bottom: 40rpx;
 			}
 			.walletName{
-				width: 220rpx;
+				width: 240rpx;
 				font-family: gilroy-bold;
+				font-size: 24px;
 			}
 		}
 		.title{

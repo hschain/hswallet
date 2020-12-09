@@ -3,7 +3,7 @@
 		<view class="cellMark"  @click="navigate('../transfer/address')" style="margin-top:48rpx">
 			<view class="circle">
 				<view class="boxLeft">
-					<image class="leftIcon" src="../../static/my/me_address.png" mode=""></image>
+					<image class="leftIcon" src="../../static/svg/me_address.svg" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title">
 							地址本

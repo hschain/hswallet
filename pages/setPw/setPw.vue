@@ -44,10 +44,10 @@
 						this.showToast('验证密码错误')
 						return
 					}
-					
+					let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
 					//存储数据并跳转路由
 					if(!uni.getStorageSync('account')){
-						let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
+						// let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
 						let account = {}
 						this.$store.commit('SET_WALLETNAME', this.$store.state.walletType)
 						uni.setStorageSync('userAddress', addr)
@@ -68,7 +68,7 @@
 						})
 					}
 					uni.setStorageSync('localPw', this.$md5(this.pw))
-					uni.setStorageSync('backupMnemonic', true)
+					uni.setStorageSync(addr+'backupMnemonic', true)
 					uni.showToast({
 						title: '密码设置成功',
 						success() {

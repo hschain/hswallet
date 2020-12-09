@@ -18,7 +18,7 @@ export function formatTime(time, getTime) {
     for (let i in time) {
       time[i] = addZero(time[i])
     }
-    return time.y + "-" + time.m + "-" + time.d + " / " + time.h + ":" + time.min + ":" + time.s;
+    return time.y + "." + time.m + "." + time.d + "  " + time.h + ":" + time.min + ":" + time.s;
   } else {
     let diff = new Date().getTime() - timeStamp.getTime()
     if (diff <= 1000) {

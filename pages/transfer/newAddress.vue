@@ -74,6 +74,7 @@
 				});
 			}
 		},
+	
 		onNavigationBarButtonTap() {
 			// 保存时做一系列规则判断
 			if (!this.newAddr.addr) {

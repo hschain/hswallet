@@ -88,7 +88,7 @@
 			}
 		},
 		onShow(){
-			console.log(uni.getStorageSync('account'));
+			
 		},
 		methods: {
 			back() {
@@ -124,6 +124,7 @@
 			// 确认已备份
 			check() {
 				//存储数据并跳转路由
+				let address = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
 				if(!uni.getStorageSync('account')){
 					let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
 					let accounts = {}
@@ -131,25 +132,55 @@
 					uni.setStorageSync('userAddress', addr)
 					let userWallet = [{
 						addr,
-						name: this.$store.state.walletType
+						name: this.$store.state.walletType,
+						type:this.$store.state.walletType
 					}]
 					this.$store.commit('SAVE_USER_WALLET', userWallet)
 					accounts[addr] = {
 						name: this.$store.state.walletType, 
 						key: this.$store.state.mnemonic,
+						type:this.$store.state.walletType
 					}
 					uni.setStorage({
 						key: 'account',
 						data: this.secret.encrypt(accounts)
 					})
-				}
-				
-				if (!uni.getStorageSync('backupMnemonic')) {
+					uni.navigateTo({
+								url: '../setPw/setPw'
+					})
+				}else if (uni.getStorageSync('account')&&!this.$store.state.toBackupPage&&!uni.getStorageSync('isAccount')) { 
+						let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
+						
+						let account = this.secret.decrypt(uni.getStorageSync('account'))
+						account[addr] = {
+							name: this.$store.state.walletType, 
+							key: this.mnemonic,
+							type:this.$store.state.walletType
+						}
+						let userWallet = []
+						for (let idx in account) {
+							userWallet.push({
+								addr: idx,
+								name: account[idx].name,
+								type: account[idx].type
+							})
+						}
+						this.$store.commit('SAVE_USER_WALLET', userWallet)
+						this.$store.commit('SET_WALLETNAME', this.$store.state.walletType)
+						uni.setStorageSync('userAddress', addr)
+						uni.setStorage({
+							key: 'account',
+							data: this.secret.encrypt(account)
+						})
+						uni.switchTab({
+							url: '../main/main'
+						})
+					}
+				if (!uni.getStorageSync(address+'backupMnemonic')) {
 					//未备份信息时开始备份
 					let account = this.secret.decrypt(uni.getStorageSync('account'))
-					uni.setStorageSync('backupMnemonic', true)
+					uni.setStorageSync(address+'backupMnemonic', true)
 					if (uni.getStorageSync('mnemonicData')) { //判断是否已存在其他地址信息
-					console.log("执行断点2")
 						let data = this.secret.decrypt(uni.getStorageSync('mnemonicData'))
 						data.push(account)
 						uni.setStorage({
@@ -157,22 +188,20 @@
 							data: this.secret.encrypt(data)
 						})
 					} else {
-						console.log("执行断点3")
 						uni.setStorage({
 							key: 'mnemonicData',
 							data: this.secret.encrypt([account])
 						})
 					}
 				}
-				if (this.$store.state.toBackupPage) { //通过备份助记词跳转过来的，执行此语句
+				
+				if (this.$store.state.toBackupPage && uni.getStorageSync('account')) { //通过备份助记词跳转过来的，执行此语句
 					console.log("执行断点4")
 					this.$store.dispatch('redirectToBackupPage', false)
 					uni.switchTab({
 						url: '../main/main'
 					})
-				} else {
-					console.log("执行断点5")
-					if (uni.getStorageSync('isAccount')) { //如果已存在账户，则代表入口来自管理页面
+				} else if (uni.getStorageSync('isAccount') && uni.getStorageSync('account')) { //如果已存在账户，则代表入口来自管理页面
 						console.log("执行断点6")
 						let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
 						
@@ -200,42 +229,10 @@
 						uni.switchTab({
 							url: '../main/main'
 						})
-					} else {
-						if (uni.getStorage('account')) {
-							let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
-						
-							let account = this.secret.decrypt(uni.getStorageSync('account'))
-							account[addr] = {
-								name: this.$store.state.walletType, 
-								key: this.mnemonic,
-								type:this.$store.state.walletType
-							}
-							let userWallet = []
-							for (let idx in account) {
-								userWallet.push({
-									addr: idx,
-									name: account[idx].name,
-									type: account[idx].type
-								})
-							}
-							this.$store.commit('SAVE_USER_WALLET', userWallet)
-							this.$store.commit('SET_WALLETNAME', this.$store.state.walletType)
-							uni.setStorageSync('userAddress', addr)
-							uni.setStorage({
-								key: 'account',
-								data: this.secret.encrypt(account)
-							})
-							uni.switchTab({
-								url: '../main/main'
-							})
-						}else{
-							uni.navigateTo({
-								url: '../setPw/setPw'
-							})
-						}
-						
-					}
-				}
+					} else{
+							
+						}	
+				
 			},
 			//点击选择标签
 			chooseTag(item, index) {

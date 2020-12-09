@@ -51,7 +51,7 @@
 				<view class="boxRight">
 					<view class="rightWrapper">
 						<view class="rightValue" style="color:#1f1f1f">
-							{{backupMnemonic ? 'yi' : '未备份'}}
+							{{backupMnemonic ? '' : '未备份'}}
 						</view>
 						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>
 					</view>
@@ -71,7 +71,8 @@
 		</u-modal>
 
 		<!-- 地址详情弹框 -->
-		<u-modal v-model="showAddr" :title="'扫二维码,转入'+value" :negative-top="top" :mask-close-able="true" confirm-color="#999" confirm-text="复制" @confirm="onCopy" :title-style="{color: '#aaa', fontSize: '28rpx'}">
+		<u-modal v-model="showAddr" :title="'扫二维码,转入'+value" :negative-top="top" :mask-close-able="true" confirm-color="#999" confirm-text="复制" @confirm="onCopy" :title-style="{color: '#aaa', fontSize: '28rpx'}" 
+		 :show-confirm-button="false" >
 			<view class="qrCodeBox">
 				<qrCode :imgText="imgText"></qrCode>
 			</view>
@@ -115,7 +116,7 @@
 				showAddr: false, //显示钱包地址全称
 				top: 200, //弹框偏移量
 				imgText: '', //二维码内容
-				backupMnemonic: uni.getStorageSync('backupMnemonic') || false, //是否已备份助记词
+				backupMnemonic: false, //是否已备份助记词
 				inputPwOption: '', //根据入口，判断输入密码成功后的操作
 				quitDialog: false, //未备份退出提示弹框
 				walletList:[],
@@ -124,20 +125,23 @@
 		},
 		onLoad() {
 			this.account = this.secret.decrypt(uni.getStorageSync('account'))
-			
 			//提前处理好二维码生成
 			let params = {
-				address: this.addr
+				address: uni.getStorageSync('userAddress')
 			}
+			
 			this.imgText = QR.createQrCodeImg( JSON.stringify(params), {  
 				 size: parseInt(200)  
 			})
-			uni.setStorageSync('isAccount', true)//管理界面标识
+			// this.imgText=uni.getStorageSync('userAddress')
+			
 			
 		},
 		onShow(){
 			this.walletList=this.$store.state.userWallet;
 			this.addr=uni.getStorageSync('userAddress');
+			this.backupMnemonic=uni.getStorageSync(this.addr+'backupMnemonic');
+			console.log(this.backupMnemonic);
 		},
 		onBackPress() {
 			if (this.showAddr) {
@@ -206,6 +210,7 @@
 				if (val) {
 					if (this.inputPwOption === 'backup') {
 						this.$store.dispatch('redirectToBackupPage', true)
+						uni.setStorageSync('isAccount', true)//管理界面标识
 						this.$store.dispatch('saveMnemonic', this.secret.decrypt(uni.getStorageSync('account'))[this.addr].key)
 						uni.navigateTo({
 							url: '../safetyTips/safetyTips'
@@ -228,9 +233,12 @@
 							}
 						}
 						uni.setStorageSync('account', this.secret.encrypt(acc))
-						if(uni.getStorageSync('account')){
+						if(newArr.length){
+							uni.setStorageSync('userAddress',newArr[0].addr)
+							this.$store.commit('SET_WALLETNAME',newArr[0].name)
+							this.$store.commit('SAVE_WALLET_TYPE',newArr[0].type)
 							uni.navigateTo({
-								url: '../walletList/walletList'
+								url: '../walletList/walletList?vel=management'
 							})
 						}else{
 							uni.removeStorageSync('account')

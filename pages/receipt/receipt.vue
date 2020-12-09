@@ -37,7 +37,7 @@
 		},
 		onLoad() {
 			let acc = this.secret.decrypt(uni.getStorageSync('account'));
-			this.addr =  Object.keys(acc)[0]
+			// this.addr =  Object.keys(acc)[0]
 			let params = {
 				address: this.addr
 			}

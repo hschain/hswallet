@@ -13,7 +13,6 @@
 							<view class="addr">{{item.addr}}</view>
 							<view class="description">{{item.description}}</view>
 						</view>
-						
 					<!-- </u-cell-item> -->
 				<!-- </u-cell-group> -->
 			</view>

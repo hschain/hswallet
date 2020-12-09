@@ -3,7 +3,7 @@
 		<view class="headerLogo">
 			<image class="logo" src="../../static/svg/img_logo.svg" mode=""></image>
 			<view class="title">
-				HSWallet
+				HS Wallet
 			</view>
 			<view class="version">
 				{{version}}

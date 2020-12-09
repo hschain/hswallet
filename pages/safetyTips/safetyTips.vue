@@ -12,9 +12,9 @@
 		</view>
 		<view class="bottomSize">
 			<u-button class="immediately" @click="notice">立即备份</u-button>
-			<view v-if="!redirectToBackupPage" class="later" @click="later">
+			<!-- <view v-if="!redirectToBackupPage" class="later" @click="later">
 				稍后备份
-			</view>
+			</view> -->
 		</view>
 	</view>
 </template>

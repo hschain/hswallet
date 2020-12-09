@@ -59,6 +59,7 @@ Wallet.prototype.sendETH = function(mnemonic, targetAddress, amount) {
  * @param Number amount						金额
  */
 Wallet.prototype.sendToken = function(mnemonic, contractAddress, targetAddress, amount) {
+	amount = ethers.utils.parseEther(amount)
 	targetAddress = ethers.utils.getAddress(targetAddress)
 	
 	let wallet = ethers.Wallet.fromMnemonic(mnemonic)
@@ -67,6 +68,16 @@ Wallet.prototype.sendToken = function(mnemonic, contractAddress, targetAddress, 
 	let contractWithSigner = new ethers.Contract(contractAddress, abi['ERC20'], activeWallet)	
 	
 	return contractWithSigner.transfer(targetAddress, amount)
+}
+
+/**
+ * 获取代币精度
+ * 
+ * @param {Object} contractAddress
+ */
+Wallet.prototype.getDecimal = function(contractAddress) {
+	let contract = new ethers.Contract(contractAddress, abi['ERC20'], this.provider)
+	return contract.decimals()
 }
 
 export default {

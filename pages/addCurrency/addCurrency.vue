@@ -18,13 +18,13 @@
         <view v-if="!keyword">
             <view class="title">首页资产</view>
             <view class="assetsList">
-                        <view  v-for="(item,index) in walletName=='HST'?assetsList:(ETHassetsList?ETHassetsList:$store.state.ETHassetsList)" :key="item.denom" class="table ">
+                        <view  v-for="(item,index) in walletType=='HST'?assetsList:(ETHassetsList?ETHassetsList:$store.state.ETHassetsList)" :key="item.denom" class="table ">
                             <view class="tableWrapper">
                                 <view class="tableLeft">
-                                    <image class="icon" v-if="walletName=='HST'" src="../../static/common/logo.png" mode=""></image>
-								    <image class="icon" v-else-if="walletName === 'ETH'" :src="item.logo" mode=""></image>
+                                    <image class="icon" v-if="walletType=='HST'" src="../../static/common/logo.png" mode=""></image>
+								    <image class="icon" v-else-if="walletType === 'ETH'" :src="item.logo" mode=""></image>
 								    <image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
-                                    <text class="denom">{{walletName=='HST'?item.denom:item.label}}</text>
+                                    <text class="denom">{{walletType=='HST'?item.denom:item.label}}</text>
                                     <view class="addre">{{addr | hash}}</view>
                                 </view>
                             </view>
@@ -60,6 +60,7 @@ export default {
     data(){
         return {
             walletName: '', //钱包名称
+            walletType:'',
             value: '',
             addr: '', 
             keyword: '',
@@ -74,6 +75,7 @@ export default {
         }
     },
     onShow() {
+            this.walletType=this.$store.state.walletType;
             this.addr = uni.getStorageSync('userAddress')
             this.ETHassetsList=uni.getStorageSync(this.addr)?uni.getStorageSync(this.addr):this.$store.state.ETHassetsList;
             this.addAssetsList=uni.getStorageSync(this.addr)?uni.getStorageSync(this.addr):this.$store.state.ETHassetsList;
@@ -154,7 +156,7 @@ export default {
 							let tokens = res.data
 							tokens.map(async (item) => {
 								if (item.split('\t')[1]) {
-                                //   let res=await _that.$wallet("ETH").getTokenBalance(_that.addr,item.split('\t')[1]);
+                                    let decimal = await _that.$wallet("ETH").getDecimal(item.split('\t')[1])
 									_that.tokenList.push({
 										label: item.split('\t')[0],
 										value: item.split('\t')[1],
@@ -162,7 +164,7 @@ export default {
 										typeval: item.split('\t')[3],
 										checkMark: item.split('\t')[4],
                                         logo: "https://cn.etherscan.com/token/images/" + item.split('\t')[5],
-                                        // balance:res._hex
+                                        decimal: decimal
 									})
 								}
 							})

@@ -1,6 +1,6 @@
 <template>
-	<view class="home" :style="{height:scrollerHeight}">
-		<!-- <image class="bg" src='../../static/common/bg_taichi.png'></image> -->
+	<view class="home" >
+		<!-- <image class="bg" src='../../static/common/bg_taichi.png'></image> :style="{height:scrollerHeight}"-->
 		<view class="tip">
 			<image class="logo" src="../../static/svg/img_logo.svg" mode=""></image>
 		<text class="walletName">HS Wallet</text>
@@ -32,7 +32,7 @@
 		},
 		computed:{
 			scrollerHeight(){
-				if (this.Height<800) {
+				if (this.Height<790) {
 					return '790px'
 				}else{
 					return this.Height+'px'
@@ -41,9 +41,8 @@
 		},
 		onReady() {
 			uni.getSystemInfo({
-				success: function (res) {
-					console.log(res.windowHeight);
-					this.Height=res.windowHeight+'px'
+				success:  (res) => { 
+					this.Height=res.windowHeight- uni.upx2px(25)+'px'
 				}
 			})
 		},
@@ -63,6 +62,9 @@
 				}
 			}
 			return true //return true的意思是禁止返回到上一个界面
+		},
+		onShow(){
+			uni.setStorageSync('nameIndex',1)
 		},
 		methods: {
 			create() {
@@ -85,7 +87,7 @@
 	.home {
 		overflow: hidden;
 		width: 100%;
-		// min-height: 1624rpx;
+		min-height: 1624rpx;
 		background: url('../../static/common/bg_taichi.png') no-repeat;
 		background-size:100% 100%;
 		// background-position-x: -6rpx;

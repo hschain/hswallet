@@ -29,8 +29,8 @@
 			getAnnouncement() {
 				this.publishData = [
 					{
-						content: 'HSWallet 初始版本发布',
-						time: '2020-12-05 11:50:56'
+						content: 'HSWallet 12/9测试版',
+						time: '2020-12-09 18:50:56'
 					},
 				]
 			},

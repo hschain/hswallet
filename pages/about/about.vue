@@ -1,5 +1,5 @@
 <template>
-	<view class="about">
+	<view class="about" >
 		<view class="headerLogo">
 			<image class="logo" src="../../static/svg/img_logo.svg" mode=""></image>
 			<view class="title">
@@ -10,7 +10,7 @@
 			</view>
 		</view>
 		
-		<view class="clearBG cellMark" @click="navigate('../log/log')" style="position:absolute;top:600rpx;left:16px;">
+		<view class="clearBG cellMark" @click="navigate('../log/log')" style="position:absolute;top:700rpx;left:32rpx;">
 			<view class="circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">
@@ -28,7 +28,7 @@
 			<view class="boder"></view>
 		</view>
 		
-		<view class="clearBG cellMark" @click="checkUpdate" style="position:absolute;top:700rpx;left:16px;">
+		<view class="clearBG cellMark" @click="checkUpdate" style="position:absolute;top:800rpx;left:32rpx;">
 			<view class=" circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">
@@ -49,7 +49,7 @@
 		<!-- <view class="gap"></view> -->
 		
 		<u-link href="https://www.hschain.io/">
-			<view class="clearBG cellMark" style="position:absolute;top:800rpx;left:16px;">
+			<view class="clearBG cellMark" style="position:absolute;top:900rpx;left:32rpx;">
 				<view class=" circle">
 					<view class="boxLeft">
 						<view class="leftWrapper">
@@ -85,7 +85,25 @@
 		data() {
 			return {
 				version: '', //当前app版本
+				Height:790
 			}
+		},
+		computed:{
+			scrollerHeight(){
+				if (this.Height<790) {
+					return '790px'
+				}else{
+					return this.Height+'px'
+				}
+			}
+		},
+		onReady() {
+			uni.getSystemInfo({
+				success:  (res) => { 
+					console.log(res);
+					this.Height=res.windowHeight- uni.upx2px(25)+'px'
+				}
+			})
 		},
 		onLoad() {
 			// #ifdef APP-PLUS
@@ -137,7 +155,7 @@
 		margin-left: 100rpx;
 	}
 	.about {
-		height: 1536rpx;
+		min-height: 1624rpx;
 		overflow: hidden;
 		background: url('../../static/common/bg_taichi.png');
 		background-size: 100% 100%;

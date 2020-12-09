@@ -6,14 +6,14 @@
 			<view class="headerWrapper">
 				<view class="containerWrapTop">
 					<view class="walletName">
-						<image v-show="walletName=='ETH'" class="walletIcon" src="../../static/svg/chain_eth_small.svg" mode=""></image>
-						<image v-show="walletName=='HST'" class="walletIcon" src="../../static/svg/chain_hst_small.svg" mode=""></image>
+						<image v-show="walletType=='ETH'" class="walletIcon" src="../../static/svg/chain_eth_small.svg" mode=""></image>
+						<image v-show="walletType=='HST'" class="walletIcon" src="../../static/svg/chain_hst_small.svg" mode=""></image>
 						<u-section
 							font-size="42"
 							:show-line="false"
 							color="#fff"
 							sub-color="#fff"
-							:title="walletName"
+							:title="walletType"
 							sub-title=""
 							:arrow="false"
 							@click="navigate('../management/management')"
@@ -26,7 +26,7 @@
 					</view>
 					<view class="cash">
 						<text class="symbol">{{hideBalance ? '****' : '$ '}}</text>
-						<text class="Totalassets">{{hideBalance ? '' : walletName=='HST'?assetsList[0].value:balance}}</text>
+						<text class="Totalassets">{{hideBalance ? '' : walletType=='HST'?assetsList[0].value:balance}}</text>
 						<image v-if="hideBalance" class="seed" src="../../static/svg/ic_eye_close.svg" mode="" @click="hidden"></image>
 						<image v-else class="seed" src="../../static/svg/ic_eye_open.svg" mode="" @click="hidden"></image>
 					</view>
@@ -60,19 +60,19 @@
 				<view class="title">
 					<text>资产</text>
 				</view>
-				<u-icon v-if="walletName!='HST'" class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000" @click="gotoAddCurrency"></u-icon>
+				<u-icon v-if="walletType!='HST'" class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000" @click="gotoAddCurrency"></u-icon>
 				<view class="assetsList">
-					<view @click="enterAssets(item)" v-for="item in walletName=='HST'?assetsList:(ETHassetsList?ETHassetsList:$store.state.ETHassetsList)" :key="item.denom" class="table">
+					<view @click="enterAssets(item)" v-for="item in walletType=='HST'?assetsList:(ETHassetsList?ETHassetsList:$store.state.ETHassetsList)" :key="item.denom" class="table">
 						<view class="tableWrapper">
 							<view class="tableLeft">
-								<image class="icon" v-if="walletName=='HST'" src="../../static/common/logo.png" mode=""></image>
-								<image class="icon" v-else-if="walletName === 'ETH'" :src="item.logo" mode=""></image>
+								<image class="icon" v-if="walletType=='HST'" src="../../static/common/logo.png" mode=""></image>
+								<image class="icon" v-else-if="walletType === 'ETH'" :src="item.logo" mode=""></image>
 								<image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
-								<text class="denom">{{walletName=='HST'?'HST':item.label}}</text>
+								<text class="denom">{{walletType=='HST'?'HST':item.label}}</text>
 							</view>
 							<view class="tableRight">
-								<text>{{hideBalance ? '****' : walletName=='HST'?item.amount:item.balance}}</text>
-								<text>{{hideBalance ? '****' : walletName=='HST'?'$ ' + item.value:"$ "+0}}</text>
+								<text>{{hideBalance ? '****' : walletType=='HST'?item.amount:item.balance}}</text>
+								<text>{{hideBalance ? '****' : walletType=='HST'?'$ ' + item.value:"$ "+0}}</text>
 							</view>
 							
 						</view>
@@ -190,7 +190,7 @@
 						 arr.push(obj)
 					// this.balance= ethers.utils.formatEther(res);
 				}else{
-					let res=await this.$wallet("ETH").getTokenBalance(this.addr,item.value)
+					this.$wallet('ETH').getTokenBalance(this.addr,item.value).then(res=>{
 						let obj={
 								label: item.label,
 								value: item.value,
@@ -200,15 +200,27 @@
 								logo: item.logo,
 								balance:ethers.utils.formatEther(res)
 							}
-							arr.push(obj)			
+							arr.push(obj)
+					}).catch(err=>{
+						console.log(err);	
+						let obj={
+								label: item.label,
+								value: item.value,
+								desc: item.desc,
+								typeval: item.typeval,
+								checkMark: item.checkMark,
+								logo: item.logo,
+								balance:0
+							}
+						arr.push(obj)
+					})	
+								
 				}
 			})
 			this.ETHassetsList=arr;
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
-				console.log(acc);
 				this.walletName = acc[this.addr].name
-				console.log(this.walletName);
 				this.walletType = acc[this.addr].type
 				for (let idx in acc) {
 					this.userWallet.push({
@@ -271,7 +283,7 @@
 				if(item.label!='ETH') {
 					uni.setStorageSync('ERC20addr',item.value)
 				}
-				uni.navigateTo({ url: `/pages/assets/assets?val=${this.walletName=='HST'?item.denom:item.label}` })
+				uni.navigateTo({ url: `/pages/assets/assets?val=${this.walletType=='HST'?item.denom:item.label}` })
 			},
 			navigate(url) {
 				uni.navigateTo({url})
@@ -494,7 +506,8 @@
 							height: 22px;
 							position: absolute;
 							left: 120rpx;
-							top: 20rpx;
+							top: 50%;
+							transform: translate(0,-50%);
 						}
 					}
 					.collection{
@@ -509,7 +522,8 @@
 							height: 22px;
 							position: absolute;
 							left: 460rpx;
-							top: 20rpx;
+							top: 50%;
+							transform: translate(0,-50%);
 						}
 					}
 					// .boxWrapper {

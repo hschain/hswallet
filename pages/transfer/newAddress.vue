@@ -141,6 +141,10 @@
 			}
 			
 		},
+		onBackPress() {
+			this.back();
+			return true;
+		},
 		onShow(){
 			if (this.AddressType=='HST') {
 				this.src='../../static/svg/chain_hst.svg'
@@ -149,6 +153,11 @@
 			}
 		},
 		methods:{
+			back(){
+				uni.navigateTo({
+					url: "address"
+				})
+			},
 			addAddress() {
 				uni.navigateTo({url: 'address'})
 			},

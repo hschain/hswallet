@@ -1,6 +1,6 @@
 <template>
 <view>
-	<view class="content" v-if="walletName=='HST'">
+	<view class="content" v-if="walletType=='HST'">
 		<view class="detail">
 			<view class="showDetail">
 				<image v-if="assetData.success" class="icon" src="../../static/common/img_success.png" mode=""></image>
@@ -31,10 +31,10 @@
 				<text class="title">交易哈希</text>
 				<view class="addre">{{assetData.details.txHash.value}}</view>
 			</view>
-			<view class="check">查询详细信息></view>
+			<view class="check" @click="goto(assetData.details.txHash.value)">查询详细信息></view>
 		</view>
 	</view>
-	<view class="content" v-else-if="walletName=='ETH'">
+	<view class="content" v-else-if="walletType=='ETH'">
 		<view class="detail">
 			<view class="showDetail">
 				<image v-if="details.result=='SUCCESS'" class="icon" src="../../static/common/img_success.png" mode=""></image>
@@ -65,7 +65,7 @@
 				<text class="title">交易哈希</text>
 				<view class="addre">{{details.tx_hash}}</view>
 			</view>
-			<view class="check">查询详细信息></view>
+			<view class="check" @click="goto(assetData.details.txHash.value)">查询详细信息></view>
 		</view>
 	</view>
 </view>
@@ -80,14 +80,13 @@
 			return {
 				title: '',
 				assetData: {},
-				walletName:'',
+				walletType:'',
 				details:{}
 			}
 		},
 		onShow(){
-			this.walletName=this.$store.state.walletName;
-			console.log('show',this.walletName);
-			if (this.walletName=='ETH') {
+			this.walletType=this.$store.state.walletType;
+			if (this.walletType=='ETH') {
 				uni.request({
 						url:'http://8.129.187.233:25676/eth/access/eth_list',
 						data:{limit: 10,start:1,type:'ALL',address:uni.getStorageSync('userAddress')},
@@ -132,13 +131,11 @@
 			}
 			
 					
-			},
+		},
 		onLoad(value) {
 			//获取当前交易hash信息
-			this.walletName=this.$store.state.walletName;
-			console.log('55555555');
-			console.log(this.walletName);
-			if (this.walletName=='HST') {
+			this.walletType=this.$store.state.walletType;
+			if (this.walletType=='HST') {
 				console.log('HST');
 				this.$u.api.getAssetsList({}, '/' + value.hash).then(res => {
 					console.log('res',res.data);
@@ -184,10 +181,20 @@
 				}).catch(err=>{
 					console.log(err);
 				})
-			}else if (this.walletName=='ETH') {
+			}else if (this.walletType=='ETH') {
 					
 		}
-	}
+		},
+		methods:{
+			goto(item){
+				if(this.walletType=='ETH'){
+					uni.navigateTo({
+						url: `/pages/etheric/etheric?url=https://cn.etherscan.com/tx/${item}`
+					})
+				}
+				
+			}
+		}
 }
 </script>
 

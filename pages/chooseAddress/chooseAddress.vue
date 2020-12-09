@@ -42,10 +42,10 @@
         // },
 		methods: {
 			back() {
-                // uni.navigateBack()
-                  uni.navigateTo({
-					    url: `../transfer/newAddress`
-				    })
+                uni.navigateBack()
+                //   uni.navigateTo({
+				// 	    url: `../transfer/newAddress`
+				//     })
             },
 			onSelect(item) {
                 // this.$store.dispatch('saveWalletType', type)

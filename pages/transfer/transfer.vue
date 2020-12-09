@@ -102,7 +102,6 @@
 			if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))) this.addrBook = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
 		},
 		onShow() {
-			console.log('walletName',this.$store.state.walletName);
 			if (this.$store.state.addrData) {
 				this.addr = this.$store.state.addrData.addr
 			}
@@ -150,16 +149,13 @@
 			},
 			// 验证正确后开启交易
 			correct(val) {
-				console.log(111111111);
 				if (val) {
-					console.log(2222);
 					this.transation()
 				}
 			},
 			//验证成功后下一步开启交易
 			transation() {
-				console.log('准备交易');
-				if (this.$store.state.walletName==='HST') {
+				if (this.$store.state.walletType==='HST') {
 					console.log('交易HST');
 					const mnemonic = this.account[this.myAddr].key
 					const hschain = this.$chain(this.$url, this.$chainId)
@@ -215,8 +211,8 @@
 					}).catch(err => {
 						console.log(err);
 					})
-				}else if (this.$store.state.walletName==='ETH' &&!uni.getStorageSync('ERC20transfer')) {
-
+				}else if (this.$store.state.walletType==='ETH' &&!uni.getStorageSync('ERC20transfer')) {
+					console.log('交易ETH');
 					const mnemonic = this.account[uni.getStorageSync('userAddress')].key;
 					console.log(mnemonic,this.addr,this.cash);
 					this.$wallet('ETH').sendETH(mnemonic,this.addr,this.cash).then(res=>{
@@ -232,13 +228,15 @@
 					uni.showToast({
 						title: '交易正在处理中'
 					})
-				}else if (this.$store.state.walletName==='ETH' &&uni.getStorageSync('ERC20transfer')) {
+				}else if (this.$store.state.walletType==='ETH' &&uni.getStorageSync('ERC20transfer')) {
+					console.log('交易ERC20');
 					const mnemonic = this.account[uni.getStorageSync('userAddress')].key;
 					this.$wallet("ETH").sendToken(mnemonic,uni.getStorageSync('ERC20addr'),this.addr,this.cash).then(res=>{
 						uni.showToast({
 							title: '交易成功'
 						})
 					},err=>{
+						console.log(err);
 						uni.showToast({
 							title: '交易失败'
 						})

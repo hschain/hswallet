@@ -15,7 +15,7 @@
 				</view>
 			</view>
 			<view class="bottomSize">
-				<u-button class="copy" @click="onCopy">复制</u-button>
+				<!-- <u-button class="copy" @click="onCopy">复制</u-button> -->
 				<view>
 					<!-- #ifdef H5-->
 					
@@ -85,10 +85,11 @@
 				randMnemonicArray: [], //打乱顺序的助记词
 				inputMnemonicArray: [], //用户选择的助记词
 				allCorrect: false, //选择的助记词顺序正确
+				nameIndex:0
 			}
 		},
 		onShow(){
-			
+			this.nameIndex=uni.getStorageSync('nameIndex');
 		},
 		methods: {
 			back() {
@@ -132,12 +133,12 @@
 					uni.setStorageSync('userAddress', addr)
 					let userWallet = [{
 						addr,
-						name: this.$store.state.walletType,
+						name: this.$store.state.walletType+`-${this.nameIndex}`,
 						type:this.$store.state.walletType
 					}]
 					this.$store.commit('SAVE_USER_WALLET', userWallet)
 					accounts[addr] = {
-						name: this.$store.state.walletType, 
+						name: this.$store.state.walletType+`-${this.nameIndex}`, 
 						key: this.$store.state.mnemonic,
 						type:this.$store.state.walletType
 					}
@@ -153,7 +154,7 @@
 						
 						let account = this.secret.decrypt(uni.getStorageSync('account'))
 						account[addr] = {
-							name: this.$store.state.walletType, 
+							name: this.$store.state.walletType+`-${this.nameIndex}`, 
 							key: this.mnemonic,
 							type:this.$store.state.walletType
 						}
@@ -207,7 +208,7 @@
 						
 						let account = this.secret.decrypt(uni.getStorageSync('account'))
 						account[addr] = {
-							name: this.$store.state.walletType, 
+							name: this.$store.state.walletType+`-${this.nameIndex}`, 
 							key: this.mnemonic,
 							type:this.$store.state.walletType
 						}
@@ -232,7 +233,7 @@
 					} else{
 							
 						}	
-				
+				uni.setStorageSync('nameIndex',this.nameIndex+1)
 			},
 			//点击选择标签
 			chooseTag(item, index) {

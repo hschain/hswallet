@@ -58,10 +58,19 @@
 			//获取地址本
 			if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))) this.addrList = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
 		},
+		onBackPress() {
+			this.back();
+			return true;
+		},
 		onNavigationBarButtonTap() {
 			uni.navigateTo({url: "newAddress"})
 		},
 		methods:{
+			back() {
+				uni.switchTab({
+					url: "../my/my"
+				})
+			},
 			//裁剪地址
 			fliterAddr (value) {
 			  return value.slice(0, 8) + " … " + value.slice(-8);

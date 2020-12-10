@@ -2,8 +2,8 @@
     "name" : "HS Wallet",
     "appid" : "__UNI__7103937",
     "description" : "HSWallet",
-    "versionName" : "9.9.8",
-    "versionCode" : 998,
+    "versionName" : "1.0.2",
+    "versionCode" : 100,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {

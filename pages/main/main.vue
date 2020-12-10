@@ -71,7 +71,7 @@
 								<text class="denom">{{walletType=='HST'?'HST':item.label}}</text>
 							</view>
 							<view class="tableRight">
-								<text>{{hideBalance ? '****' : walletType=='HST'?formatDecimal(item.amount,4):formatDecimal(item.balance,4)}}</text>
+								<text>{{hideBalance ? '****' : walletType=='HST'?item.amount:formatDecimal(item.balance,4)}}</text>
 								<text>{{hideBalance ? '****' : walletType=='HST'?'$ ' + formatDecimal(item.value,2):"$ "+formatDecimal(item.balanceDollar,2)}}</text>
 							</view>
 							
@@ -350,6 +350,7 @@
 				})
 			},
 			getUpdate() {
+				console.log('plus.runtime',plus.runtime);
 				if (uni.getStorageSync('account')) { //如果用户已注册账号，则会检测版本更新
 					let platform = ''
 					let version = ''
@@ -365,7 +366,7 @@
 						platform
 					}).then(res => {
 						console.log("versionres",res);
-						if (version !== res.data.version) {
+						if (version < res.data.version) {
 							this.$store.commit('SAVE_UPDATE_RES', res)
 							this.$refs.updateTipNav.showDialog()
 						}

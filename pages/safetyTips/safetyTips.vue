@@ -122,7 +122,7 @@
 			.immediately {
 				width: 686rpx;
 				height: 96rpx;
-				margin: 0 auto 40rpx;
+				margin: 0 auto 20px;
 				color: #fff;
 				background: url('../../static/common/button_gold.png') no-repeat;
 				background-size: 100% 100%;

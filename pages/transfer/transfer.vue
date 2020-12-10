@@ -184,15 +184,16 @@
 									}
 								}
 							],
-							chain_id: 'test',
+							chain_id: 'hschain',
 							fee: { amount: [ ], gas: String(this.cash*200000) },
 							memo: this.memo,
 							account_number: String(res.result.value.account_number),
 							sequence: String(res.result.value.sequence)
 						});
 						const signedTx = hschain.sign(stdSignMsg, ecpairPriv)
+						console.log('signedTx',signedTx);
 						this.$u.api.broadcast(signedTx).then(res => {
-							console.log('res',res);
+							console.log('res',JSON.parse(res.raw_log));
 							if (JSON.parse(res.raw_log)[0].success) {
 								this.$refs.uToast.show({
 									title: '交易正在处理中',
@@ -225,6 +226,9 @@
 						uni.showToast({
 							title: '交易成功'
 						})
+						setTimeout(() => {
+									uni.navigateBack()
+						},2000)
 					}).catch(err=>{
 						uni.showToast({
 							title: '交易失败'	
@@ -241,6 +245,9 @@
 						uni.showToast({
 							title: '交易成功'
 						})
+						setTimeout(() => {
+							uni.navigateBack()
+						},2000)
 					},err=>{
 						console.log(err);
 						uni.showToast({

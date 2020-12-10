@@ -29,6 +29,7 @@
 </template>
 
 <script>
+const bip39 = require('bip39');
 	export default {
 		name: 'importMnemonic',
 		data() {
@@ -74,7 +75,13 @@
 					if (valid) {
 						let value = this.form.value
 						this.$store.dispatch('saveMnemonic', value)
-						let addr = this.$wallet(this.$store.state.walletType).getAddress(value)						
+						if (!bip39.validateMnemonic(value)){
+							uni.showToast({
+								title: '助记词有误',
+								icon:"none"
+							})
+						}
+						let addr = this.$wallet(this.$store.state.walletType).getAddress(value)					
 						// if (uni.getStorageSync('mnemonicData') && this.secret.decrypt(uni.getStorageSync('mnemonicData'))[addr]) {
 							uni.setStorageSync(addr+'backupMnemonic', true)
 						// }

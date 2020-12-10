@@ -14,7 +14,7 @@
 		<view class="amountDetail ">
 			<view class="fee">
 				<text class="title">矿工费</text>
-				<text class="number">{{0.2222+' HST'}}</text>
+				<text class="number">{{0+' HST'}}</text>
 				<view class="calculation">GasPrice(24.00 GWEI) * Gas(112,956)</view>
 				<view class="border"></view>
 			</view>

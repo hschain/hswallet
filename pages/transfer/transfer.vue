@@ -116,7 +116,13 @@
 			uni.scanCode({
 				onlyFromCamera: true,
 			    success: function (res) {
-			        _this.addr = JSON.parse(res.result).address
+					let resArr=res.result.split("?")
+					let addressArr=resArr[0].split(":")
+					if(addressArr.length>1){
+						_this.addr=addressArr[1]
+					}else{
+						_this.addr=addressArr[0]
+					}
 			    }
 			});
 		},
@@ -124,7 +130,7 @@
 		methods:{
 			//添加新地址
 			addAddress() {
-				uni.navigateTo({url: `address`})
+				uni.navigateTo({url: `address?val=transfer`})
 			},
 			// 下一步前验证弹框
 			nextStep() {

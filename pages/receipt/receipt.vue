@@ -38,10 +38,7 @@
 		onLoad() {
 			let acc = this.secret.decrypt(uni.getStorageSync('account'));
 			// this.addr =  Object.keys(acc)[0]
-			let params = {
-				address: this.addr
-			}
-			this.imgText = QR.createQrCodeImg( JSON.stringify(params), {  
+			this.imgText = QR.createQrCodeImg(this.addr, {  
 				 size: parseInt(200)  
 			})
 		},

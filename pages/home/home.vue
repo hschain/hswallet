@@ -64,7 +64,8 @@
 			return true //return true的意思是禁止返回到上一个界面
 		},
 		onShow(){
-			uni.setStorageSync('nameIndex',1)
+			uni.setStorageSync('hstnameIndex',1)
+			uni.setStorageSync('ethnameIndex',1)
 		},
 		methods: {
 			create() {
@@ -87,7 +88,7 @@
 	.home {
 		overflow: hidden;
 		width: 100%;
-		min-height: 1624rpx;
+		min-height: 812px;
 		background: url('../../static/common/bg_taichi.png') no-repeat;
 		background-size:100% 100%;
 		// background-position-x: -6rpx;

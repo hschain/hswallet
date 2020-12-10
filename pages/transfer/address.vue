@@ -46,30 +46,35 @@
 				],
 				delWarning: false, //删除确认弹框
 				showActionSheet: false,
-				AddressType:uni.getStorageSync('AddressType')||'HST'
+				AddressType:uni.getStorageSync('AddressType')||'HST',
+				source:'',
 			}
 		},
-		onLoad() {
+		onLoad(value) {
 			// 获取入口地址
 			let page = getCurrentPages()
 			this.route = page[page.length - 2].route
+			this.source=value.val
+			console.log('value',value);
 		},
 		onShow() {
 			//获取地址本
 			if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))) this.addrList = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
 		},
 		onBackPress() {
-			this.back();
-			return true;
+			if(!this.source){
+				this.back();
+				return true;
+			}
 		},
 		onNavigationBarButtonTap() {
 			uni.navigateTo({url: "newAddress"})
 		},
 		methods:{
-			back() {
-				uni.switchTab({
-					url: "../my/my"
-				})
+			back() {	
+					uni.switchTab({
+						url: "../my/my"
+					})
 			},
 			//裁剪地址
 			fliterAddr (value) {

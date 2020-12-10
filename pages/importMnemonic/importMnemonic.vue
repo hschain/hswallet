@@ -57,8 +57,12 @@
 							trigger: ['blur'],
 						}
 					]
-				}
+				},
+				nameIndex:1
 			}
+		},
+		onShow(){
+			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
 		},
 		methods: {
 			back() {
@@ -84,8 +88,9 @@
 										let addr = _this.$wallet(_this.$store.state.walletType).getAddress(_this.$store.state.mnemonic)						
 										
 										let account = _this.secret.decrypt(uni.getStorageSync('account'))
+										console.log('this.nameIndex',this.nameIndex);
 										account[addr] = {
-											name: _this.$store.state.walletType, 
+											name: _this.$store.state.walletType+`-${_this.nameIndex}`, 
 											key: _this.$store.state.mnemonic,
 											type:_this.$store.state.walletType
 										}
@@ -118,6 +123,7 @@
 						})
 					}
 				})
+				this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
 			},
 			onReady() {
 				this.$refs.uForm.setRules(this.rules);

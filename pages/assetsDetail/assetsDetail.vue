@@ -40,7 +40,7 @@
 				<image v-if="details.result=='SUCCESS'" class="icon" src="../../static/common/img_success.png" mode=""></image>
 				<image v-else class="icon" src="../../static/common/wrong.png" mode=""></image>
 				<text :class="['tip',details.result=='SUCCESS'?'green':'red']">{{details.result=='SUCCESS'? '成功' : '失败'}}</text>
-				<text class="time">{{details.tx_timestamp}}</text>
+				<text class="time">{{formatDate(details.tx_timestamp)}}</text>
 				<text class="amount">{{details.to === '0x85464b207d7c1fce8da13d2f3d950c796e399a9c' ? '+ ' : '- '}}{{details.amount+' ETH'}}</text>
 			</view>
 		</view>
@@ -65,7 +65,7 @@
 				<text class="title">交易哈希</text>
 				<view class="addre">{{details.tx_hash}}</view>
 			</view>
-			<view class="check" @click="goto(assetData.details.txHash.value)">查询详细信息></view>
+			<view class="check" @click="goto(details.tx_hash)">查询详细信息></view>
 		</view>
 	</view>
 </view>
@@ -89,20 +89,13 @@
 			if (this.walletType=='ETH') {
 				uni.request({
 						url:'http://8.129.187.233:25676/eth/access/eth_list',
-						data:{limit: 10,start:1,type:'ALL',address:uni.getStorageSync('userAddress')},
+						data:{limit: 10,start:0,type:'ALL',address:uni.getStorageSync('userAddress').toLocaleLowerCase()},
 						header: {
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
 						success: (res) => {
+							console.log(res,this.$store.state.index);
 							if (res.data) {
-								// this.details.result=res.data.content[this.index].result;
-								// this.details.time=res.data.content[this.index].time;
-								// this.details.amount=res.data.content[this.index].amount;
-								// this.details.hash=res.data.content[this.index].tx_hash;
-								// this.details.to=res.data.content[this.index].to;
-								// this.details.from=res.data.content[this.index].from;
-								// this.details.fee=res.data.content[this.index].fee;
-								// this.details.type=res.data.content[this.index].to=='0x85464b207d7c1fce8da13d2f3d950c796e399a9c'?'in':'out';
 								this.details=res.data.content[this.$store.state.index];
 							}
 						},
@@ -110,7 +103,7 @@
 			}else{
 				uni.request({
 						url:'http://8.129.187.233:25676/eth/access/eth_list',
-						data:{limit: 10,start:1,type:'ALL',address:uni.getStorageSync('userAddress'),contract_address:uni.getStorageSync('ERC20addr')},
+						data:{limit: 10,start:0,type:'ALL',address:uni.getStorageSync('userAddress').toLocaleLowerCase(),contract_address:uni.getStorageSync('ERC20addr').toLocaleLowerCase()},
 						header: {
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
@@ -187,13 +180,28 @@
 		},
 		methods:{
 			goto(item){
+				console.log(item);
 				if(this.walletType=='ETH'){
 					uni.navigateTo({
-						url: `/pages/etheric/etheric?url=https://cn.etherscan.com/tx/${item}`
+						url: `../etheric/etheric?url=https://cn.etherscan.com/tx/${item}`
 					})
 				}
 				
-			}
+			},
+			formatDate(date) {
+				if (date) {
+					var date = new Date(date*1);
+					var YY = date.getFullYear() + '-';
+					var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+					var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
+					var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+					var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+					var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
+					return YY + MM + DD +" "+hh + mm + ss;
+				} else {
+					return ''
+				}
+			},
 		}
 }
 </script>

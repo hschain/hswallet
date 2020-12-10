@@ -1,6 +1,7 @@
 import { ethers } from "@/common/js/ethers.js"
 import hschain from 'hschainjs'
 import abi from "@/common/js/abi"
+import util from '@/common/js/util.js'
 
 let Wallet = function(chain) {
 	this.chain = chain;
@@ -59,7 +60,7 @@ Wallet.prototype.sendETH = function(mnemonic, targetAddress, amount) {
  * @param Number amount						金额
  */
 Wallet.prototype.sendToken = function(mnemonic, contractAddress, targetAddress, amount) {
-	amount = ethers.utils.parseEther(amount)
+	amount = ethers.utils.parseUnits(amount, util.getDecimal(contractAddress))
 	targetAddress = ethers.utils.getAddress(targetAddress)
 	
 	let wallet = ethers.Wallet.fromMnemonic(mnemonic)

@@ -168,7 +168,7 @@
 				let _this = this
 				uni.scanCode({
 				    success: function (res) {
-						_this.newAddr.addr = JSON.parse(res.result).address
+						_this.newAddr.addr = res.result
 				    }
 				});
 			}

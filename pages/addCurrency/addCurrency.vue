@@ -18,14 +18,14 @@
         <view v-if="!keyword">
             <view class="title">首页资产</view>
             <view class="assetsList">
-                        <view  v-for="(item,index) in walletType=='HST'?assetsList:(ETHassetsList?ETHassetsList:$store.state.ETHassetsList)" :key="item.denom" class="table ">
+                        <view  v-for="(item,index) in walletType=='HST' ? assetsList : ETHassetsList" :key="walletType=='HST' ? item.denom : item.value" class="table ">
                             <view class="tableWrapper">
                                 <view class="tableLeft">
                                     <image class="icon" v-if="walletType=='HST'" src="../../static/common/logo.png" mode=""></image>
 								    <image class="icon" v-else-if="walletType === 'ETH'" :src="item.logo" mode=""></image>
 								    <image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
                                     <text class="denom">{{walletType=='HST'?item.denom:item.label}}</text>
-                                    <view class="addre">{{addr | hash}}</view>
+                                    <view class="addre">{{item.value | hash}}</view>
                                 </view>
                             </view>
                             <image class="assetsEdit"  src="../../static/svg/ic_remove.svg" mode="" @click="removeAssets(index)"></image>
@@ -55,6 +55,8 @@
     </view>
 </template>
 <script>
+import util from '@/common/js/util.js'
+
 export default {
     name:'addCurrency',
     data(){
@@ -70,15 +72,13 @@ export default {
             userWallet: [],
             tokenList: [],
             isEmpty: false,
-            addAssetsList:[],
             ETHassetsList:[],
         }
     },
     onShow() {
             this.walletType=this.$store.state.walletType;
             this.addr = uni.getStorageSync('userAddress')
-            this.ETHassetsList=uni.getStorageSync(this.addr)?uni.getStorageSync(this.addr):this.$store.state.ETHassetsList;
-            this.addAssetsList=uni.getStorageSync(this.addr)?uni.getStorageSync(this.addr):this.$store.state.ETHassetsList;
+            this.ETHassetsList = util.getAssets(this.addr);
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
 				this.walletName = acc[this.addr].name
@@ -174,15 +174,15 @@ export default {
 				}, 1000)
             },
             addAssets(index){
-                this.addAssetsList.push(this.tokenList[index]);
-                uni.setStorageSync(this.addr,Array.from(new Set(this.addAssetsList)))
+                console.log(this.tokenList[0].desc.split('$')[1]);
+				util.setAsset(this.addr, this.tokenList[index]);
                 uni.showToast({
 					title: '添加成功'
 				})
             },
             removeAssets(index){
-                this.ETHassetsList.splice(index, 1);
-                uni.setStorageSync(this.addr,this.ETHassetsList)
+				util.removeAsset(this.addr, this.ETHassetsList[index])
+				this.ETHassetsList.splice(index, 1);				
                 uni.showToast({
 					title: '删除成功'
 				})

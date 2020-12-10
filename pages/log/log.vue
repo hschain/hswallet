@@ -30,7 +30,7 @@
 				this.publishData = [
 					{
 						content: 'HSWallet 12/9测试版',
-						time: '2020-12-09 18:50:56'
+						time: '2020-12-09 20:13:56'
 					},
 				]
 			},

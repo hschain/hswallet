@@ -70,7 +70,7 @@
 			</view>
 		</view>
 		
-		<u-top-tips ref="uTips" navbar-height="0"></u-top-tips>
+		<u-top-tips ref="uTips" :navbar-height="statusBarHeight"></u-top-tips>
 	</view>
 </template>
 
@@ -85,11 +85,12 @@
 				randMnemonicArray: [], //打乱顺序的助记词
 				inputMnemonicArray: [], //用户选择的助记词
 				allCorrect: false, //选择的助记词顺序正确
-				nameIndex:0
+				nameIndex:0,
+				statusBarHeight: uni.getSystemInfoSync().statusBarHeight
 			}
 		},
 		onShow(){
-			this.nameIndex=uni.getStorageSync('nameIndex');
+			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
 		},
 		methods: {
 			back() {
@@ -233,7 +234,7 @@
 					} else{
 							
 						}	
-				uni.setStorageSync('nameIndex',this.nameIndex+1)
+				this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
 			},
 			//点击选择标签
 			chooseTag(item, index) {

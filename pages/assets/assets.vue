@@ -6,7 +6,7 @@
 			<image v-show="walletType=='ETH'" class="walletIcon" src="../../static/common/ETH.png" mode=""></image>
 			<view class="detail ">
 				<view class="value">
-					{{hideBalance ? "****" : account}}
+					{{hideBalance ? "****" : formatDecimal(account,4)}}
 				</view>
 				<view class="title">
 					账户总额
@@ -189,6 +189,16 @@
 					return ''
 				}
 			},
+			formatDecimal(num,i) {
+                num = num.toString()
+                let index = num.indexOf('.')
+                if (index !== -1) {
+                    num = num.substring(0, i + index + 1)
+                } else {
+                    num = num.substring(0)
+                }
+                return parseFloat(num).toFixed(i)
+            },
 			back() {
 				uni.navigateBack()
 			},
@@ -253,9 +263,11 @@
 						}, 5000)
 					})
 				}else if(this.currencyName=='ETH'){
+					// let address=uni.getStorageSync('userAddress').toLocaleLowerCase();
+					// let address='0x7a1d8ab56d0cc6f395af81b3c7db9ac92616c34eabdce3f37bca1720cfb8a0ad'
 					uni.request({
 						url:'http://8.129.187.233:25676/eth/access/eth_list',
-						data:{limit: this.limit,start:1,type:'ALL',address:uni.getStorageSync('userAddress')},
+						data:{address:uni.getStorageSync('userAddress').toLocaleLowerCase(),limit:20,start:0},
 						header: {
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
@@ -272,23 +284,23 @@
 										from:item.from,
 										to:item.to,
 										amount:item.amount,
-										type:item.to==uni.getStorageSync('userAddress')?'in':'out',
+										type:item.to==uni.getStorageSync('userAddress').toLocaleLowerCase()?'in':'out',
 										time: this.formatDate(item.tx_timestamp, true),
 										id:i++
 									}
 									this.assetsList.all.push(obj)
+									console.log('全',this.assetsList);
 								})
 								this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
 								this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
 								this.assetsList.err = this.assetsList.all.filter(item => item.result=='ERROR')
-								console.log('全',this.assetsList);
 							}
 						},
 					})
 				}else{
 					uni.request({
 						url:'http://8.129.187.233:25676/eth/access/rc20_list',
-						data:{limit: this.limit,start:1,type:'ALL',address:uni.getStorageSync('userAddress'),contract_address:uni.getStorageSync('ERC20addr')},
+						data:{limit: this.limit,start:0,type:'ALL',address:uni.getStorageSync('userAddress').toLocaleLowerCase(),contract_address:uni.getStorageSync('ERC20addr').toLocaleLowerCase()},
 						header: {
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
@@ -305,7 +317,7 @@
 										from:item.from,
 										to:item.to,
 										amount:item.amount,
-										type:item.to==uni.getStorageSync('userAddress')?'in':'out',
+										type:item.to==uni.getStorageSync('userAddress').toLocaleLowerCase()?'in':'out',
 										time: this.formatDate(item.tx_timestamp, true),
 										id:i++
 									}

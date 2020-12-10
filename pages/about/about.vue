@@ -155,7 +155,7 @@
 		margin-left: 100rpx;
 	}
 	.about {
-		min-height: 1624rpx;
+		min-height: 812px;
 		overflow: hidden;
 		background: url('../../static/common/bg_taichi.png');
 		background-size: 100% 100%;

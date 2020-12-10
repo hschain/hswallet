@@ -164,13 +164,21 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
-		}		
+		},
+		{
+			"path": "pages/etheric/etheric",
+			"style": {
+				"navigationBarTitleText": " ",
+				"navigationBarBackgroundColor":"#000",
+				"navigationBarTextStyle":"black"
+			}
+		}			
 	],
 	"globalStyle": {//用于设置应用的状态、导航条、标题、窗口颜色背景
 		"navigationBarTextStyle": "black",//导航栏标题颜色及状态栏前景颜色，仅限black/white
 		"navigationBarBackgroundColor": "#fff",//导航栏背景颜色
 		"backgroundColor": "#000",//下拉显示出来的窗口的背景色
-		"app-plus": {  
+		"app-": {  
 			"background": "#000",
 			"animationType": "slide-in-right",
 			"titleNView":{  	

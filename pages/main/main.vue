@@ -26,7 +26,7 @@
 					</view>
 					<view class="cash">
 						<text class="symbol">{{hideBalance ? '****' : '$ '}}</text>
-						<text class="Totalassets">{{hideBalance ? '' : walletType=='HST'?assetsList[0].value:balance}}</text>
+						<text class="Totalassets">{{hideBalance ? '' : walletType=='HST'?formatDecimal(assetsList[0].value,2):formatDecimal(TotalAssets,2)}}</text>
 						<image v-if="hideBalance" class="seed" src="../../static/svg/ic_eye_close.svg" mode="" @click="hidden"></image>
 						<image v-else class="seed" src="../../static/svg/ic_eye_open.svg" mode="" @click="hidden"></image>
 					</view>
@@ -71,8 +71,8 @@
 								<text class="denom">{{walletType=='HST'?'HST':item.label}}</text>
 							</view>
 							<view class="tableRight">
-								<text>{{hideBalance ? '****' : walletType=='HST'?item.amount:item.balance}}</text>
-								<text>{{hideBalance ? '****' : walletType=='HST'?'$ ' + item.value:"$ "+0}}</text>
+								<text>{{hideBalance ? '****' : walletType=='HST'?formatDecimal(item.amount,4):formatDecimal(item.balance,4)}}</text>
+								<text>{{hideBalance ? '****' : walletType=='HST'?'$ ' + formatDecimal(item.value,2):"$ "+formatDecimal(item.balanceDollar,2)}}</text>
 							</view>
 							
 						</view>
@@ -117,6 +117,7 @@
 	var _self;
 	import updateTip from '../../components/updateTip.vue'
 	import { ethers } from "@/common/js/ethers.js"
+	import util from '@/common/js/util.js'
 	export default {
 		name: 'mainPage',
 		components: { updateTip },
@@ -154,8 +155,8 @@
 				ETHassetsList:[
 				],
 				ETHassets:[],
-				balance:0,
 				barHeight:25,
+				exchange:{}
 			}
 		},
 		onLoad() {
@@ -167,16 +168,23 @@
         	_self.getSystemStatusBarHeight();
 		},
 	async onShow() {
+			uni.request({
+				url:'https://api.coingecko.com/api/v3/exchange_rates',
+				success: (res) => {
+					this.exchange=res.data.rates
+				},
+				fail:(err)=>{
+					console.log('err',err);
+				}
+			})
 			this.addr = uni.getStorageSync('userAddress');
-			uni.setStorageSync('ERC20transfer',false)
-			this.$wallet('ETH').getBalance(this.addr)
-			this.$store.commit('SET_ETHASSETSLIST',[{
-					label:"ETH",
-					value:uni.getStorageSync('userAddress'),
-					logo:'../../static/common/ETH.png',
-				}]);	
-			this.ETHassets=uni.getStorageSync(this.addr)||this.$store.state.ETHassetsList;
-			console.log("ETHassets",this.ETHassets);
+			uni.setStorageSync('ERC20transfer',false)	
+			this.ETHassets = util.getAssets(this.addr)
+			this.ETHassets.unshift({
+				label:"ETH",
+				value:uni.getStorageSync('userAddress'),
+				logo:'../../static/common/ETH.png',
+			})			
 			let arr=[];
 			this.ETHassets.forEach(async item=>{
 				if(item.label=='ETH'){
@@ -185,10 +193,11 @@
 							    label:item.label,
 								value:item.value,
 								logo:item.logo,
-								balance: ethers.utils.formatEther(res)
+								balance: ethers.utils.formatEther(res),
+								balanceDollar:(ethers.utils.formatEther(res)/this.exchange.eth.value)*this.exchange.usd.value
 						 }
 						 arr.push(obj)
-					// this.balance= ethers.utils.formatEther(res);
+					
 				}else{
 					this.$wallet('ETH').getTokenBalance(this.addr,item.value).then(res=>{
 						let obj={
@@ -198,7 +207,8 @@
 								typeval: item.typeval,
 								checkMark: item.checkMark,
 								logo: item.logo,
-								balance:ethers.utils.formatEther(res)
+								balance:ethers.utils.formatUnits(res, item.decimal),
+								balanceDollar:item.desc.split('$')[1]?item.desc.split('$')[1]*ethers.utils.formatUnits(res, item.decimal):'~'
 							}
 							arr.push(obj)
 					}).catch(err=>{
@@ -210,12 +220,14 @@
 								typeval: item.typeval,
 								checkMark: item.checkMark,
 								logo: item.logo,
-								balance:0
+								balance:0,
+								balanceDollar:'~'
 							}
 						arr.push(obj)
 					})	
 								
 				}
+				
 			})
 			this.ETHassetsList=arr;
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
@@ -266,20 +278,43 @@
 				// }
 			}
 			//如果vuex存在助记词缓存，则清空助记词
-			if (this.$store.state.mnemonic) this.$store.dispatch('saveMnemonic', '')
+			if (this.$store.state.mnemonic) this.$store.dispatch('saveMnemonic', '');
+			
 		},
 		filters: {
 			hash: function (value) {
 			  return value.slice(0, 12) + " … " + value.slice(-12);
 			},
 		},
+		computed:{
+			TotalAssets(){
+				let asssum=0;
+				this.ETHassetsList.forEach(item=>{
+					if(item.balanceDollar!='~'){
+						asssum=asssum+item.balanceDollar
+					}
+				})
+				return asssum
+			}
+		},
 		methods: {
 			 getSystemStatusBarHeight:function(){
 				var height = plus.navigator.getStatusbarHeight();
 				_self.barHeight = height;
 				_self.barHeight = 0;
-        },
+			  },
+			formatDecimal(num,i) {
+                num = num.toString()
+                let index = num.indexOf('.')
+                if (index !== -1) {
+                    num = num.substring(0, i + index + 1)
+                } else {
+                    num = num.substring(0)
+                }
+                return parseFloat(num).toFixed(i)
+            },
 			enterAssets(item) {
+				console.log(item)
 				if(item.label!='ETH') {
 					uni.setStorageSync('ERC20addr',item.value)
 				}
@@ -321,6 +356,7 @@
 					// #ifdef APP-PLUS
 					plus.os.name === 'Android' ? platform = 'Android' : platform = 'Ios'
 					version = 'v' + plus.runtime.version
+					console.log('version',version);
 					// #endif
 					this.$u.api.getVersion({
 						address: uni.getStorageSync('userAddress'),
@@ -328,6 +364,7 @@
 						app: 'HSWallet',
 						platform
 					}).then(res => {
+						console.log("versionres",res);
 						if (version !== res.data.version) {
 							this.$store.commit('SAVE_UPDATE_RES', res)
 							this.$refs.updateTipNav.showDialog()

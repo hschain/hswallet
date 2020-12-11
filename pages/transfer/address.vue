@@ -55,7 +55,7 @@
 			let page = getCurrentPages()
 			this.route = page[page.length - 2].route
 			this.source=value.val
-			console.log('value',value);
+		
 		},
 		onShow() {
 			//获取地址本

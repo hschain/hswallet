@@ -142,7 +142,6 @@
 				})
 				
 			}else if(this.currencyName=='ETH'){
-				console.log('ETH');
 				let result=await this.$wallet('ETH').getBalance(uni.getStorageSync('userAddress'))
 				this.account=ethers.utils.formatEther(result)
 			}
@@ -158,7 +157,7 @@
 			this.queryNewAssetsList()
 			// this.wsSendMsg('in')
 			// this.$store.state.socketTask.onMessage(res => {
-			// 	console.log(res);
+			
 			// })
 		},
 		onBackPress() {
@@ -175,20 +174,16 @@
 			},
 		},
 		methods: {
-			formatDate(date) {
-				if (date) {
-					var date = new Date(date*1);
-					var YY = date.getFullYear() + '-';
-					var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-					var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
-					var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
-					var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
-					var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
-					return YY + MM + DD +" "+hh + mm + ss;
-				} else {
-					return ''
-				}
-			},
+			 timestampToTime(timestamp) {
+				var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+				var Y = date.getFullYear() + '-';
+				var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1):date.getMonth()+1) + '-';
+				var D = (date.getDate()< 10 ? '0'+date.getDate():date.getDate())+ ' ';
+				var h = (date.getHours() < 10 ? '0'+date.getHours():date.getHours())+ ':';
+				var m = (date.getMinutes() < 10 ? '0'+date.getMinutes():date.getMinutes()) + ':';
+				var s = date.getSeconds() < 10 ? '0'+date.getSeconds():date.getSeconds();
+				return Y+M+D+h+m+s;
+   			},
 			formatDecimal(num,i) {
                 num = num.toString()
                 let index = num.indexOf('.')
@@ -272,11 +267,12 @@
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
 						success: (res) => {
-							console.log("交易明细",res.data);
+							
 							if (res.data) {
 								// res.data.reverse();
 								let i=0;
 								res.data.content.forEach(item => {
+					
 									let obj = {
 										fee:item.fee,
 										txHash: item.tx_hash,
@@ -285,11 +281,11 @@
 										to:item.to,
 										amount:item.amount,
 										type:item.to==uni.getStorageSync('userAddress').toLocaleLowerCase()?'in':'out',
-										time: this.formatDate(item.tx_timestamp, true),
+										time: this.timestampToTime(item.tx_timestamp),
 										id:i++
 									}
 									this.assetsList.all.push(obj)
-									console.log('全',this.assetsList);
+									
 								})
 								this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
 								this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
@@ -305,7 +301,7 @@
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
 						success: (res) => {
-							console.log("ERC20交易明细",res.data);
+							
 							if (res.data) {
 								// res.data.reverse();
 								let i=0;
@@ -318,7 +314,7 @@
 										to:item.to,
 										amount:item.amount,
 										type:item.to==uni.getStorageSync('userAddress').toLocaleLowerCase()?'in':'out',
-										time: this.formatDate(item.tx_timestamp, true),
+										time: this.timestampToTime(item.tx_timestamp),
 										id:i++
 									}
 									this.assetsList.all.push(obj)
@@ -377,32 +373,32 @@
 						denom: this.denom
 					}
 					if (lazyLoad) {
-						console.log(lazyLoad);
+						
 						params.begin = this.paging.end-1
-						console.log(this.paging);
+						
 					} else {
-						console.log(2222222);
+						
 						this.$u.api.getAssets(uni.getStorageSync('userAddress')).then(res => {
 							let coins = res.data.result.value.coins
 							if (/^u/i.test(coins[0].denom)) {
 								coins[0].amount = (coins[0].amount / 1000000).toFixed(6);
 							}
 							this.account = coins[0].amount
-							console.log('res',res);
+							
 						})
 					}
 					if (this.loadStatus === 'loadmore') {
 						this.loadStatus = 'loading'
-						console.log('loding',params);
+						
 						this.queryAssetsList(lazyLoad,this.loadStatus,params);
 					}else{
-						console.log(params);
+						
 						// this.queryAssetsList(lazyLoad,this.loadStatus,params);
 					}
 				}
 			},
 			navigate(item) {
-				console.log(item);
+				
 				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail?hash=${item.txHash}` })
 			},
 			ETHnavigate(item){

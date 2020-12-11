@@ -72,7 +72,7 @@
                     this.walletName = this.$store.state.walletName
                     this.userWallet = this.$store.state.userWallet
                 }
-                console.log("钱包列表",this.userWallet);
+                
                 //是否隐藏资金
                 uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
                 
@@ -92,7 +92,7 @@
                     // 		this.$store.state.socketTask.send({
                     // 			data: JSON.stringify(wsParams),
                     // 			async success() {
-                    // 				console.log('发送connect信息成功');
+                    // 				
                     // 			}
                     // 		})
                     // 	})
@@ -152,7 +152,7 @@
             },
             //切换用户地址
 			switchUserAddress(item) {
-				// console.log("点击后的itme:",item);
+				
 				this.addr =  item.addr
 				this.walletName = item.name
 				this.$store.commit('SET_WALLETNAME', item.name)

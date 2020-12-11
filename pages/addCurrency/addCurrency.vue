@@ -94,7 +94,7 @@ export default {
 				this.walletName = this.$store.state.walletName
 				this.userWallet = this.$store.state.userWallet
 			}
-            console.log("钱包列表",this.userWallet);
+            
             
 			//是否隐藏资金
 			uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
@@ -152,11 +152,10 @@ export default {
 							filterby: 2,
 						},
 						success: (res) => {
-							uni.hideLoading()
 							let tokens = res.data
 							tokens.map(async (item) => {
 								if (item.split('\t')[1]) {
-                                    let decimal = await _that.$wallet("ETH").getDecimal(item.split('\t')[1])
+									let decimal = await _that.$wallet("ETH").getDecimal(item.split('\t')[1])
 									_that.tokenList.push({
 										label: item.split('\t')[0],
 										value: item.split('\t')[1],
@@ -168,13 +167,13 @@ export default {
 									})
 								}
 							})
+							uni.hideLoading()
 							_that.isEmpty = !_that.tokenList.length
 						}
 					})
 				}, 1000)
             },
             addAssets(index){
-                console.log(this.tokenList[0].desc.split('$')[1]);
 				util.setAsset(this.addr, this.tokenList[index]);
                 uni.showToast({
 					title: '添加成功'

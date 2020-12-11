@@ -14,7 +14,7 @@ function create(chain) {
 
 Wallet.prototype.getAddress = function(mnemonic) {
 	if (this.chain == "HST") {
-		return hschain.network('https://testnet.hschain.io/', 'hst01').getAddress(mnemonic)
+		return hschain.network('https://scan.hschain.io', 'hschain').getAddress(mnemonic)
 	}
 	
 	if (this.chain == "ETH") {

@@ -95,7 +95,6 @@ const bip39 = require('bip39');
 										let addr = _this.$wallet(_this.$store.state.walletType).getAddress(_this.$store.state.mnemonic)						
 										
 										let account = _this.secret.decrypt(uni.getStorageSync('account'))
-										console.log('this.nameIndex',this.nameIndex);
 										account[addr] = {
 											name: _this.$store.state.walletType+`-${_this.nameIndex}`, 
 											key: _this.$store.state.mnemonic,
@@ -117,9 +116,16 @@ const bip39 = require('bip39');
 											key: 'account',
 											data: _this.secret.encrypt(account)
 										})
-										uni.switchTab({
-											url: '../main/main'
-										})
+										if (uni.getStorageSync('localPw')) {
+											_this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',_this.nameIndex+1):uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
+											uni.switchTab({
+												url: '../main/main'
+											})
+										} else {
+											uni.navigateTo({
+												url: `../setPw/setPw`
+											})
+										}
 									} else {
 										uni.navigateTo({
 											url: `../setPw/setPw`
@@ -130,7 +136,7 @@ const bip39 = require('bip39');
 						})
 					}
 				})
-				this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
+				
 			},
 			onReady() {
 				this.$refs.uForm.setRules(this.rules);

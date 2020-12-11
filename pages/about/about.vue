@@ -100,7 +100,7 @@
 		onReady() {
 			uni.getSystemInfo({
 				success:  (res) => { 
-					console.log(res);
+					
 					this.Height=res.windowHeight- uni.upx2px(25)+'px'
 				}
 			})
@@ -155,7 +155,7 @@
 		margin-left: 100rpx;
 	}
 	.about {
-		min-height: 812px;
+		min-height: 1636rpx;
 		overflow: hidden;
 		background: url('../../static/common/bg_taichi.png');
 		background-size: 100% 100%;

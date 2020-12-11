@@ -22,7 +22,11 @@
 				pw: '',
 				confirmPw: '',
 				secondCheck: false, //页面切换至二次确认的标记
+				nameIndex:0
 			}
+		},
+		onShow(){
+			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
 		},
 		methods: {
 			back() {
@@ -69,6 +73,7 @@
 					}
 					uni.setStorageSync('localPw', this.$md5(this.pw))
 					uni.setStorageSync(addr+'backupMnemonic', true)
+					this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
 					uni.showToast({
 						title: '密码设置成功',
 						success() {

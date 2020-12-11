@@ -59,15 +59,15 @@ const store = new Vuex.Store({
 				{
 					url,
 					success() {
-						console.log('websocket连接中');
+						
 					}
 				}
 			)
 			state.socketTask.onOpen(res => {
 				state.socketIsOpen = true;
-				console.log('websocket打开成功');
+			
 				state.socketTask.onMessage(res => {
-					console.log('ws收到服务器内容: ' + JSON.stringify(res))
+					
 				})
 			})
 			// 监听关闭
@@ -76,29 +76,29 @@ const store = new Vuex.Store({
 					state.socketTask = uni.connectSocket({
 						url,
 						success() {
-							console.log('websocket重新连接成功');
+							
 						}
 					})
 				} else {
-					console.log('ws连接已关闭');
+					
 					state.socketTask = null;
 				}
 
 			})
 			// 监听错误
 			state.socketTask.onError(()=>{
-				console.log('ws连接错误');
+			
 				state.socketIsOpen = false;
 				state.socketTask = null;
 			})
 		},
 		WEBSOCKET_SEND: (state, msg) => {
 			// state.socketTask.onOpen(res => {
-				console.log('ws发送信息：' + JSON.stringify(msg));
+				
 				state.socketTask.send({
 					data: msg,
 					async success() {
-						console.log('ws发送成功');
+					
 					}
 				})
 			// })

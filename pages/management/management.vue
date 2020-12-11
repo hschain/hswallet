@@ -120,7 +120,8 @@
 				inputPwOption: '', //根据入口，判断输入密码成功后的操作
 				quitDialog: false, //未备份退出提示弹框
 				walletList:[],
-				type:''
+				type:'',
+				nameIndex:0
 			}
 		},
 		onLoad() {
@@ -141,7 +142,7 @@
 			this.walletList=this.$store.state.userWallet;
 			this.addr=uni.getStorageSync('userAddress');
 			this.backupMnemonic=uni.getStorageSync(this.addr+'backupMnemonic');
-			console.log(this.backupMnemonic);
+			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex')
 		},
 		onBackPress() {
 			if (this.showAddr) {
@@ -183,11 +184,13 @@
 					for (let idx in this.account) {
 						userWallet.push({
 							addr: idx,
-							name: this.account[idx].name
+							name: this.account[idx].name,
+							type: this.account[idx].type,
 						})
 					}
 					this.$store.commit('SAVE_USER_WALLET', userWallet)
 					this.$store.commit('SET_WALLETNAME', this.value)
+					this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex-1):uni.setStorageSync('ethnameIndex',this.nameIndex-1)
 					uni.setStorageSync('account', this.secret.encrypt(this.account))
 					this.modifyName = false
 				}
@@ -237,6 +240,7 @@
 							uni.setStorageSync('userAddress',newArr[0].addr)
 							this.$store.commit('SET_WALLETNAME',newArr[0].name)
 							this.$store.commit('SAVE_WALLET_TYPE',newArr[0].type)
+							this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex-1):uni.setStorageSync('ethnameIndex',this.nameIndex-1)
 							uni.navigateTo({
 								url: '../walletList/walletList?vel=management'
 							})

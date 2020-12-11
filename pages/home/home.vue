@@ -88,7 +88,7 @@
 	.home {
 		overflow: hidden;
 		width: 100%;
-		min-height: 812px;
+		min-height: 1636rpx;
 		background: url('../../static/common/bg_taichi.png') no-repeat;
 		background-size:100% 100%;
 		// background-position-x: -6rpx;

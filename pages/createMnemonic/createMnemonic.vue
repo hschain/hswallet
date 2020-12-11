@@ -90,7 +90,7 @@
 			}
 		},
 		onShow(){
-			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
+			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex')
 		},
 		methods: {
 			back() {
@@ -174,9 +174,15 @@
 							key: 'account',
 							data: this.secret.encrypt(account)
 						})
-						uni.switchTab({
-							url: '../main/main'
-						})
+						if (uni.getStorageSync('localPw')) {
+							uni.switchTab({
+								url: '../main/main'
+							})
+						} else {
+							uni.navigateTo({
+								url: `../setPw/setPw`
+							})
+						}
 					}
 				if (!uni.getStorageSync(address+'backupMnemonic')) {
 					//未备份信息时开始备份
@@ -198,13 +204,13 @@
 				}
 				
 				if (this.$store.state.toBackupPage && uni.getStorageSync('account')) { //通过备份助记词跳转过来的，执行此语句
-					console.log("执行断点4")
+					
 					this.$store.dispatch('redirectToBackupPage', false)
 					uni.switchTab({
 						url: '../main/main'
 					})
 				} else if (uni.getStorageSync('isAccount') && uni.getStorageSync('account')) { //如果已存在账户，则代表入口来自管理页面
-						console.log("执行断点6")
+						
 						let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
 						
 						let account = this.secret.decrypt(uni.getStorageSync('account'))
@@ -228,13 +234,19 @@
 							key: 'account',
 							data: this.secret.encrypt(account)
 						})
-						uni.switchTab({
-							url: '../main/main'
-						})
+						if (uni.getStorageSync('localPw')) {
+							this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
+								uni.switchTab({
+									url: '../main/main'
+								})
+						} else {
+								uni.navigateTo({
+									url: `../setPw/setPw`
+								})
+						}
 					} else{
 							
 						}	
-				this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
 			},
 			//点击选择标签
 			chooseTag(item, index) {
@@ -248,7 +260,7 @@
 					})
 				}
 				this.inputMnemonicArray.push({value: item.value, idx: index, error})
-				console.log(this.inputMnemonicArray);
+			
 				this.randMnemonicArray[index].choose = true
 				this.allCorrect = true
 				this.inputMnemonicArray.forEach((item, index) => {

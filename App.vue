@@ -3,7 +3,7 @@
 	
 	export default {
 		onLaunch: function() {
-			console.log('App Launch')
+			
 			// #ifdef APP-PLUS
 				plus.nativeUI.setUIStyle('dark')
 			// #endif
@@ -21,10 +21,10 @@
 			}
 		},
 		onShow: function() {
-			console.log('App Show')
+			
 		},
 		onHide: function() {
-			console.log('App Hide')
+		
 		},
 		beforeDestroy() {
 			this.$store.dispatch('websocketClose', "wss://testnet.hschain.io/api/v1/ws")

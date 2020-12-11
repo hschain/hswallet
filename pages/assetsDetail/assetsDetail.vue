@@ -94,7 +94,6 @@
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
 						success: (res) => {
-							console.log(res,this.$store.state.index);
 							if (res.data) {
 								this.details=res.data.content[this.$store.state.index];
 							}
@@ -129,9 +128,9 @@
 			//获取当前交易hash信息
 			this.walletType=this.$store.state.walletType;
 			if (this.walletType=='HST') {
-				console.log('HST');
+				
 				this.$u.api.getAssetsList({}, '/' + value.hash).then(res => {
-					console.log('res',res.data);
+				
 					if (res.data) {
 						res.data.forEach(item => {
 							this.assetData = {
@@ -163,7 +162,7 @@
 									}
 								}
 							}
-							console.log('this.assetData',this.assetData);
+						
 							item.messages[0].events.message.sender === uni.getStorageSync('userAddress') ? this.assetData.type = 'out' : this.assetData.type = 'in'
 							if (/^u/i.test(item.messages[0].events.transfer.denom)) {
 								this.assetData.denom = item.messages[0].events.transfer.denom.slice(1);
@@ -172,7 +171,7 @@
 						})
 					}
 				}).catch(err=>{
-					console.log(err);
+					
 				})
 			}else if (this.walletType=='ETH') {
 					
@@ -180,7 +179,7 @@
 		},
 		methods:{
 			goto(item){
-				console.log(item);
+				
 				if(this.walletType=='ETH'){
 					uni.navigateTo({
 						url: `../etheric/etheric?url=https://cn.etherscan.com/tx/${item}`

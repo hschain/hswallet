@@ -217,7 +217,7 @@
 			queryNewAssetsList() {
 				if(this.currencyName=='HST'){
 					let params = {
-						limit: this.limit,
+						limit: 8,
 						address: uni.getStorageSync('userAddress'),
 						// address:'hsc1wqznqd37hve7mdk759e25svw5597rw5gglle9f',
 						timetable: 'now',
@@ -366,7 +366,7 @@
 				if(this.currencyName=='HST'){
 					uni.getStorageSync('hideBalance') ? this.hideBalance = true : this.hideBalance = false
 					let params = {
-						limit: this.limit,
+						limit: 8,
 						address: uni.getStorageSync('userAddress'),
 						// address:'hsc1wqznqd37hve7mdk759e25svw5597rw5gglle9f',
 						timetable: 'history',

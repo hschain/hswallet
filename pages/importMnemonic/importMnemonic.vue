@@ -1,5 +1,6 @@
 <template>
 	<view class="importMnemonic">
+		<view v-if="showlod" class="loading"><u-loading class="load" mode="flower" show size="200"></u-loading></view>
 		<view class="header">
 			<image @click="back" class="back" src="../../static/svg/ic_back.svg" mode=""></image>
 		</view>
@@ -59,7 +60,8 @@ const bip39 = require('bip39');
 						}
 					]
 				},
-				nameIndex:1
+				nameIndex:1,
+				showlod:false
 			}
 		},
 		onShow(){
@@ -71,6 +73,7 @@ const bip39 = require('bip39');
 			},
 			//点击开始校验并导入助记词,根据不同场景做相应处理
 			startImport() {
+				this.showlod=true;
 				this.$refs.uForm.validate(valid => {
 					if (valid) {
 						let value = this.form.value
@@ -91,9 +94,9 @@ const bip39 = require('bip39');
 							title: '助记词导入成功',
 							success() {
 								setTimeout(() => {
+									this.showlod=false;
 									if (uni.getStorageSync('account')) {
 										let addr = _this.$wallet(_this.$store.state.walletType).getAddress(_this.$store.state.mnemonic)						
-										
 										let account = _this.secret.decrypt(uni.getStorageSync('account'))
 										account[addr] = {
 											name: _this.$store.state.walletType+`-${_this.nameIndex}`, 
@@ -108,6 +111,7 @@ const bip39 = require('bip39');
 												type: account[idx].type
 											})
 										}
+										this.showlod=true;
 										_this.$store.commit('SAVE_USER_WALLET', userWallet)
 										_this.$store.commit('SET_WALLETNAME', _this.$store.state.walletType)
 										uni.setStorageSync('userAddress', addr)
@@ -149,6 +153,21 @@ const bip39 = require('bip39');
 	.importMnemonic {
 		overflow: hidden;
 		color: #1F1F1F;
+		.loading{
+			width: 160px;
+			height: 160px;
+			background: rgba($color: #000000, $alpha: 0.3);
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-50%);
+			.load{
+				position: absolute;
+				top: 30px;
+				left: 30px;
+				
+			}
+		}
 		.header {
 			margin: 100rpx 40rpx 0;
 			.back {

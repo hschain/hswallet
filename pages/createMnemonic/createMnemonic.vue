@@ -1,5 +1,6 @@
 <template>
 	<view class="createMnemonic">
+		<view v-if="showlod" class="loading"><u-loading class="load" mode="flower" show size="200"></u-loading></view>
 		<view class="header">
 			<image @click="back" class="back" src="../../static/svg/ic_back.svg" mode=""></image>
 		</view>
@@ -86,7 +87,9 @@
 				inputMnemonicArray: [], //用户选择的助记词
 				allCorrect: false, //选择的助记词顺序正确
 				nameIndex:0,
-				statusBarHeight: uni.getSystemInfoSync().statusBarHeight
+				statusBarHeight: uni.getSystemInfoSync().statusBarHeight,
+				accoun:uni.getStorageSync('account'),
+				showlod:false
 			}
 		},
 		onShow(){
@@ -125,9 +128,10 @@
 			},
 			// 确认已备份
 			check() {
+				this.showlod=true;
 				//存储数据并跳转路由
 				let address = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
-				if(!uni.getStorageSync('account')){
+				if(!this.accoun){
 					let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
 					let accounts = {}
 					this.$store.commit('SET_WALLETNAME', this.$store.state.walletType)
@@ -150,10 +154,9 @@
 					uni.navigateTo({
 								url: '../setPw/setPw'
 					})
-				}else if (uni.getStorageSync('account')&&!this.$store.state.toBackupPage&&!uni.getStorageSync('isAccount')) { 
+				}else if (this.accoun) { //&&!this.$store.state.toBackupPage&&!uni.getStorageSync('isAccount')
 						let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
-						
-						let account = this.secret.decrypt(uni.getStorageSync('account'))
+						let account = this.secret.decrypt(this.accoun)
 						account[addr] = {
 							name: this.$store.state.walletType+`-${this.nameIndex}`, 
 							key: this.mnemonic,
@@ -174,42 +177,16 @@
 							key: 'account',
 							data: this.secret.encrypt(account)
 						})
-						if (uni.getStorageSync('localPw')) {
-							uni.switchTab({
-								url: '../main/main'
-							})
-						} else {
-							uni.navigateTo({
-								url: `../setPw/setPw`
-							})
-						}
-					}
-				if (!uni.getStorageSync(address+'backupMnemonic')) {
-					//未备份信息时开始备份
-					let account = this.secret.decrypt(uni.getStorageSync('account'))
-					uni.setStorageSync(address+'backupMnemonic', true)
-					if (uni.getStorageSync('mnemonicData')) { //判断是否已存在其他地址信息
-						let data = this.secret.decrypt(uni.getStorageSync('mnemonicData'))
-						data.push(account)
-						uni.setStorage({
-							key: 'mnemonicData',
-							data: this.secret.encrypt(data)
-						})
-					} else {
-						uni.setStorage({
-							key: 'mnemonicData',
-							data: this.secret.encrypt([account])
-						})
-					}
-				}
-				
-				if (this.$store.state.toBackupPage && uni.getStorageSync('account')) { //通过备份助记词跳转过来的，执行此语句
-					
-					this.$store.dispatch('redirectToBackupPage', false)
-					uni.switchTab({
-						url: '../main/main'
-					})
-				} else if (uni.getStorageSync('isAccount') && uni.getStorageSync('account')) { //如果已存在账户，则代表入口来自管理页面
+						// if (uni.getStorageSync('localPw')) {
+						// 	uni.switchTab({
+						// 		url: '../main/main'
+						// 	})
+						// } else {
+						// 	uni.navigateTo({
+						// 		url: `../setPw/setPw`
+						// 	})
+						// }
+				}else if (uni.getStorageSync('isAccount') && uni.getStorageSync('account')) { //如果已存在账户，则代表入口来自管理页面
 						
 						let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
 						
@@ -235,7 +212,7 @@
 							data: this.secret.encrypt(account)
 						})
 						if (uni.getStorageSync('localPw')) {
-							this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
+							
 								uni.switchTab({
 									url: '../main/main'
 								})
@@ -244,9 +221,36 @@
 									url: `../setPw/setPw`
 								})
 						}
-					} else{
+				// if (!uni.getStorageSync(address+'backupMnemonic')) {
+				// 	//未备份信息时开始备份
+				// 	let account = this.secret.decrypt(uni.getStorageSync('account'))
+				// 	uni.setStorageSync(address+'backupMnemonic', true)
+				// 	if (uni.getStorageSync('mnemonicData')) { //判断是否已存在其他地址信息
+				// 		let data = this.secret.decrypt(uni.getStorageSync('mnemonicData'))
+				// 		data.push(account)
+				// 		uni.setStorage({
+				// 			key: 'mnemonicData',
+				// 			data: this.secret.encrypt(data)
+				// 		})
+				// 	} else {
+				// 		uni.setStorage({
+				// 			key: 'mnemonicData',
+				// 			data: this.secret.encrypt([account])
+				// 		})
+				// 	}
+				// }
+				
+				// if (this.$store.state.toBackupPage && uni.getStorageSync('account')) { //通过备份助记词跳转过来的，执行此语句
+					
+				// 	this.$store.dispatch('redirectToBackupPage', false)
+				// 	uni.switchTab({
+				// 		url: '../main/main'
+				// 	})
+				} 
+				this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
+				// 	} else{
 							
-						}	
+				// 		}	
 			},
 			//点击选择标签
 			chooseTag(item, index) {
@@ -310,6 +314,21 @@
 	}
 	.createMnemonic {
 		height: 100vh;
+		.loading{
+			width: 160px;
+			height: 160px;
+			background: rgba($color: #000000, $alpha: 0.3);
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%,-50%);
+			.load{
+				position: absolute;
+				top: 30px;
+				left: 30px;
+				
+			}
+		}
 		.header {
 			padding: 100rpx 40rpx 0;
 			.back {

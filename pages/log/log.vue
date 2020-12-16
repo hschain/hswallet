@@ -27,6 +27,7 @@
 		},
 		methods: {
 			getAnnouncement() {
+				
 				this.publishData = [
 					{
 						content: 'HS Wallet 12/11 初始版',

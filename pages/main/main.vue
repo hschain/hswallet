@@ -1,6 +1,6 @@
 <template>
 	<view class="content" :style="{'margin-top':barHeight+'px'}">
-		<view class="status_bar"></view>
+		<view v-if="platform=='Android'" class="status_bar"></view>
 		<view class="top">
 			<u-navbar back-icon-name="list" :custom-back="selectWallet" back-icon-color="#fff" style="font-weight: 600;"
 			 title-color="#fff" :border-bottom="false" title="钱包" :background="{background}"></u-navbar>
@@ -163,7 +163,8 @@
 				userWallet: [], //当前用户多个钱包信息
 				ETHassetsList: [],
 				barHeight: 25,
-				exchange: {}
+				exchange: {},
+				platform:''
 			}
 		},
 		onLoad() {
@@ -248,7 +249,7 @@
 		}
 		//如果vuex存在助记词缓存，则清空助记词
 		if (this.$store.state.mnemonic) this.$store.dispatch('saveMnemonic', '');
-
+		this.platform=plus.os.name
 	},
 	filters: {
 			hash: function(value) {
@@ -324,7 +325,6 @@
 				})
 			},
 			getUpdate() {
-
 				if (uni.getStorageSync('account')) { //如果用户已注册账号，则会检测版本更新
 					let platform = ''
 					let version = ''

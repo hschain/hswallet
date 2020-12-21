@@ -1,6 +1,5 @@
 <template>
 	<view class="createMnemonic">
-		<view v-if="showlod" class="loading"><u-loading class="load" mode="flower" show size="200"></u-loading></view>
 		<view class="header">
 			<image @click="back" class="back" src="../../static/svg/ic_back.svg" mode=""></image>
 		</view>
@@ -66,7 +65,7 @@
 			</view>
 			<view class="bottomSize">
 				<view>
-					<view :class="['next', inputMnemonicArray.length === 12 && allCorrect ? 'opaque' : 'transparent']" @click="inputMnemonicArray.length === 12 && allCorrect ? check() : ''">下一步</view>
+					<u-button :class="['next', inputMnemonicArray.length === 12 && allCorrect ? 'opaque' : 'transparent']" @click="inputMnemonicArray.length === 12 && allCorrect ? check() : ''">下一步</u-button>
 				</view>
 			</view>
 		</view>
@@ -76,6 +75,7 @@
 </template>
 
 <script>
+import hschain from 'hschainjs'
 	export default {
 		name: 'createMnemonic',
 		data() {
@@ -86,14 +86,27 @@
 				randMnemonicArray: [], //打乱顺序的助记词
 				inputMnemonicArray: [], //用户选择的助记词
 				allCorrect: false, //选择的助记词顺序正确
-				nameIndex:0,
+				nameIndex:this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex'),
 				statusBarHeight: uni.getSystemInfoSync().statusBarHeight,
-				accoun:uni.getStorageSync('account'),
-				showlod:false
+				accountList:'',
+				walletType:this.$store.state.walletType,
+				localPw:uni.getStorageSync('localPw'),
+				userWallet:this.$store.state.userWallet,
+				addr:''
 			}
 		},
 		onShow(){
+			// this.localPw=uni.getStorageSync('localPw')
+			this.accountList=this.secret.decrypt(uni.getStorageSync('account'))
+			// this.walletType=this.$store.state.walletType
 			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex')
+			// this.addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
+			
+		},
+		onReady(){
+			setTimeout(() => {
+				this.addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
+			}, 1500);
 		},
 		methods: {
 			back() {
@@ -125,102 +138,118 @@
 				    const random = Math.floor(Math.random() * (i + 1));
 				    [this.randMnemonicArray[i], this.randMnemonicArray[random]] = [this.randMnemonicArray[random], this.randMnemonicArray[i]];
 				}
+				
 			},
 			// 确认已备份
 			check() {
-				this.showlod=true;
+				uni.showLoading({
+					title: ''
+				});
 				//存储数据并跳转路由
-				let address = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
-				if(!this.accoun){
-					let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
-					let accounts = {}
-					this.$store.commit('SET_WALLETNAME', this.$store.state.walletType)
-					uni.setStorageSync('userAddress', addr)
-					let userWallet = [{
-						addr,
-						name: this.$store.state.walletType+`-${this.nameIndex}`,
-						type:this.$store.state.walletType
-					}]
+				let addr = this.addr
+				// let addr = this.$chain(this.$url, this.$chainId).getAddress(this.mnemonic)
+				// let addr = hschain.network('https://testnet.hschain.io', 'hst01').getAddress(this.mnemonic)
+				// if(!this.accountList){
+					this.$store.commit('SET_WALLETNAME', this.walletType+`-${this.nameIndex}`)
+					uni.setStorageSync('userAddress', addr)		
+					let accounts=this.accountList?this.accountList:{}
+					let userWallet = this.accountList?this.userWallet:[{addr,name: this.walletType+`-${this.nameIndex}`,type:this.walletType}]
+					if (this.accountList) {
+							userWallet.push({
+								addr: addr,
+								name: this.walletType+`-${this.nameIndex}`, 
+								type:this.walletType
+							})
+					}	
 					this.$store.commit('SAVE_USER_WALLET', userWallet)
+					
 					accounts[addr] = {
-						name: this.$store.state.walletType+`-${this.nameIndex}`, 
-						key: this.$store.state.mnemonic,
-						type:this.$store.state.walletType
+						name: this.walletType+`-${this.nameIndex}`, 
+						key: this.mnemonic,
+						type:this.walletType
 					}
 					uni.setStorage({
 						key: 'account',
 						data: this.secret.encrypt(accounts)
 					})
-					uni.navigateTo({
-								url: '../setPw/setPw'
-					})
-				}else if (this.accoun) { //&&!this.$store.state.toBackupPage&&!uni.getStorageSync('isAccount')
-						let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
-						let account = this.secret.decrypt(this.accoun)
-						account[addr] = {
-							name: this.$store.state.walletType+`-${this.nameIndex}`, 
-							key: this.mnemonic,
-							type:this.$store.state.walletType
-						}
-						let userWallet = []
-						for (let idx in account) {
-							userWallet.push({
-								addr: idx,
-								name: account[idx].name,
-								type: account[idx].type
-							})
-						}
-						this.$store.commit('SAVE_USER_WALLET', userWallet)
-						this.$store.commit('SET_WALLETNAME', this.$store.state.walletType)
-						uni.setStorageSync('userAddress', addr)
-						uni.setStorage({
-							key: 'account',
-							data: this.secret.encrypt(account)
+					if (this.localPw) {
+						uni.switchTab({
+							url: '../main/main'
 						})
-						// if (uni.getStorageSync('localPw')) {
-						// 	uni.switchTab({
-						// 		url: '../main/main'
-						// 	})
-						// } else {
-						// 	uni.navigateTo({
-						// 		url: `../setPw/setPw`
-						// 	})
-						// }
-				}else if (uni.getStorageSync('isAccount') && uni.getStorageSync('account')) { //如果已存在账户，则代表入口来自管理页面
-						
-						let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
-						
-						let account = this.secret.decrypt(uni.getStorageSync('account'))
-						account[addr] = {
-							name: this.$store.state.walletType+`-${this.nameIndex}`, 
-							key: this.mnemonic,
-							type:this.$store.state.walletType
-						}
-						let userWallet = []
-						for (let idx in account) {
-							userWallet.push({
-								addr: idx,
-								name: account[idx].name,
-								type: account[idx].type
-							})
-						}
-						this.$store.commit('SAVE_USER_WALLET', userWallet)
-						this.$store.commit('SET_WALLETNAME', this.$store.state.walletType)
-						uni.setStorageSync('userAddress', addr)
-						uni.setStorage({
-							key: 'account',
-							data: this.secret.encrypt(account)
+					} else {
+						uni.navigateTo({
+							url: `../setPw/setPw`
 						})
-						if (uni.getStorageSync('localPw')) {
-							
-								uni.switchTab({
-									url: '../main/main'
-								})
-						} else {
-								uni.navigateTo({
-									url: `../setPw/setPw`
-								})
-						}
+					}	
+					
+				// }
+				// else if (this.accountList) { //&&!this.$store.state.toBackupPage&&!uni.getStorageSync('isAccount')
+				// 		// let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
+				// 		let account = this.secret.decrypt(this.accountList)
+				// 		account[addr] = {
+				// 			name: this.$store.state.walletType+`-${this.nameIndex}`, 
+				// 			key: this.mnemonic,
+				// 			type:this.$store.state.walletType
+				// 		}
+				// 		let userWallet = []
+				// 		for (let idx in account) {
+				// 			userWallet.push({
+				// 				addr: idx,
+				// 				name: account[idx].name,
+				// 				type: account[idx].type
+				// 			})
+				// 		}
+				// 		this.$store.commit('SAVE_USER_WALLET', userWallet)
+				// 		this.$store.commit('SET_WALLETNAME', this.$store.state.walletType)
+				// 		uni.setStorageSync('userAddress', addr)
+				// 		uni.setStorage({
+				// 			key: 'account',
+				// 			data: this.secret.encrypt(account)
+				// 		})
+				// 		if (uni.getStorageSync('localPw')) {
+				// 			uni.switchTab({
+				// 				url: '../main/main'
+				// 			})
+				// 		} else {
+				// 			uni.navigateTo({
+				// 				url: `../setPw/setPw`
+				// 			})
+				// 		}
+				// }
+				// else if (uni.getStorageSync('isAccount') && uni.getStorageSync('account')) { //如果已存在账户，则代表入口来自管理页面
+						
+				// 		let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)					
+						
+				// 		let account = this.secret.decrypt(uni.getStorageSync('account'))
+				// 		account[addr] = {
+				// 			name: this.$store.state.walletType+`-${this.nameIndex}`, 
+				// 			key: this.mnemonic,
+				// 			type:this.$store.state.walletType
+				// 		}
+				// 		let userWallet = []
+				// 		for (let idx in account) {
+				// 			userWallet.push({
+				// 				addr: idx,
+				// 				name: account[idx].name,
+				// 				type: account[idx].type
+				// 			})
+				// 		}
+				// 		this.$store.commit('SAVE_USER_WALLET', userWallet)
+				// 		this.$store.commit('SET_WALLETNAME', this.$store.state.walletType)
+				// 		uni.setStorageSync('userAddress', addr)
+				// 		uni.setStorage({
+				// 			key: 'account',
+				// 			data: this.secret.encrypt(account)
+				// 		})
+				// 		if (uni.getStorageSync('localPw')) {
+				// 				uni.switchTab({
+				// 					url: '../main/main'
+				// 				})
+				// 		} else {
+				// 				uni.navigateTo({
+				// 					url: `../setPw/setPw`
+				// 				})
+				// 		}
 				// if (!uni.getStorageSync(address+'backupMnemonic')) {
 				// 	//未备份信息时开始备份
 				// 	let account = this.secret.decrypt(uni.getStorageSync('account'))
@@ -246,8 +275,10 @@
 				// 	uni.switchTab({
 				// 		url: '../main/main'
 				// 	})
-				} 
+				// } 
+				uni.hideLoading();
 				this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
+				
 				// 	} else{
 							
 				// 		}	
@@ -290,13 +321,13 @@
 					}
 				})
 			}
-		}
+		},
 	}
 </script>
 
 <style lang="scss" scoped>
 	.transparent{
-		opacity: 0.4;
+		opacity: 0.6;
 	}
 	.opaque{
 		opacity: 1;
@@ -337,7 +368,7 @@
 			}
 		}
 		.tip {
-			display: flex;
+			// display: flex;
 			height: 60vh;
 			font-size: 30rpx;
 			display: flex;
@@ -442,10 +473,10 @@
 			.next{
 				width: 686rpx;
 				height: 96rpx;
+				margin: 0 auto 40rpx;
+				color: #fff;
 				background: url('../../static/common/button_gold.png') no-repeat;
 				background-size: 100% 100%;
-				text-align: center;
-				line-height: 96rpx;
 			}
 		}
 	}

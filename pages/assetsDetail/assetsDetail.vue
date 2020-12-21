@@ -1,6 +1,6 @@
 <template>
 <view>
-	<view class="content" v-if="walletType=='HST'">
+	<view class="content" v-if="Type.type=='HST'">
 		<view class="detail">
 			<view class="showDetail">
 				<image v-if="assetData.success" class="icon" src="../../static/common/img_success.png" mode=""></image>
@@ -34,13 +34,13 @@
 			<view class="check" @click="goto(assetData.details.txHash.value)">查询详细信息></view>
 		</view>
 	</view>
-	<view class="content" v-else-if="walletType=='ETH'">
+	<view class="content" v-else-if="Type.type=='ETH'">
 		<view class="detail">
 			<view class="showDetail">
 				<image v-if="details.result=='SUCCESS'" class="icon" src="../../static/common/img_success.png" mode=""></image>
 				<image v-else class="icon" src="../../static/common/wrong.png" mode=""></image>
 				<text :class="['tip',details.result=='SUCCESS'?'green':'red']">{{details.result=='SUCCESS'? '成功' : '失败'}}</text>
-				<text class="time">{{formatDate(details.tx_timestamp)}}</text>
+				<text class="time">{{timestampToTime(details.tx_timestamp)}}</text>
 				<text class="amount">{{details.to === '0x85464b207d7c1fce8da13d2f3d950c796e399a9c' ? '+ ' : '- '}}{{details.amount+' ETH'}}</text>
 			</view>
 		</view>
@@ -81,12 +81,15 @@
 				title: '',
 				assetData: {},
 				walletType:'',
-				details:{}
+				details:{},
+				Type:{}
 			}
 		},
 		onShow(){
+			let accs = this.secret.decrypt(uni.getStorageSync('account'));
+			this.Type=accs[uni.getStorageSync('userAddress')];
 			this.walletType=this.$store.state.walletType;
-			if (this.walletType=='ETH') {
+			if (this.Type.type=='ETH') {
 				uni.request({
 						url:'http://8.129.187.233:25676/eth/access/eth_list',
 						data:{limit: 10,start:0,type:'ALL',address:uni.getStorageSync('userAddress').toLocaleLowerCase()},
@@ -126,16 +129,17 @@
 		},
 		onLoad(value) {
 			//获取当前交易hash信息
-			this.walletType=this.$store.state.walletType;
-			if (this.walletType=='HST') {
-				
+			let accs = this.secret.decrypt(uni.getStorageSync('account'));
+			this.Type=accs[uni.getStorageSync('userAddress')];
+			// this.walletType=this.$store.state.walletType;
+			if (this.Type.type=='HST') {
 				this.$u.api.getAssetsList({}, '/' + value.hash).then(res => {
-				
 					if (res.data) {
+						
 						res.data.forEach(item => {
 							this.assetData = {
 								denom: '',
-								time: formatTime(item.timestamp, true),
+								time: this.Time(item.timestamp),
 								value: 0,
 								type: '',
 								success: item.messages[0].success,
@@ -169,38 +173,45 @@
 								this.assetData.value = (item.messages[0].events.transfer.amount / 1000000).toFixed(6);
 							}
 						})
+						
 					}
 				}).catch(err=>{
 					
 				})
-			}else if (this.walletType=='ETH') {
-					
-		}
+			}
 		},
 		methods:{
 			goto(item){
 				
-				if(this.walletType=='ETH'){
+				if(this.Type.type=='ETH'){
 					uni.navigateTo({
 						url: `../etheric/etheric?url=https://cn.etherscan.com/tx/${item}`
+					})
+				}else if(this.Type.type=='HST'){
+					uni.navigateTo({
+						url: `../etheric/etheric?url=https://scan.hschain.io/#/transactions/${item}`
 					})
 				}
 				
 			},
-			formatDate(date) {
-				if (date) {
-					var date = new Date(date*1);
-					var YY = date.getFullYear() + '-';
-					var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-					var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate());
-					var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
-					var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
-					var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds());
-					return YY + MM + DD +" "+hh + mm + ss;
-				} else {
-					return ''
-				}
+			Time(item) {
+				console.log(item);
+				let arr = item.slice(0, -1).split("T");
+				let tiemstr=arr[0] + " " + arr[1] + " GMT+0000"
+				let timeStamp = new Date(tiemstr).getTime();
+				
+				return this.timestampToTime(timeStamp/1000)
 			},
+			timestampToTime(timestamp) {
+				var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+				var Y = date.getFullYear() + '-';
+				var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1):date.getMonth()+1) + '-';
+				var D = (date.getDate()< 10 ? '0'+date.getDate():date.getDate())+ ' ';
+				var h = (date.getHours() < 10 ? '0'+date.getHours():date.getHours())+ ':';
+				var m = (date.getMinutes() < 10 ? '0'+date.getMinutes():date.getMinutes()) + ':';
+				var s = date.getSeconds() < 10 ? '0'+date.getSeconds():date.getSeconds();
+				return Y+M+D+h+m+s;
+   			},
 		}
 }
 </script>

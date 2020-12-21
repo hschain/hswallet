@@ -51,7 +51,7 @@
 				<view class="boxRight">
 					<view class="rightWrapper">
 						<view class="rightValue" style="color:#1f1f1f">
-							{{backupMnemonic ? '' : '未备份'}}
+							{{''}}<!-- backupMnemonic ? '' : '未备份' -->
 						</view>
 						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>
 					</view>
@@ -190,7 +190,6 @@
 					}
 					this.$store.commit('SAVE_USER_WALLET', userWallet)
 					this.$store.commit('SET_WALLETNAME', this.value)
-					this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex-1):uni.setStorageSync('ethnameIndex',this.nameIndex-1)
 					uni.setStorageSync('account', this.secret.encrypt(this.account))
 					this.modifyName = false
 				}
@@ -240,7 +239,6 @@
 							uni.setStorageSync('userAddress',newArr[0].addr)
 							this.$store.commit('SET_WALLETNAME',newArr[0].name)
 							this.$store.commit('SAVE_WALLET_TYPE',newArr[0].type)
-							this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex-1):uni.setStorageSync('ethnameIndex',this.nameIndex-1)
 							uni.navigateTo({
 								url: '../walletList/walletList?vel=management'
 							})

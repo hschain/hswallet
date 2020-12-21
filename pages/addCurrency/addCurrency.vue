@@ -18,13 +18,13 @@
         <view v-if="!keyword">
             <view class="title">首页资产</view>
             <view class="assetsList">
-                        <view  v-for="(item,index) in walletType=='HST' ? assetsList : ETHassetsList" :key="walletType=='HST' ? item.denom : item.value" class="table ">
+                        <view  v-for="(item,index) in Type.type=='HST' ? assetsList : ETHassetsList" :key="Type.type=='HST' ? item.denom : item.value" class="table ">
                             <view class="tableWrapper">
                                 <view class="tableLeft">
-                                    <image class="icon" v-if="walletType=='HST'" src="../../static/common/logo.png" mode=""></image>
-								    <image class="icon" v-else-if="walletType === 'ETH'" :src="item.logo" mode=""></image>
+                                    <image class="icon" v-if="Type.type=='HST'" src="../../static/common/logo.png" mode=""></image>
+								    <image class="icon" v-else-if="Type.type === 'ETH'" :src="item.logo" mode=""></image>
 								    <image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
-                                    <text class="denom">{{walletType=='HST'?item.denom:item.label}}</text>
+                                    <text class="denom">{{Type.type=='HST'?item.denom:item.label}}</text>
                                     <view class="addre">{{item.value | hash}}</view>
                                 </view>
                             </view>
@@ -39,7 +39,7 @@
                     <view v-if="!tokenList" class="isEmpty">
                         <u-empty text="暂无数据" mode="search" src="../../static/common/img_blank.png"></u-empty>
                     </view>
-                    <view v-for="(item,index) in tokenList" :key="item.value" class="table">
+                    <view v-for="(item,index) in tokenList" :key="index" class="table">
                         <view class="tableWrapper">
                             <view class="tableLeft">
                                 <image class="icon" :src="item.logo" mode="widthFix" lazy-load></image>
@@ -73,9 +73,12 @@ export default {
             tokenList: [],
             isEmpty: false,
             ETHassetsList:[],
+            Type:{},
         }
     },
     onShow() {
+            let accs = this.secret.decrypt(uni.getStorageSync('account'));
+			this.Type=accs[uni.getStorageSync('userAddress')];
             this.walletType=this.$store.state.walletType;
             this.addr = uni.getStorageSync('userAddress')
             this.ETHassetsList = util.getAssets(this.addr);
@@ -155,6 +158,7 @@ export default {
 							let tokens = res.data
 							tokens.map(async (item) => {
 								if (item.split('\t')[1]) {
+									uni.showLoading()
 									let decimal = await _that.$wallet("ETH").getDecimal(item.split('\t')[1])
 									_that.tokenList.push({
 										label: item.split('\t')[0],
@@ -165,10 +169,9 @@ export default {
                                         logo: "https://cn.etherscan.com/token/images/" + item.split('\t')[5],
                                         decimal: decimal
 									})
+									uni.hideLoading()
 								}
 							})
-							uni.hideLoading()
-							_that.isEmpty = !_that.tokenList.length
 						}
 					})
 				}, 1000)

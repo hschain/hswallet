@@ -1,20 +1,20 @@
 <template>
 	<view class="content" :style="{'margin-top':barHeight+'px'}">
-		<view v-if="platform=='Android'" class="status_bar"></view>
+		<view  class="status_bar"></view>
 		<view class="top">
 			<u-navbar back-icon-name="list" :custom-back="selectWallet" back-icon-color="#fff" style="font-weight: 600;"
 			 title-color="#fff" :border-bottom="false" title="钱包" :background="{background}"></u-navbar>
 			<view class="headerWrapper">
 				<view class="containerWrapTop">
 					<view class="walletName">
-						<image v-show="walletType=='ETH'" class="walletIcon" src="../../static/svg/chain_eth_small.svg" mode=""></image>
-						<image v-show="walletType=='HST'" class="walletIcon" src="../../static/svg/chain_hst_small.svg" mode=""></image>
+						<image v-show="Type.type=='ETH'" class="walletIcon" src="../../static/svg/chain_eth_small.svg" mode=""></image>
+						<image v-show="Type.type=='HST'" class="walletIcon" src="../../static/svg/chain_hst_small.svg" mode=""></image>
 						<u-section
 							font-size="42"
 							:show-line="false"
 							color="#fff"
 							sub-color="#fff"
-							:title="walletName"
+							:title="Type.name"
 							sub-title=""
 							:arrow="false"
 							@click="navigate('../management/management')"
@@ -27,7 +27,7 @@
 					</view>
 					<view class="cash">
 						<text class="symbol">{{hideBalance ? '****' : '$ '}}</text>
-						<text class="Totalassets">{{hideBalance ? '' : walletType=='HST'?formatDecimal(assetsList[0].value,2):formatDecimal(TotalAssets,2)}}</text>
+						<text class="Totalassets">{{hideBalance ? '' : Type.type=='HST'?formatDecimal(assetsList[0].value,2):formatDecimal(TotalAssets,2)}}</text>
 						<image v-if="hideBalance" class="seed" src="../../static/svg/ic_eye_close.svg" mode="" @click="hidden"></image>
 						<image v-else class="seed" src="../../static/svg/ic_eye_open.svg" mode="" @click="hidden"></image>
 					</view>
@@ -63,25 +63,25 @@
 				<view class="title">
 					<text>资产</text>
 				</view>
-				<u-icon v-if="walletType!='HST'" class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000"
+				<u-icon v-if="Type.type!='HST'" class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000"
 				 @click="gotoAddCurrency"></u-icon>
 				<view class="assetsList">
-					<view @click="enterAssets(item)" v-for="item in walletType == 'HST' ? assetsList : ETHassetsList"
-					 :key="walletType == 'HST' ? item.denom : item.value" class="table">
+					<view @click="enterAssets(item)" v-for="item in Type.type == 'HST' ? assetsList : ETHassetsList"
+					 :key="Type.type == 'HST' ? item.denom : item.value" class="table">
 						<view class="tableWrapper">
 							<view class="tableLeft">
-								<image class="icon" v-if="walletType=='HST'" src="../../static/common/logo.png" mode=""></image>
-								<image class="icon" v-else-if="walletType === 'ETH'" :src="item.logo" mode=""></image>
+								<image class="icon" v-if="Type.type=='HST'" src="../../static/common/logo.png" mode=""></image>
+								<image class="icon" v-else-if="Type.type === 'ETH'" :src="item.logo" mode=""></image>
 								<image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
-								<text class="denom">{{ walletType == 'HST'? 'HST' : item.label }}</text>
+								<text class="denom">{{ Type.type == 'HST'? 'HST' : item.label }}</text>
 							</view>
 							<view v-show="!item.loaded">
 								<u-loading color="green"></u-loading>
 							</view>
 							<view v-show="item.loaded">
 								<view class="tableRight">
-									<text>{{hideBalance ? '****' : walletType=='HST'?item.amount:formatDecimal(item.balance,4)}}</text>
-									<text>{{hideBalance ? '****' : walletType=='HST'?'$ ' + formatDecimal(item.value,2):"$ "+formatDecimal(item.balanceDollar,2)}}</text>
+									<text>{{hideBalance ? '****' : Type.type=='HST'?item.amount:formatDecimal(item.balance,4)}}</text>
+									<text>{{hideBalance ? '****' : Type.type=='HST'?'$ ' + formatDecimal(item.value,2):"$ "+formatDecimal(item.balanceDollar,2)}}</text>
 								</view>
 							</view>
 						</view>
@@ -164,7 +164,9 @@
 				ETHassetsList: [],
 				barHeight: 25,
 				exchange: {},
-				platform:''
+				platform:'',
+				Type:{name:''},
+				TotalAssets:0
 			}
 		},
 		onLoad() {
@@ -175,7 +177,20 @@
 			_self = this;
 			_self.getSystemStatusBarHeight();
 		},
-		async onShow() {
+		onReady(){
+			
+		},
+		 onShow() {
+			if (!uni.getStorageSync('localPw')) {
+				uni.removeStorageSync('account')
+				uni.removeStorageSync('userAddress')
+				uni.redirectTo({
+					url: `../home/home`
+				})
+			}
+			let acc = this.secret.decrypt(uni.getStorageSync('account'));
+			this.Type=acc[uni.getStorageSync('userAddress')];
+			this.Type.name=acc[uni.getStorageSync('userAddress')].name
 			uni.request({
 				url: 'https://api.coingecko.com/api/v3/exchange_rates',
 				success: (res) => {
@@ -257,15 +272,16 @@
 			},
 		},
 		computed: {
-			TotalAssets() {
-				let asssum = 0;
-				this.ETHassetsList.forEach(item => {
-					if (item.balanceDollar != '~') {
-						asssum = asssum + item.balanceDollar
-					}
-				})
-				return asssum
-			}
+			// TotalAssets() {
+			// 	console.log(this.ETHassetsList);
+			// 	let asssum = 0;
+			// 	this.ETHassetsList.forEach(item => {
+			// 		if (item.balanceDollar != '~') {
+			// 			asssum = asssum + item.balanceDollar
+			// 		}
+			// 	})
+			// 	return asssum
+			// }
 		},
 		methods: {
 			getSystemStatusBarHeight: function() {
@@ -289,7 +305,7 @@
 					uni.setStorageSync('ERC20addr', item.value)
 				}
 				uni.navigateTo({
-					url: `/pages/assets/assets?val=${this.walletType=='HST'?item.denom:item.label}`
+					url: `/pages/assets/assets?val=${this.Type.type=='HST'?'HST':item.label+'&logo='+item.logo}`
 				})
 			},
 			navigate(url) {
@@ -331,8 +347,8 @@
 					// #ifdef APP-PLUS
 					plus.os.name === 'Android' ? platform = 'Android' : platform = 'Ios'
 					version = 'v' + plus.runtime.version
-
 					// #endif
+					console.log(version);
 					this.$u.api.getVersion({
 						address: uni.getStorageSync('userAddress'),
 						version,
@@ -340,7 +356,8 @@
 						platform
 					}).then(res => {
 
-						if (version < res.data.version) {
+						if (version != res.data.version) {
+							console.log(res.data);
 							this.$store.commit('SAVE_UPDATE_RES', res)
 							this.$refs.updateTipNav.showDialog()
 						}
@@ -403,20 +420,25 @@
 				}
 			},
 			getBalance(item) {
+				this.TotalAssets=0
 				if (item.label == "ETH") {
+					let sum=0
 					this.$wallet('ETH').getBalance(this.addr).then(res => {
 						item.loaded = true
 						item.balance = ethers.utils.formatEther(res)
 						item.balanceDollar = (ethers.utils.formatEther(res) / this.exchange.eth.value) * this.exchange.usd.value
 						this.$forceUpdate()
+						this.TotalAssets=this.TotalAssets+item.balanceDollar
 					})
 				} else {
+					let sum=0
 					this.$wallet('ETH').getTokenBalance(this.addr, item.value).then(res => {
 						item.loaded = true						
 						item.balance = ethers.utils.formatUnits(res, item.decimal),
 						item.balanceDollar = item.desc.split('$')[1] ? item.desc.split('$')[1] * ethers.utils.formatUnits(res, item.decimal) :
 							'~'
 						this.$forceUpdate()
+						this.TotalAssets=this.TotalAssets+item.balanceDollar
 					})
 				}
 			}

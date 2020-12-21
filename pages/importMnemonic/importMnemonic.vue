@@ -1,6 +1,6 @@
 <template>
 	<view class="importMnemonic">
-		<view v-if="showlod" class="loading"><u-loading class="load" mode="flower" show size="200"></u-loading></view>
+		<!-- <view v-if="showlod" class="loading"><u-loading class="load" mode="flower" show size="200"></u-loading></view> -->
 		<view class="header">
 			<image @click="back" class="back" src="../../static/svg/ic_back.svg" mode=""></image>
 		</view>
@@ -24,7 +24,7 @@
 					/>
 				</u-form-item>
 			</u-form>
-			<view @click="startImport()" class="importBtn">开始导入</view>
+			<u-button @click="startImport()" class="importBtn">开始导入</u-button>
 		</view>
 	</view>
 </template>
@@ -60,11 +60,18 @@ const bip39 = require('bip39');
 						}
 					]
 				},
-				nameIndex:1,
-				showlod:false
+				nameIndex:this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex'),
+				accountList:uni.getStorageSync('account'),
+				addr:''
 			}
 		},
 		onShow(){
+			
+		},
+		onReady(){
+			// setTimeout(() => {
+			// 	this.addr = this.$wallet(this.$store.state.walletType).getAddress(this.form.value)
+			// }, 500);
 			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
 		},
 		methods: {
@@ -73,7 +80,10 @@ const bip39 = require('bip39');
 			},
 			//点击开始校验并导入助记词,根据不同场景做相应处理
 			startImport() {
-				this.showlod=true;
+				// this.showlod=true;
+				uni.showLoading({
+					title: ' '
+				});
 				this.$refs.uForm.validate(valid => {
 					if (valid) {
 						let value = this.form.value
@@ -84,58 +94,91 @@ const bip39 = require('bip39');
 								icon:"none"
 							})
 						}
-						let addr = this.$wallet(this.$store.state.walletType).getAddress(value)					
+						let addr = this.$wallet(this.$store.state.walletType).getAddress(this.form.value)			
 						// if (uni.getStorageSync('mnemonicData') && this.secret.decrypt(uni.getStorageSync('mnemonicData'))[addr]) {
-							uni.setStorageSync(addr+'backupMnemonic', true)
+							// uni.setStorageSync(addr+'backupMnemonic', true)
 						// }
 						
 						let _this = this
 						uni.showToast({
 							title: '助记词导入成功',
 							success() {
-								setTimeout(() => {
-									this.showlod=false;
-									if (uni.getStorageSync('account')) {
-										let addr = _this.$wallet(_this.$store.state.walletType).getAddress(_this.$store.state.mnemonic)						
-										let account = _this.secret.decrypt(uni.getStorageSync('account'))
-										account[addr] = {
-											name: _this.$store.state.walletType+`-${_this.nameIndex}`, 
-											key: _this.$store.state.mnemonic,
-											type:_this.$store.state.walletType
-										}
-										let userWallet = []
-										for (let idx in account) {
-											userWallet.push({
-												addr: idx,
-												name: account[idx].name,
-												type: account[idx].type
-											})
-										}
-										this.showlod=true;
-										_this.$store.commit('SAVE_USER_WALLET', userWallet)
-										_this.$store.commit('SET_WALLETNAME', _this.$store.state.walletType)
-										uni.setStorageSync('userAddress', addr)
+								uni.hideLoading();
+								// setTimeout(() => {
+									// this.showlod=false;
+									// if (uni.getStorageSync('account')) {
+															
+									// 	let account = _this.secret.decrypt(uni.getStorageSync('account'))
+									// 	account[addr] = {
+									// 		name: _this.$store.state.walletType+`-${_this.nameIndex}`, 
+									// 		key: _this.$store.state.mnemonic,
+									// 		type:_this.$store.state.walletType
+									// 	}
+									// 	let userWallet = []
+									// 	for (let idx in account) {
+									// 		userWallet.push({
+									// 			addr: idx,
+									// 			name: account[idx].name,
+									// 			type: account[idx].type
+									// 		})
+									// 	}
+									// 	// this.showlod=true;
+									// 	_this.$store.commit('SAVE_USER_WALLET', userWallet)
+									// 	_this.$store.commit('SET_WALLETNAME', _this.$store.state.walletType)
+									// 	uni.setStorageSync('userAddress', addr)
 										
-										uni.setStorage({
-											key: 'account',
-											data: _this.secret.encrypt(account)
+									// 	uni.setStorage({
+									// 		key: 'account',
+									// 		data: _this.secret.encrypt(account)
+									// 	})
+									// 	if (uni.getStorageSync('localPw')) {
+									// 		_this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',_this.nameIndex+1):uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
+									// 		_this.$store.commit('SAVE_NAMEINDEX', _this.nameIndex+1)
+									// 		uni.switchTab({
+									// 			url: '../main/main'
+									// 		})
+									// 	} else {
+									// 		uni.navigateTo({
+									// 			url: `../setPw/setPw`
+									// 		})
+									// 	}
+									// } else {
+									// 	uni.navigateTo({
+									// 		url: `../setPw/setPw`
+									// 	})
+									// }
+								// },1000)
+								_this.$store.commit('SET_WALLETNAME', _this.$store.state.walletType+`-${_this.nameIndex}`)
+								uni.setStorageSync('userAddress', addr)				
+								let accounts=_this.accountList?_this.secret.decrypt(_this.accountList):{}
+								let userWallet = _this.accountList?_this.$store.state.userWallet:[{addr,name: _this.$store.state.walletType+`-${_this.nameIndex}`,type:_this.$store.state.walletType}]
+								if (_this.accountList) {
+										userWallet.push({
+											addr: addr,
+											name: _this.$store.state.walletType+`-${_this.nameIndex}`, 
+											type:_this.$store.state.walletType
 										})
-										if (uni.getStorageSync('localPw')) {
-											_this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',_this.nameIndex+1):uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
-											uni.switchTab({
-												url: '../main/main'
-											})
-										} else {
-											uni.navigateTo({
-												url: `../setPw/setPw`
-											})
-										}
-									} else {
-										uni.navigateTo({
-											url: `../setPw/setPw`
-										})
-									}
-								},1000)
+								}
+								_this.$store.commit('SAVE_USER_WALLET', userWallet)
+								accounts[addr] = {
+									name: _this.$store.state.walletType+`-${_this.nameIndex}`, 
+									key: _this.$store.state.mnemonic,
+									type:_this.$store.state.walletType
+								}
+								uni.setStorage({
+									key: 'account',
+									data: _this.secret.encrypt(accounts)
+								})
+								if (uni.getStorageSync('localPw')) {
+									uni.switchTab({
+										url: '../main/main'
+									})
+								} else {
+									uni.navigateTo({
+										url: `../setPw/setPw`
+									})
+								}	
+								this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
 							}
 						})
 					}
@@ -198,8 +241,7 @@ const bip39 = require('bip39');
 			.importBtn {
 				width: 686rpx;
 				height: 96rpx;
-				text-align: center;
-				line-height: 96rpx;
+				margin: 0 auto 40rpx;
 				color: #fff;
 				background: url('../../static/common/button_gold.png') no-repeat;
 				background-size: 100% 100%;

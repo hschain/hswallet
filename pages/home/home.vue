@@ -1,6 +1,5 @@
 <template>
 	<view class="home" >
-		<!-- <image class="bg" src='../../static/common/bg_taichi.png'></image> :style="{height:scrollerHeight}"-->
 		<view class="tip">
 			<image class="logo" src="../../static/svg/img_logo.svg" mode=""></image>
 		<text class="walletName">HS Wallet</text>
@@ -27,25 +26,10 @@
 		data() {
 			return {
 				first: null,
-				Height:0
+				
 			}
 		},
-		computed:{
-			scrollerHeight(){
-				if (this.Height<790) {
-					return '790px'
-				}else{
-					return this.Height+'px'
-				}
-			}
-		},
-		onReady() {
-			uni.getSystemInfo({
-				success:  (res) => { 
-					this.Height=res.windowHeight- uni.upx2px(25)+'px'
-				}
-			})
-		},
+		
 		onBackPress() {
 			//改变用户回退行为，否则会回退到main页面，无法再进入home页面
 			if (!this.first) {
@@ -70,13 +54,11 @@
 		methods: {
 			create() {
 				uni.navigateTo({
-					// url: '../safetyTips/safetyTips'  chooseType
 					url: '../chooseType/chooseType?type=create'
 				})
 			},
 			importWallet() {
 				uni.navigateTo({
-					// url: '../importMnemonic/importMnemonic'
 					url: '../chooseType/chooseType?type=import'
 				})
 			}
@@ -91,7 +73,6 @@
 		min-height: 1636rpx;
 		background: url('../../static/common/bg_taichi.png') no-repeat;
 		background-size:100% 100%;
-		// background-position-x: -6rpx;
 		position: relative;
 		.tip {
 			width: 300rpx;

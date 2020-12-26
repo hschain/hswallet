@@ -52,6 +52,13 @@
 				"navigationStyle": "custom",
 				"titleNView":"false"
 			}
+		},
+		{
+			"path": "pages/privateKey/privateKey",
+			"style": {
+				"navigationStyle": "custom",
+				"titleNView":"false"
+			}
 		}, {
 			"path": "pages/importMnemonic/importMnemonic",
 			"style": {

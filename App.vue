@@ -14,7 +14,9 @@
 			// uni.removeStorage({
 			// 	key: 'account'
 			// })
-			if (!uni.getStorageSync('account')) {
+			if (!uni.getStorageSync('localPw')) {
+				uni.removeStorageSync('account')
+				uni.removeStorageSync('userAddress')
 				uni.navigateTo({
 					url: './pages/home/home'
 				})

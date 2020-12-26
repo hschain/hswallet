@@ -39,8 +39,8 @@
 			</view>
 		</view>
 		
-		<view class=" cellMark" @click="backup">
-			<view class="containerWrap circle">
+		<view class=" cellMark" @click="backup('backup')" v-if="Type.key">
+			<view class="containerWrap circle border">
 				<view class="boxLeft">
 					<view class="leftWrapper">
 						<view class="title">
@@ -51,7 +51,7 @@
 				<view class="boxRight">
 					<view class="rightWrapper">
 						<view class="rightValue" style="color:#1f1f1f">
-							{{''}}<!-- backupMnemonic ? '' : '未备份' -->
+							
 						</view>
 						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>
 					</view>
@@ -59,6 +59,26 @@
 			</view>
 		</view>
 		
+		<view class=" cellMark" @click="backup('exportPrivateKey')">
+			<view class="containerWrap circle">
+				<view class="boxLeft">
+					<view class="leftWrapper">
+						<view class="title">
+							导出私钥
+						</view>
+					</view>
+				</view>
+				<view class="boxRight">
+					<view class="rightWrapper">
+						<view class="rightValue" style="color:#1f1f1f">
+							
+						</view>
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>
+					</view>
+				</view>
+			</view>
+		</view>
+
 		<view class="quitAccount  " @click="quitDialog = true">
 		删除钱包
 		</view>
@@ -120,7 +140,7 @@
 				inputPwOption: '', //根据入口，判断输入密码成功后的操作
 				quitDialog: false, //未备份退出提示弹框
 				walletList:[],
-				type:'',
+				Type:{},
 				nameIndex:0
 			}
 		},
@@ -143,6 +163,8 @@
 			this.addr=uni.getStorageSync('userAddress');
 			this.backupMnemonic=uni.getStorageSync(this.addr+'backupMnemonic');
 			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex')
+			let acc = this.secret.decrypt(uni.getStorageSync('account'));
+			this.Type=acc[uni.getStorageSync('userAddress')];
 		},
 		onBackPress() {
 			if (this.showAddr) {
@@ -203,8 +225,8 @@
 				this.showAddr = true
 			},
 			// 备份前调用密码校验
-			backup() {
-				this.inputPwOption = 'backup'
+			backup(item) {
+				this.inputPwOption = item
 				this.$refs.inputPwNav.showDialog()
 			},
 			// 验证正确后开启备份
@@ -217,9 +239,10 @@
 						uni.navigateTo({
 							url: '../safetyTips/safetyTips'
 						})
-					} else if (this.inputPwOption === 'quit') {                                                        
+					}else if(this.inputPwOption === 'exportPrivateKey') {
+						this.$store.dispatch('saveMnemonic', this.secret.decrypt(uni.getStorageSync('account'))[this.addr].key)
 						uni.navigateTo({
-							url: '../home/home'
+							url: '../safetyTips/safetyTips?val=privateKey'
 						})
 					}else if(this.inputPwOption==='dele'){
 						var newArr = this.walletList.filter(item => {

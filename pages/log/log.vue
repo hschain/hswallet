@@ -31,7 +31,7 @@
 				this.publishData = [
 					{
 						content: 'HS Wallet 12/11 初始版',
-						time: '2020-12-05 18:13:56'
+						time: '2020-12-011 18:13:56'
 					},
 				]
 			},

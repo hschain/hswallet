@@ -56,21 +56,24 @@
         onShow() {
                 this.selected=uni.getStorageSync('userAddress');
                 this.addr = uni.getStorageSync('userAddress')
-                if (!this.$store.state.walletName && uni.getStorageSync('account')) {
+                
+                if (this.$store.state.userWallet) {
+                    this.walletName = this.$store.state.walletName
+                    this.userWallet = this.$store.state.userWallet
+                } else {
                     let acc = this.secret.decrypt(uni.getStorageSync('account'));
                     this.walletName = acc[this.addr].name
+                    let userWallet=[]
                     for (let idx in acc) {
-                        this.userWallet.push({
+                        userWallet.push({
                             addr: idx,
                             name: acc[idx].name,
 							type: acc[idx].type
                         })
                     }
-                    this.$store.commit('SAVE_USER_WALLET', this.userWallet)
+                    this.userWallet=userWallet;
+                    this.$store.commit('SAVE_USER_WALLET', userWallet)
                     this.$store.commit('SET_WALLETNAME', this.walletName)
-                } else {
-                    this.walletName = this.$store.state.walletName
-                    this.userWallet = this.$store.state.userWallet
                 }
                 
                 //是否隐藏资金
@@ -110,27 +113,6 @@
 			back() {
 				uni.navigateBack()
             },
-            getUpdate() {
-				if (uni.getStorageSync('account')) { //如果用户已注册账号，则会检测版本更新
-					let platform = ''
-					let version = ''
-					// #ifdef APP-PLUS
-					plus.os.name === 'Android' ? platform = 'Android' : platform = 'Ios'
-					version = 'v' + plus.runtime.version
-					// #endif
-					this.$u.api.getVersion({
-						address: uni.getStorageSync('userAddress'),
-						version,
-						app: 'HSWallet',
-						platform
-					}).then(res => {
-						if (version !== res.data.version) {
-							this.$store.commit('SAVE_UPDATE_RES', res)
-							this.$refs.updateTipNav.showDialog()
-						}
-					})
-				}
-			},
 			// 复制地址
 			onCopy() {
 				//#ifndef H5

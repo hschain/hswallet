@@ -198,7 +198,7 @@
 		},
 		methods: {
 			Time(item) {
-				console.log(item);
+				
 				let arr = item.slice(0, -1).split("T");
 				let tiemstr=arr[0] + " " + arr[1] + " GMT+0000"
 				let timeStamp = new Date(tiemstr).getTime();
@@ -250,7 +250,6 @@
 					let params = {
 						limit: 10,
 						address: uni.getStorageSync('userAddress'),
-						// address:'hsc1wqznqd37hve7mdk759e25svw5597rw5gglle9f',
 						timetable: 'now',
 						denom: this.denom
 					}
@@ -290,9 +289,6 @@
 						}, 5000)
 					})
 				}else if(this.currencyName=='ETH'){
-					// let address=uni.getStorageSync('userAddress').toLocaleLowerCase();
-					// let address='0x7a1d8ab56d0cc6f395af81b3c7db9ac92616c34eabdce3f37bca1720cfb8a0ad'
-					
 					uni.request({
 						url:'http://8.129.187.233:25676/eth/access/eth_list',
 						data:{address:uni.getStorageSync('userAddress').toLocaleLowerCase(),limit:20,start:0},
@@ -300,9 +296,8 @@
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
 						success: (res) => {
-							
+							// console.log(res.data);
 							if (res.data) {
-								// res.data.reverse();
 								let i=0;
 								res.data.content.forEach(item => {
 					
@@ -381,7 +376,7 @@
 					}).then(res => {
 						if (!lazyLoad) this.paging = res.paging
 						if (res.data) {
-							console.log(res.data);
+							
 							res.data.forEach(item => {
 								let obj = {
 									denom: '',

@@ -165,7 +165,6 @@
 			//验证成功后下一步开启交易
 			transation() {
 				if (this.Type.type==='HST') {
-				
 					const mnemonic = this.account[this.myAddr].key
 					const hschain = this.$chain(this.$url, this.$chainId)
 					hschain.setPath(this.$path)
@@ -194,7 +193,7 @@
 							sequence: String(res.result.value.sequence)
 						});
 						const signedTx = hschain.sign(stdSignMsg, ecpairPriv)
-						
+						console.log(signedTx);
 						this.$u.api.broadcast(signedTx).then(res => {
 							
 							if (JSON.parse(res.raw_log)[0].success) {
@@ -221,13 +220,19 @@
 					}).catch(err => {
 						
 					})
-				}else if (thisType.type==='ETH' &&!uni.getStorageSync('ERC20transfer')) {
-					
-					const mnemonic = this.account[uni.getStorageSync('userAddress')].key;
-					
-					this.$wallet('ETH').sendETH(mnemonic,this.addr,this.cash).then(res=>{
+				}else if (this.Type.type==='ETH' &&!uni.getStorageSync('ERC20transfer')) {
+					let type;
+					let mnemonic;
+					if (this.Type.key) {
+						type='mnemonic'
+						mnemonic = this.account[uni.getStorageSync('userAddress')].key;
+					}else if (this.Type.privateKey) {
+						type='privateKey'
+						mnemonic = this.account[uni.getStorageSync('userAddress')].privateKey;
+					}
+					this.$wallet('ETH').sendETH(mnemonic,this.addr,this.cash,type).then(res=>{
 						uni.showToast({
-							title: '交易成功'
+							title: '交易请求提交成功'
 						})
 						setTimeout(() => {
 									uni.navigateBack()
@@ -242,11 +247,18 @@
 						title: '交易正在处理中'
 					})
 				}else if (this.Type.type==='ETH' &&uni.getStorageSync('ERC20transfer')) {
-				
-					const mnemonic = this.account[uni.getStorageSync('userAddress')].key;
-					this.$wallet("ETH").sendToken(mnemonic,uni.getStorageSync('ERC20addr'),this.addr,this.cash).then(res=>{
+					let type;
+					let mnemonic;
+					if (this.Type.key) {
+						type='mnemonic'
+						mnemonic = this.account[uni.getStorageSync('userAddress')].key;
+					}else if (this.Type.privateKey) {
+						type='privateKey'
+						mnemonic = this.account[uni.getStorageSync('userAddress')].privateKey;
+					}
+					this.$wallet("ETH").sendToken(mnemonic,uni.getStorageSync('ERC20addr'),this.addr,this.cash,type).then(res=>{
 						uni.showToast({
-							title: '交易成功'
+							title: '交易请求提交成功'
 						})
 						setTimeout(() => {
 							uni.navigateBack()

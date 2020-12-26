@@ -47,33 +47,7 @@
 						this.showToast('验证密码错误')
 						return
 					}
-					// let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
-					//存储数据并跳转路由
-					// if(!uni.getStorageSync('account')){
-						// let addr = this.$wallet(this.$store.state.walletType).getAddress(this.$store.state.mnemonic)
-					// 	let account = {}
-					// 	this.$store.commit('SET_WALLETNAME', this.$store.state.walletType)
-					// 	uni.setStorageSync('userAddress', addr)
-					// 	let userWallet = [{
-					// 		addr,
-					// 		name: this.$store.state.walletType+`-${this.nameIndex}`,
-					// 		type: this.$store.state.walletType
-					// 	}]
-					// 	this.$store.commit('SAVE_USER_WALLET', userWallet)
-					// 	account[addr] = {
-					// 		name: this.$store.state.walletType+`-${this.nameIndex}`, 
-					// 		type: this.$store.state.walletType,
-					// 		key: this.$store.state.mnemonic,
-					// 	}
-					// 	uni.setStorage({
-					// 		key: 'account',
-					// 		data: this.secret.encrypt(account)
-					// 	})
-					// }
 					uni.setStorageSync('localPw', this.$md5(this.pw))
-					// uni.setStorageSync(addr+'backupMnemonic', true)
-					// this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
-					// this.$store.commit('SAVE_NAMEINDEX', this.nameIndex+1)
 					uni.showToast({
 						title: '密码设置成功',
 						success() {
@@ -129,17 +103,7 @@
 		}
 		.confirmCheck {
 			font-size: 32rpx;
-			// width: 686rpx;
-			// height: 96rpx;
 			font-weight: 400;
-			// line-height: 96rpx;
-			// text-align: center;
-			// color: #fff;
-			// background: url('../../static/common/button_gold.png') no-repeat;
-			// background-size: 100% 100%;
-			// position: absolute;
-			// left: 50%;
-			// transform: translate(-50%,0);
 			width: 686rpx;
 			height: 96rpx;
 			margin: 0 auto 40rpx;

@@ -5,9 +5,15 @@
 			<image @click="back" class="back" src="../../static/svg/ic_back.svg" mode=""></image>
 		</view>
 		<view class="textWrapper">
-			<view class="title">
+			<view class="titleNav">
+				<view :class="select=='mnemonic'?'select':'notSelected'" @click="mnemonicCut">
 				导入助记词
 			</view>
+			<view :class="select=='privatekey'?'select':'notSelected'" @click="privatekeyCut">
+				导入私钥
+			</view>
+			</view>
+			
 			<u-form :model="form" ref="uForm" :error-type="errorType">
 				<u-form-item class="inputText" prop="value" :border-bottom="false">
 					<u-input 
@@ -19,12 +25,12 @@
 						:auto-height="true"
 						maxlength="300"
 						:clearable="false"
-						placeholder="请输入12个助记词单词,并使用空格分隔"
+						:placeholder="holder"
 						placeholder-style="#666"
 					/>
 				</u-form-item>
 			</u-form>
-			<u-button @click="startImport()" class="importBtn">开始导入</u-button>
+			<u-button @click="select=='mnemonic'?startImport():privatekeyImport()" class="importBtn">开始导入</u-button>
 		</view>
 	</view>
 </template>
@@ -42,41 +48,56 @@ const bip39 = require('bip39');
 				rules: {
 					value: [
 						{
-							required: true, 
+							// required: true,
+							validator: (rule, value, callback) => {
+								if (this.select=='mnemonic') {
+									return value.length > 0
+								}
+							},
 							message: '输入框不能为空', 
 							trigger: ['blur'],
 						}, {
 							validator: (rule, value, callback) => {
-								return value.split(' ').length >= 12
+								if (this.select=='mnemonic') {
+									return value.split(' ').length >= 12
+								}
 							},
 							message: '助记词不足12个', 
 							trigger: ['blur'],
 						}, {
 							validator: (rule, value, callback) => {
-								return value.split(' ').length <= 12
+								if (this.select=='mnemonic') {
+									return value.split(' ').length <= 12
+								}
 							},
 							message: '助记词超过12个', 
 							trigger: ['blur'],
 						}
 					]
 				},
-				nameIndex:this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex'),
+				nameIndex:0,
 				accountList:uni.getStorageSync('account'),
-				addr:''
+				holder:'请输入12个助记词单词,并使用空格分隔',
+				select:'mnemonic',
 			}
 		},
 		onShow(){
-			
-		},
-		onReady(){
-			// setTimeout(() => {
-			// 	this.addr = this.$wallet(this.$store.state.walletType).getAddress(this.form.value)
-			// }, 500);
 			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
 		},
+		// onReady(){
+		// 	this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
+		// },
 		methods: {
 			back() {
 				uni.navigateBack()
+			},
+			mnemonicCut(){
+				this.select='mnemonic';
+				this.holder='请输入12个助记词单词,并使用空格分隔'
+			},
+			privatekeyCut(){
+				this.select='privatekey';
+				this.holder='请输入您的私钥'
 			},
 			//点击开始校验并导入助记词,根据不同场景做相应处理
 			startImport() {
@@ -86,7 +107,7 @@ const bip39 = require('bip39');
 				});
 				this.$refs.uForm.validate(valid => {
 					if (valid) {
-						let value = this.form.value
+						let value = this.form.value.replace(/(^\s*)|(\s*$)/g, "")
 						this.$store.dispatch('saveMnemonic', value)
 						if (!bip39.validateMnemonic(value)){
 							uni.showToast({
@@ -94,60 +115,13 @@ const bip39 = require('bip39');
 								icon:"none"
 							})
 						}
-						let addr = this.$wallet(this.$store.state.walletType).getAddress(this.form.value)			
-						// if (uni.getStorageSync('mnemonicData') && this.secret.decrypt(uni.getStorageSync('mnemonicData'))[addr]) {
-							// uni.setStorageSync(addr+'backupMnemonic', true)
-						// }
-						
+						let addr = this.$wallet(this.$store.state.walletType).getAddress(value)			
 						let _this = this
 						uni.showToast({
 							title: '助记词导入成功',
 							success() {
 								uni.hideLoading();
-								// setTimeout(() => {
-									// this.showlod=false;
-									// if (uni.getStorageSync('account')) {
-															
-									// 	let account = _this.secret.decrypt(uni.getStorageSync('account'))
-									// 	account[addr] = {
-									// 		name: _this.$store.state.walletType+`-${_this.nameIndex}`, 
-									// 		key: _this.$store.state.mnemonic,
-									// 		type:_this.$store.state.walletType
-									// 	}
-									// 	let userWallet = []
-									// 	for (let idx in account) {
-									// 		userWallet.push({
-									// 			addr: idx,
-									// 			name: account[idx].name,
-									// 			type: account[idx].type
-									// 		})
-									// 	}
-									// 	// this.showlod=true;
-									// 	_this.$store.commit('SAVE_USER_WALLET', userWallet)
-									// 	_this.$store.commit('SET_WALLETNAME', _this.$store.state.walletType)
-									// 	uni.setStorageSync('userAddress', addr)
-										
-									// 	uni.setStorage({
-									// 		key: 'account',
-									// 		data: _this.secret.encrypt(account)
-									// 	})
-									// 	if (uni.getStorageSync('localPw')) {
-									// 		_this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',_this.nameIndex+1):uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
-									// 		_this.$store.commit('SAVE_NAMEINDEX', _this.nameIndex+1)
-									// 		uni.switchTab({
-									// 			url: '../main/main'
-									// 		})
-									// 	} else {
-									// 		uni.navigateTo({
-									// 			url: `../setPw/setPw`
-									// 		})
-									// 	}
-									// } else {
-									// 	uni.navigateTo({
-									// 		url: `../setPw/setPw`
-									// 	})
-									// }
-								// },1000)
+								setTimeout(() => {
 								_this.$store.commit('SET_WALLETNAME', _this.$store.state.walletType+`-${_this.nameIndex}`)
 								uni.setStorageSync('userAddress', addr)				
 								let accounts=_this.accountList?_this.secret.decrypt(_this.accountList):{}
@@ -178,15 +152,80 @@ const bip39 = require('bip39');
 										url: `../setPw/setPw`
 									})
 								}	
-								this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
+								_this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',_this.nameIndex+1):uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
+								},1000)
 							}
 						})
 					}
 				})
 				
 			},
+			privatekeyImport(){
+				uni.showLoading({
+					title: ' '
+				});
+				if (this.form.value.replace(/(^\s*)|(\s*$)/g, "")) {
+					let value = this.form.value.replace(/(^\s*)|(\s*$)/g, "")
+					let addr
+					try {
+						addr = this.$wallet(this.$store.state.walletType).getAddress(value,'privateKey')
+					} catch (error) {
+						uni.showToast({
+							title: '私钥不正确',
+							icon:"none"
+						})
+						return
+					}
+					let _this = this
+						uni.showToast({
+							title: '私钥导入成功',
+							success() {
+								uni.hideLoading();
+								setTimeout(() => {
+								_this.$store.commit('SET_WALLETNAME', _this.$store.state.walletType+`-${_this.nameIndex}`)
+								uni.setStorageSync('userAddress', addr)				
+								let accounts=_this.accountList?_this.secret.decrypt(_this.accountList):{}
+								let userWallet = _this.accountList?_this.$store.state.userWallet:[{addr,name: _this.$store.state.walletType+`-${_this.nameIndex}`,type:_this.$store.state.walletType}]
+								if (_this.accountList) {
+										userWallet.push({
+											addr: addr,
+											name: _this.$store.state.walletType+`-${_this.nameIndex}`, 
+											type:_this.$store.state.walletType
+										})
+								}
+								_this.$store.commit('SAVE_USER_WALLET', userWallet)
+								accounts[addr] = {
+									name: _this.$store.state.walletType+`-${_this.nameIndex}`, 
+									privateKey: _this.form.value,
+									type:_this.$store.state.walletType
+								}
+								uni.setStorage({
+									key: 'account',
+									data: _this.secret.encrypt(accounts)
+								})
+								if (uni.getStorageSync('localPw')) {
+									uni.switchTab({
+										url: '../main/main'
+									})
+								} else {
+									uni.navigateTo({
+										url: `../setPw/setPw`
+									})
+								}	
+								_this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',_this.nameIndex+1):uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
+								},1000)
+							}
+						})
+					}else{
+						uni.showToast({
+							title: '请输入您的私钥',
+							icon:"none"
+						})
+						return
+					}
+			},
 			onReady() {
-				this.$refs.uForm.setRules(this.rules);
+					this.$refs.uForm.setRules(this.rules);
 			}
 		}
 	}
@@ -223,12 +262,26 @@ const bip39 = require('bip39');
 		align-items: center;
 		flex-direction: column;
 		// margin-top: 160rpx;
-			.title {
-				font-size: 68rpx;
+			.titleNav {
+				display: flex;
+				width: 100%;
+				height: 44px;
+				font-size: 14px;
 				margin-bottom: 100rpx;
-				position: relative;
-				top: 20rpx;
-				right: 168rpx;
+				margin-top: 20px;
+				border-bottom: 1px solid #F3F3F7;
+				padding: 0 16px;
+				.select{
+					width: 171px;
+					color: #1F1F1F;
+					border-bottom: 2px solid #1F1F1F;
+					text-align: center;
+				}
+				.notSelected{
+					width: 171px;
+					color: #909195;
+					text-align: center;
+				}
 			}
 			.inputValue {
 				width: 686rpx;

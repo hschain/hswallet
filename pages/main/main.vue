@@ -14,7 +14,7 @@
 							:show-line="false"
 							color="#fff"
 							sub-color="#fff"
-							:title="Type.name"
+							:title="this.$store.state.walletName"
 							sub-title=""
 							:arrow="false"
 							@click="navigate('../management/management')"
@@ -48,12 +48,6 @@
 							转账
 						</view>
 					</view>
-					<!-- <view class="boxWrapper" @click="info">
-						<u-icon class="icon" name="dig" :color="btnIconColor" custom-prefix="project-icon" size="30"></u-icon>
-						<view class="content yellowFont">
-							PoB
-						</view>
-					</view> -->
 				</view>
 			</view>
 		</view>
@@ -90,31 +84,6 @@
 				</view>
 			</view>
 		</view>
-
-		<!-- <u-popup v-model="changeWalletDialog" mode="bottom" border-radius="20" :closeable="true">
-			<view class="changeWalletDialog">
-				<view class="headerTip">
-					<u-icon class="icon" size="40" name="../../static/common/circlePlus.png" color="#000" @click="addNewAddress"></u-icon>
-					<view class="title">
-						钱包列表
-					</view>
-				</view>
-				<scroll-view scroll-y="true" class="containerBox">
-					<view class="yellowContainer addressBox" v-for="(item, index) in userWallet" :key="index + 'name'" @click="switchUserAddress(item)">
-						<view class="containerWrap">
-							<view class="walletInfo">
-								<view class="name">
-									{{item.name}}
-								</view>
-								<view class="addr">
-									{{item.addr | hash}}
-								</view>
-							</view>
-						</view>
-					</view>
-				</scroll-view>
-			</view>
-		</u-popup> -->
 
 		<u-action-sheet @click="selectOption" :list="optionList" v-model="addNewAddrDialog" :cancel-btn="true" border-radius="20"></u-action-sheet>
 
@@ -164,8 +133,7 @@
 				ETHassetsList: [],
 				barHeight: 25,
 				exchange: {},
-				platform:'',
-				Type:{name:''},
+				Type:{},
 				TotalAssets:0
 			}
 		},
@@ -177,26 +145,25 @@
 			_self = this;
 			_self.getSystemStatusBarHeight();
 		},
-		onReady(){
-			
-		},
 		 onShow() {
-			if (!uni.getStorageSync('localPw')) {
-				uni.removeStorageSync('account')
-				uni.removeStorageSync('userAddress')
-				uni.redirectTo({
-					url: `../home/home`
-				})
-			}
-			let acc = this.secret.decrypt(uni.getStorageSync('account'));
-			this.Type=acc[uni.getStorageSync('userAddress')];
-			this.Type.name=acc[uni.getStorageSync('userAddress')].name
+			 if (uni.getStorageSync('account')) {
+				let acc = this.secret.decrypt(uni.getStorageSync('account'));
+				this.Type=acc[uni.getStorageSync('userAddress')];
+			 }
+			
+			// if (!uni.getStorageSync('localPw')) {
+			// 	uni.removeStorageSync('account')
+			// 	uni.removeStorageSync('userAddress')
+			// 	uni.redirectTo({
+			// 		url: `../home/home`
+			// 	})
+			// }
+			
 			uni.request({
 				url: 'https://api.coingecko.com/api/v3/exchange_rates',
 				success: (res) => {
 					this.exchange = res.data.rates
 				},
-				fail: (err) => {}
 			})
 
 			this.addr = uni.getStorageSync('userAddress');
@@ -209,6 +176,7 @@
 				value: uni.getStorageSync('userAddress'),
 				logo: '../../static/common/ETH.png',
 			})
+			this.TotalAssets=0
 			this.ETHassetsList.forEach(item => {
 				item.balance = 0
 				item.balanceDollar = 0
@@ -242,46 +210,14 @@
 		//如果用户已注册账户地址，则执行接下来的命令
 		if (uni.getStorageSync('account')) {
 			this.getAssets()
-
-			// if (!this.$store.state.socketIsOpen) {
-			// 	this.$store.dispatch('websocketInit', "wss://testnet.hschain.io/api/v1/ws")
-			// 	let _this = this
-			// 	let wsParams = {
-			// 		address: this.addr,
-			// 		app: 'HSWallet',
-			// 		page: 'app',
-			// 		signal: 'connect'
-			// 	}
-			// 	this.$store.state.socketTask.onOpen(res => {
-			// 		this.$store.state.socketTask.send({
-			// 			data: JSON.stringify(wsParams),
-			// 			async success() {
-			// 			
-			// 			}
-			// 		})
-			// 	})
-			// }
 		}
 		//如果vuex存在助记词缓存，则清空助记词
 		if (this.$store.state.mnemonic) this.$store.dispatch('saveMnemonic', '');
-		this.platform=plus.os.name
 	},
 	filters: {
 			hash: function(value) {
 				return value.slice(0, 12) + " … " + value.slice(-12);
 			},
-		},
-		computed: {
-			// TotalAssets() {
-			// 	console.log(this.ETHassetsList);
-			// 	let asssum = 0;
-			// 	this.ETHassetsList.forEach(item => {
-			// 		if (item.balanceDollar != '~') {
-			// 			asssum = asssum + item.balanceDollar
-			// 		}
-			// 	})
-			// 	return asssum
-			// }
 		},
 		methods: {
 			getSystemStatusBarHeight: function() {
@@ -348,16 +284,13 @@
 					plus.os.name === 'Android' ? platform = 'Android' : platform = 'Ios'
 					version = 'v' + plus.runtime.version
 					// #endif
-					console.log(version);
 					this.$u.api.getVersion({
 						address: uni.getStorageSync('userAddress'),
 						version,
 						app: 'HSWallet',
 						platform
 					}).then(res => {
-
 						if (version != res.data.version) {
-							console.log(res.data);
 							this.$store.commit('SAVE_UPDATE_RES', res)
 							this.$refs.updateTipNav.showDialog()
 						}
@@ -378,10 +311,7 @@
 					url: '../walletList/walletList'
 				})
 			},
-			//添加新的钱包地址
-			addNewAddress() {
-				this.addNewAddrDialog = true
-			},
+			
 			//创建或导入钱包
 			selectOption(index) {
 				//index: 操作下标
@@ -396,20 +326,7 @@
 				}
 				this.changeWalletDialog = false
 			},
-			//切换用户地址
-			switchUserAddress(item) {
-
-				this.addr = item.addr
-				this.walletName = item.name
-				this.$store.commit('SET_WALLETNAME', item.name)
-				uni.setStorageSync('userAddress', item.addr)
-				this.getAssets()
-				this.changeWalletDialog = false
-				//刷新页面
-				uni.reLaunch({
-					url: '../main/main'
-				})
-			},
+			
 			hidden() {
 				if (uni.getStorageSync('hideBalance')) {
 					this.hideBalance = false;
@@ -420,7 +337,7 @@
 				}
 			},
 			getBalance(item) {
-				this.TotalAssets=0
+				
 				if (item.label == "ETH") {
 					let sum=0
 					this.$wallet('ETH').getBalance(this.addr).then(res => {
@@ -445,8 +362,7 @@
 		}
 	}
 </script>
-<style>
-</style>
+
 <style lang="scss">
 	.content {
 		width: 100%;

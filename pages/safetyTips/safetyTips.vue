@@ -25,7 +25,11 @@
 		data() {
 			return {
 				redirectToBackupPage: this.$store.state.toBackupPage || false,
+				backupType:''
 			}
+		},
+		onLoad(value){
+			this.backupType=value.val
 		},
 		onShow() {
 			if (!this.$store.state.mnemonic) {
@@ -39,9 +43,16 @@
 			},
 			//立即备份
 			notice() {
-				uni.navigateTo({
-					url: '../createMnemonic/createMnemonic'
-				})
+				if (this.backupType=='privateKey') {
+					uni.navigateTo({
+						url: '../privateKey/privateKey'
+					})
+				}else{
+					uni.navigateTo({
+						url: '../createMnemonic/createMnemonic'
+					})
+				}
+				
 			},
 			//稍后备份
 			later() {

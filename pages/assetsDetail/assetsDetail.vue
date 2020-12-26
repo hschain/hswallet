@@ -195,7 +195,6 @@
 				
 			},
 			Time(item) {
-				console.log(item);
 				let arr = item.slice(0, -1).split("T");
 				let tiemstr=arr[0] + " " + arr[1] + " GMT+0000"
 				let timeStamp = new Date(tiemstr).getTime();

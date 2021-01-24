@@ -135,7 +135,8 @@ import hschain from 'hschainjs'
 			// 确认已备份
 			check() {
 				uni.showLoading({
-					title: ''
+					title: '',
+					mask:true
 				});
 				//存储数据并跳转路由
 				let addr = this.addr

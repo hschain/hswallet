@@ -103,7 +103,8 @@ const bip39 = require('bip39');
 			startImport() {
 				// this.showlod=true;
 				uni.showLoading({
-					title: ' '
+					title: ' ',
+					mask:true
 				});
 				this.$refs.uForm.validate(valid => {
 					if (valid) {
@@ -136,7 +137,7 @@ const bip39 = require('bip39');
 								_this.$store.commit('SAVE_USER_WALLET', userWallet)
 								accounts[addr] = {
 									name: _this.$store.state.walletType+`-${_this.nameIndex}`, 
-									key: _this.$store.state.mnemonic,
+									key:  _this.form.value,
 									type:_this.$store.state.walletType
 								}
 								uni.setStorage({
@@ -162,7 +163,8 @@ const bip39 = require('bip39');
 			},
 			privatekeyImport(){
 				uni.showLoading({
-					title: ' '
+					title: ' ',
+					mask:true
 				});
 				if (this.form.value.replace(/(^\s*)|(\s*$)/g, "")) {
 					let value = this.form.value.replace(/(^\s*)|(\s*$)/g, "")

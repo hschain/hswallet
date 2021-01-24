@@ -6,7 +6,7 @@
 		<view class="Container">
 			<view class="containerWrap">
 				<view class="addrInput">
-					<u-input :custom-style="{fontSize: '32rpx',background:'#fff',fontFamily:'gilroy-bold'}" class="input" v-model="addr" :placeholder="$store.state.walletType + '地址'" :clearable="false" :border="false"/>
+					<u-input :custom-style="{fontSize: '32rpx',background:'#fff',fontFamily:'gilroy-bold'}" class="input" v-model="addr" :placeholder="this.Type.type + '地址'" :clearable="false" :border="false"/>
 					<image @click="addAddress" class="addrImg" src="../../static/common/ic_address.png" mode=""></image>
 				</view>
 				<u-cell-group v-show="Object.keys(addrData).length">
@@ -63,7 +63,9 @@
 				memo: '', //输入交易备注
 				nextStatus: false, //下一步按钮是否可用
 				timer: null, //定时器
-				Type:{}
+				Type:{},
+				denom:'',
+				name:''
 			}
 		},
 		watch: {
@@ -97,10 +99,17 @@
 				}
 			}
 		},
-		onLoad() {
+		onLoad(value) {
 			this.account = this.secret.decrypt(uni.getStorageSync('account'))
+			let acc = this.secret.decrypt(uni.getStorageSync('account'));
+			this.Type=acc[uni.getStorageSync('userAddress')];
 			this.myAddr = uni.getStorageSync('userAddress')
 			if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))) this.addrBook = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
+			uni.setNavigationBarTitle({
+			　　title: value.name?value.name:this.Type.type + "转账"
+			})	
+			this.denom=value.denom?value.denom:'uhst'
+			this.name=value.name?value.name:this.Type.type
 		},
 		onShow() {
 			let acc = this.secret.decrypt(uni.getStorageSync('account'));
@@ -109,9 +118,7 @@
 				this.addr = this.$store.state.addrData.addr
 			}
 			
-			uni.setNavigationBarTitle({
-			　　title: this.$store.state.walletType + "转账"
-			})			
+					
 		},
 		//调用二维码扫码功能
 		onNavigationBarButtonTap() {
@@ -165,10 +172,15 @@
 			//验证成功后下一步开启交易
 			transation() {
 				if (this.Type.type==='HST') {
-					const mnemonic = this.account[this.myAddr].key
 					const hschain = this.$chain(this.$url, this.$chainId)
 					hschain.setPath(this.$path)
-					const ecpairPriv = hschain.getECPairPriv(mnemonic)
+					let ecpairPriv 
+					if (this.account[uni.getStorageSync('userAddress')].privateKey) {
+						ecpairPriv = Buffer.from(this.account[uni.getStorageSync('userAddress')].privateKey, 'hex') 
+					} else if(this.account[uni.getStorageSync('userAddress')].key){
+						const mnemonic = this.account[uni.getStorageSync('userAddress')].key
+						ecpairPriv = hschain.getECPairPriv(mnemonic)
+					}
 					this.$u.api.getAccounts(this.myAddr).then(res => {
 						let stdSignMsg = hschain.newStdMsg({
 							msgs: [
@@ -178,7 +190,7 @@
 										amount: [
 											{
 												amount: String(this.cash*1000000),
-												denom: "uhst"
+												denom: this.denom
 											}
 										],
 										from_address: this.myAddr,
@@ -186,16 +198,17 @@
 									}
 								}
 							],
-							chain_id: 'hschain',
+							// chain_id: 'hschain',
+							chain_id: 'test',
 							fee: { amount: [ ], gas: String(this.cash*200000) },
 							memo: this.memo,
 							account_number: String(res.result.value.account_number),
 							sequence: String(res.result.value.sequence)
 						});
 						const signedTx = hschain.sign(stdSignMsg, ecpairPriv)
-						console.log(signedTx);
+						
 						this.$u.api.broadcast(signedTx).then(res => {
-							
+							console.log(res.raw_log);
 							if (JSON.parse(res.raw_log)[0].success) {
 								this.$refs.uToast.show({
 									title: '交易正在处理中',
@@ -215,10 +228,11 @@
 								})
 							}
 						}).catch(err => {
-							
+							uni.showToast({
+								title: '交易失败'	
+							})
 						})
 					}).catch(err => {
-						
 					})
 				}else if (this.Type.type==='ETH' &&!uni.getStorageSync('ERC20transfer')) {
 					let type;

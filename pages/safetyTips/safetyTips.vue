@@ -6,7 +6,7 @@
 		<view class="tip">
 			<text class="headerTip">安全第一</text>
 			<view class="circle"></view>
-			<text class="tipText">您将看到您的私钥，它是您存取资产的密钥，请您确保将其备份在其他安全的地方，不要和任何人分享！</text>
+			<text class="tipText">{{clues}}</text>
 			<view class="circle"></view>
 			<text class="tipText">如果您遗失了手机或卸载了本程序，您可以通过私钥恢复资产！</text>
 		</view>
@@ -25,11 +25,17 @@
 		data() {
 			return {
 				redirectToBackupPage: this.$store.state.toBackupPage || false,
-				backupType:''
+				backupType:'',
+				clues:'您将看到您的助记词，它是您存取资产的密钥，请您确保将其备份在其他安全的地方，不要和任何人分享！'
 			}
 		},
 		onLoad(value){
 			this.backupType=value.val
+			if (this.backupType=='privateKey') {
+				this.clues='您将看到您的私钥，它是您存取资产的密钥，请您确保将其备份在其他安全的地方，不要和任何人分享！'
+			}else{
+				this.clues='您将看到您的助记词，它是您存取资产的密钥，请您确保将其备份在其他安全的地方，不要和任何人分享！'
+			}
 		},
 		onShow() {
 			if (!this.$store.state.mnemonic) {

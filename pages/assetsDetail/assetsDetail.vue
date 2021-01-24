@@ -79,19 +79,35 @@
 		data() {
 			return {
 				title: '',
-				assetData: {},
+				assetData: {
+					details: {
+						txHash: {
+							name: '交易hash',
+								value: '',
+							},
+									
+							from: {
+								name: '来源',
+								value: '',
+							},
+							to: {
+								name: '去向',
+								value: '',
+							},
+					}	
+				},
 				walletType:'',
 				details:{},
-				Type:{}
-			}
-		},
+				Type:{},	
+		}
+	},
 		onShow(){
 			let accs = this.secret.decrypt(uni.getStorageSync('account'));
 			this.Type=accs[uni.getStorageSync('userAddress')];
 			this.walletType=this.$store.state.walletType;
 			if (this.Type.type=='ETH') {
 				uni.request({
-						url:'http://8.129.187.233:25676/eth/access/eth_list',
+						url:'http://47.242.65.77:5676/eth/access/eth_list',
 						data:{limit: 10,start:0,type:'ALL',address:uni.getStorageSync('userAddress').toLocaleLowerCase()},
 						header: {
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
@@ -104,7 +120,7 @@
 					})
 			}else{
 				uni.request({
-						url:'http://8.129.187.233:25676/eth/access/eth_list',
+						url:'http://47.242.65.77:5676/eth/access/rc20_list',
 						data:{limit: 10,start:0,type:'ALL',address:uni.getStorageSync('userAddress').toLocaleLowerCase(),contract_address:uni.getStorageSync('ERC20addr').toLocaleLowerCase()},
 						header: {
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
@@ -196,10 +212,14 @@
 			},
 			Time(item) {
 				let arr = item.slice(0, -1).split("T");
-				let tiemstr=arr[0] + " " + arr[1] + " GMT+0000"
-				let timeStamp = new Date(tiemstr).getTime();
+				let arr2=arr[1].split(":");
+				let hours=(arr2[0]*1)+8
+				let timeStr=arr[0] + " " + hours+':'+arr2[1]+':'+arr2[2]
+				// let tiemstr=arr[0] + " " + arr[1] + " GMT+0000"
+				// let timeStamp = new Date(tiemstr).getTime();
 				
-				return this.timestampToTime(timeStamp/1000)
+				// return this.timestampToTime(timeStamp/1000)
+				return timeStr
 			},
 			timestampToTime(timestamp) {
 				var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
@@ -237,13 +257,14 @@
 		color: #909195;
 	}
 	.addr{
-		width: 474rpx;
+		// width: 474rpx;
+		width: 247px;
 		font-size: 24rpx;
 		font-family: Gilroy-Regular, Gilroy;
 		font-weight: 400;
 		color: #1F1F1F;
 		margin-left: 96rpx;
-		// word-break: break-all;
+		word-break: break-all;
 		// overflow: hidden;
 		position: absolute;
 		top: 40rpx;

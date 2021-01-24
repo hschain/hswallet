@@ -17,7 +17,7 @@
 			if (!uni.getStorageSync('localPw')) {
 				uni.removeStorageSync('account')
 				uni.removeStorageSync('userAddress')
-				uni.navigateTo({
+				uni.redirectTo({
 					url: './pages/home/home'
 				})
 			}

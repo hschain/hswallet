@@ -27,7 +27,7 @@
 					</view>
 					<view class="cash">
 						<text class="symbol">{{hideBalance ? '****' : '$ '}}</text>
-						<text class="Totalassets">{{hideBalance ? '' : Type.type=='HST'?formatDecimal(assetsList[0].value,2):formatDecimal(TotalAssets,2)}}</text>
+						<text class="Totalassets">{{hideBalance ? '' : Type.type=='HST'?(Total>0?Total:'0.00'):formatDecimal(TotalAssets,2)}}</text>
 						<image v-if="hideBalance" class="seed" src="../../static/svg/ic_eye_close.svg" mode="" @click="hidden"></image>
 						<image v-else class="seed" src="../../static/svg/ic_eye_open.svg" mode="" @click="hidden"></image>
 					</view>
@@ -60,14 +60,17 @@
 				<u-icon v-if="Type.type!='HST'" class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000"
 				 @click="gotoAddCurrency"></u-icon>
 				<view class="assetsList">
-					<view @click="enterAssets(item)" v-for="item in Type.type == 'HST' ? assetsList : ETHassetsList"
+					<view @click="enterAssets(item)" v-for="item in Type.type == 'HST' ? currencyList : ETHassetsList"
 					 :key="Type.type == 'HST' ? item.denom : item.value" class="table">
 						<view class="tableWrapper">
 							<view class="tableLeft">
-								<image class="icon" v-if="Type.type=='HST'" src="../../static/common/logo.png" mode=""></image>
-								<image class="icon" v-else-if="Type.type === 'ETH'" :src="item.logo" mode=""></image>
-								<image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
-								<text class="denom">{{ Type.type == 'HST'? 'HST' : item.label }}</text>
+								<image v-if="item.name=='HST'" class="icon" src="../../static/common/coin_HST.png" mode=""></image>
+								<image v-if="item.name=='HST0'" class="icon" src="../../static/common/coin_HST0.png" mode=""></image>
+								<image v-if="item.name=='TWT'" class="icon" src="../../static/common/coin_TWT.png" mode=""></image>
+								<image v-if="item.name=='TWT0'" class="icon" src="../../static/common/coin_TWT0.png" mode=""></image>
+								<image class="icon" v-if="Type.type === 'ETH'" :src="item.logo" mode=""></image>
+								<image v-if="item.name!='HST'&&item.name!='HST0'&item.name!='TWT'&&item.name!='TWT0'" class="icon" src="../../static/common/coin_default.png" mode=""></image>
+								<text class="denom">{{ Type.type == 'HST'? item.name : item.label }}</text>
 							</view>
 							<view v-show="!item.loaded">
 								<u-loading color="green"></u-loading>
@@ -134,7 +137,9 @@
 				barHeight: 25,
 				exchange: {},
 				Type:{},
-				TotalAssets:0
+				TotalAssets:0,
+				currencyList:[],
+				Total:"0.0000"
 			}
 		},
 		onLoad() {
@@ -150,14 +155,6 @@
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
 				this.Type=acc[uni.getStorageSync('userAddress')];
 			 }
-			
-			// if (!uni.getStorageSync('localPw')) {
-			// 	uni.removeStorageSync('account')
-			// 	uni.removeStorageSync('userAddress')
-			// 	uni.redirectTo({
-			// 		url: `../home/home`
-			// 	})
-			// }
 			
 			uni.request({
 				url: 'https://api.coingecko.com/api/v3/exchange_rates',
@@ -236,12 +233,11 @@
 				return parseFloat(num).toFixed(i)
 			},
 			enterAssets(item) {
-
-				if (item.label != 'ETH') {
+				if (item.label != 'ETH'&& item.label) {
 					uni.setStorageSync('ERC20addr', item.value)
 				}
 				uni.navigateTo({
-					url: `/pages/assets/assets?val=${this.Type.type=='HST'?'HST':item.label+'&logo='+item.logo}`
+					url: `/pages/assets/assets?val=${this.Type.type=='HST'?`${item.name}`+'&denom='+item.denom:item.label+'&logo='+item.logo}`
 				})
 			},
 			navigate(url) {
@@ -261,8 +257,8 @@
 			},
 			getAssets() {
 				this.$u.api.getAssets(this.addr).then(res => {
+					let sum=0
 					this.assetsList = res.data.result.value.coins
-
 					this.assetsList.forEach((item) => {
 						if (/^u/i.test(item.denom)) {
 							item.denom = item.denom.slice(1).toUpperCase();
@@ -272,6 +268,24 @@
 						item.price = (item.price * 1).toFixed(6)
 						item.value = (item.price * item.amount).toFixed(6)
 					});
+					this.$u.api.getCurrencyList().then(res => {
+						this.currencyList=res.data.result
+						this.currencyList.forEach((item) => {
+							item.amount=(0/1000000).toFixed(6)
+							item.name=item.denom.slice(1).toUpperCase();
+							this.assetsList.forEach((ele) => {
+								if (ele.priceunit==item.priceunit) {
+									item.amount = ele.amount;
+								}
+							});
+							item.loaded = true
+							item.price = item.price
+							item.value = item.price * item.amount
+							sum=sum+this.formatDecimal(item.value,2)*1
+						})
+						this.Total=sum
+					});
+					
 				}).catch(err => {
 
 				})
@@ -282,7 +296,9 @@
 					let version = ''
 					// #ifdef APP-PLUS
 					plus.os.name === 'Android' ? platform = 'Android' : platform = 'Ios'
-					version = 'v' + plus.runtime.version
+					let versionarr=plus.runtime.version.split('.')
+					version = versionarr[0]+versionarr[1]+versionarr[2]
+					// version = 'v' + plus.runtime.version
 					// #endif
 					this.$u.api.getVersion({
 						address: uni.getStorageSync('userAddress'),
@@ -290,7 +306,11 @@
 						app: 'HSWallet',
 						platform
 					}).then(res => {
-						if (version != res.data.version) {
+					let arr	=res.data.version.split('v')
+					let arrNew=arr[1].split('.')
+					let configuration=arrNew[0]+arrNew[1]+arrNew[2]
+						if (version <configuration ) {
+						// if (version != res.data.version) {
 							this.$store.commit('SAVE_UPDATE_RES', res)
 							this.$refs.updateTipNav.showDialog()
 						}
@@ -337,7 +357,6 @@
 				}
 			},
 			getBalance(item) {
-				
 				if (item.label == "ETH") {
 					let sum=0
 					this.$wallet('ETH').getBalance(this.addr).then(res => {

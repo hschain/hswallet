@@ -7,7 +7,7 @@
 			<image v-if="currencyName=='TWT'" class="walletIcon" src="../../static/common/coin_TWT.png" mode=""></image>
 			<image v-if="currencyName=='TWT0'" class="walletIcon" src="../../static/common/coin_TWT0.png" mode=""></image>
 			<image v-if="Type.type=='ETH'" class="walletIcon" :src="imgsrc" mode=""></image>
-			<image v-if="currencyName!='HST'&&currencyName!='HST0'&currencyName!='TWT'&&currencyName!='TWT0'" class="walletIcon" src="../../static/common/coin_default.png" mode=""></image>
+			<image v-if="currencyName!='HST'&&currencyName!='HST0'&currencyName!='TWT'&&currencyName!='TWT0'&&Type.type!='ETH'" class="walletIcon" src="../../static/common/coin_default.png" mode=""></image>
 			<view class="detail ">
 				<view class="value">
 					{{hideBalance ? "****" : formatDecimal(account,4)}}
@@ -28,7 +28,6 @@
 				:is-scroll="false"
 				bar-width = "150"
 				font-size="32"
-				current="0"
 				bg-color="#fff"
 				:current="activeIndex"
 				@change="changeIndex"
@@ -44,7 +43,7 @@
 							<view v-if="!assetsList[name].length" class="isEmpty">
 								<u-empty text="暂无数据" mode="data" src="../../static/common/img_blank.png"></u-empty>
 							</view>
-							<view v-else @click="Type.type=='HST'?navigate(item):ETHnavigate(item)" v-for="(item, i) in assetsList[name]" :key="i + 'key'" class="table">
+							<view v-else @click="Type.type=='HST'?navigate(item,i):ETHnavigate(item,i)" v-for="(item, i) in assetsList[name]" :key="i + 'key'" :class="['table',currentIndex== i?'active':'']">
 								<view class="tableLeft">
 									<view class="tabTop">
 										<image class="icon" v-if="item.type=='in'" src="../../static/svg/ic_deposit.svg" mode=""></image>
@@ -57,7 +56,7 @@
 									<!-- <view class="tabBottom">{{item.time}}</view> -->
 								</view>
 								<view class="tableRight">
-									<text v-if="Type.type=='HST'">{{item.type === 'in' ? '+' : '-'}} {{hideBalance ? "****" : item.value}}</text>
+									<text v-if="Type.type=='HST'">{{item.type === 'in' ? '+' : '-'}} {{hideBalance ? "****" : formatDecimal(item.value,4)}}</text>
 									<text v-else-if="Type.type=='ETH'">{{item.type === 'in' ? '+' : '-'}} {{hideBalance ? "****" : item.amount}}</text>
 								</view>
 								<view class="border"></view>
@@ -70,11 +69,11 @@
 		</swiper>
 		
 		<view class="bottomBar">
-			<view class="collection">
+			<view :class="['collection',collection?'active':'']">
 				<u-icon class="icon" name="../../static/svg/ic_deposit.svg" custom-prefix="project-icon" size="100"></u-icon>
 				<view class="createBtn" :custom-style="customStyle" @click="receipt">收款</view>
 			</view>
-			<view class="transfer">
+			<view :class="['transfer',transfers?'active':'']">
 				<u-icon class="icon" name="../../static/svg/ic_withdraw.svg"  custom-prefix="project-icon" size="100"></u-icon>
 				<view class="importBtn" type="primary" @click="transfer">转账</view>
 			</view>
@@ -125,7 +124,10 @@
 				walletType:'',
 				account:'0.000000',
 				Type:{},
-				imgsrc:''
+				imgsrc:'',
+				currentIndex:-1,
+				transfers:false,
+				collection:false
 			}
 		},
 		onLoad(value) {
@@ -150,10 +152,10 @@
 			 
 		},
 		async onShow() {
-			uni.showLoading({
-						title: '加载中',
-						mask:true
-					});
+			// uni.showLoading({
+			// 			title: '加载中',
+			// 			mask:true
+			// 		});
 			let accs = this.secret.decrypt(uni.getStorageSync('account'));
 			this.Type=accs[uni.getStorageSync('userAddress')];
 			this.walletType=this.$store.state.walletType;
@@ -254,51 +256,6 @@
 			},
 			// 获取最新资产详情
 			queryNewAssetsList() {
-				// if(this.Type.type=='HST'){
-				// 	let params = {
-				// 		limit: 10,
-				// 		address: uni.getStorageSync('userAddress'),
-				// 		timetable: 'now',
-				// 		denom: this.denom
-				// 	}
-				// 	this.$u.api.getAssetsList(params).then(res => {
-				// 		this.paging = res.paging
-				// 		console.log(res);
-				// 		if (res.data) {
-				// 			res.data.reverse()
-				// 			res.data.forEach(item => {
-				// 				let obj = {
-				// 					denom: '',
-				// 					time: formatTime(item.timestamp, true),
-				// 					value: 0,
-				// 					type: '',
-				// 					success: item.messages[0].success,
-				// 					txHash: item.tx_hash
-				// 				}
-				// 				item.messages[0].events.message.sender === uni.getStorageSync('userAddress') ? obj.type = 'out' : obj.type = 'in'
-				// 				if (/^u/i.test(item.messages[0].events.transfer.denom)) {
-				// 					obj.denom = item.messages[0].events.transfer.denom.slice(1);
-				// 					obj.value = (item.messages[0].events.transfer.amount / 1000000).toFixed(6);
-				// 				}
-				// 				this.assetsList.all.unshift(obj)
-				// 			})
-				// 			// this.assetsList.all.forEach(item => {
-				// 			// 	item.type === 'out' ? this.assetsList.out.push(item) : this.assetsList.in.push(item)
-				// 			// 	if (!item.success) this.assetsList.err.push(item)
-				// 			// })
-				// 			this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
-				// 			this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
-				// 			this.assetsList.err = this.assetsList.all.filter(item => !item.success)
-				// 		}
-				// 		uni.hideLoading();
-				// 	}).finally(() => {
-				// 		setTimeout(() => {
-				// 			if (this.$store.state.queryNewInfoflag) {
-				// 				this.queryNewAssetsList()
-				// 			}
-				// 		}, 5000)
-				// 	})
-				// }else 
 				if(this.currencyName=='ETH'){
 					uni.request({
 						url:'http://47.242.65.77:5676/eth/access/eth_list',
@@ -307,7 +264,7 @@
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
 						success: (res) => {
-							
+							console.log(res);
 							if (res.data) {
 								let i=0;
 								res.data.content.forEach(item => {
@@ -330,10 +287,14 @@
 								this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
 								this.assetsList.err = this.assetsList.all.filter(item => item.result=='ERROR')
 							}
-							uni.hideLoading();
+							
+						},
+						fail:(err)=>{
+							console.log(err);
 						},
 					})
-				}else{
+					uni.hideLoading();
+				}else if(this.Type.type=='ETH'&&this.currencyName!='ETH'){
 					uni.request({
 						url:'http://47.242.65.77:5676/eth/access/rc20_list',
 						data:{limit: this.limit,start:0,type:'ALL',address:uni.getStorageSync('userAddress').toLocaleLowerCase(),contract_address:uni.getStorageSync('ERC20addr').toLocaleLowerCase()},
@@ -341,7 +302,6 @@
 							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
 						},
 						success: (res) => {
-							
 							if (res.data) {
 								// res.data.reverse();
 								let i=0;
@@ -363,9 +323,10 @@
 								this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
 								this.assetsList.err = this.assetsList.all.filter(item => item.result=='ERROR')
 							}
-							uni.hideLoading();
+							
 						},
 					})
+					uni.hideLoading();
 				}
 			},
 			//请求资产详情
@@ -450,15 +411,23 @@
 					// }
 				}
 			},
-			navigate(item) {
+			navigate(item,index) {
+				this.currentIndex=index
+				setTimeout(()=>{
+					this.currentIndex=-1
+				},200);
 				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail?hash=${item.txHash}` })
 			},
-			ETHnavigate(item){
+			ETHnavigate(item,index){
 				this.$store.commit('SET_INDEX', item.id)
 				uni.navigateTo({ url: `/pages/assetsDetail/assetsDetail` })
 			},
 			//转账
 			transfer() {
+				this.transfers=true
+					setTimeout(() => {
+						this.transfers=false
+					}, 300)
 				if (this.currencyName!='ETH' && this.Type.type!='HST') {
 					uni.setStorageSync('ERC20transfer',true)
 				}
@@ -466,6 +435,10 @@
 			},
 			//收款
 			receipt() {
+				this.collection=true
+					setTimeout(() => {
+						this.collection=false
+					}, 300)
 				uni.navigateTo({ url: '../receipt/receipt' })
 			},
 			//向后端发送进入此页面或者离开此页面消息
@@ -484,6 +457,10 @@
 </script>
 
 <style lang="scss">
+	.active{
+		background: #ccc;
+		opacity: 0.3;
+	}
 	$hei: 100vh;
 	.content {
 		display: flex;

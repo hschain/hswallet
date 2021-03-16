@@ -105,7 +105,7 @@
 			let accs = this.secret.decrypt(uni.getStorageSync('account'));
 			this.Type=accs[uni.getStorageSync('userAddress')];
 			this.walletType=this.$store.state.walletType;
-			if (this.Type.type=='ETH') {
+			if (this.Type.type=='ETH'&&!uni.getStorageSync('ERC20addr')) {
 				uni.request({
 						url:'http://47.242.65.77:5676/eth/access/eth_list',
 						data:{limit: 10,start:0,type:'ALL',address:uni.getStorageSync('userAddress').toLocaleLowerCase()},
@@ -118,7 +118,7 @@
 							}
 						},
 					})
-			}else{
+			}else if(this.Type.type=='ETH'&& uni.getStorageSync('ERC20addr')){
 				uni.request({
 						url:'http://47.242.65.77:5676/eth/access/rc20_list',
 						data:{limit: 10,start:0,type:'ALL',address:uni.getStorageSync('userAddress').toLocaleLowerCase(),contract_address:uni.getStorageSync('ERC20addr').toLocaleLowerCase()},

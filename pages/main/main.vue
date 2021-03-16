@@ -34,14 +34,14 @@
 				</view>
 				<image class="btnLogo" src="../../static/svg/img_taichi.svg" mode=""></image>
 				<view class="containerWrapBottom">
-					<view class="transfer" @click="navigate('../receipt/receipt')">
+					<view :class="['transfer',transfer?'active':'']" @click="navigate('../receipt/receipt','transfer')">
 						<u-icon class="icon" name="../../static/svg/ic_deposit.svg" :color="btnIconColor" custom-prefix="project-icon"
 						 size="100"></u-icon>
 						<view class="contents">
 							收款
 						</view>
 					</view>
-					<view class="collection" @click="navigate('../transfer/transfer')">
+					<view :class="['collection',collection?'active':'']" @click="navigate('../transfer/transfer','collection')">
 						<u-icon class="icon" name="../../static/common/ic_withdraw.png" :color="btnIconColor" custom-prefix="project-icon"
 						 size="100"></u-icon>
 						<view class="contents">
@@ -60,8 +60,8 @@
 				<u-icon v-if="Type.type!='HST'" class="addIcon" size="40" name="../../static/common/circlePlus.png" color="#000"
 				 @click="gotoAddCurrency"></u-icon>
 				<view class="assetsList">
-					<view @click="enterAssets(item)" v-for="item in Type.type == 'HST' ? currencyList : ETHassetsList"
-					 :key="Type.type == 'HST' ? item.denom : item.value" class="table">
+					<view @click="enterAssets(item,index)" v-for="(item,index) in Type.type == 'HST' ? currencyList : ETHassetsList"
+					 :key="Type.type == 'HST' ? item.denom : item.value" :class="['table',currentIndex== index?'active':'']">
 						<view class="tableWrapper">
 							<view class="tableLeft">
 								<image v-if="item.name=='HST'" class="icon" src="../../static/common/coin_HST.png" mode=""></image>
@@ -69,7 +69,7 @@
 								<image v-if="item.name=='TWT'" class="icon" src="../../static/common/coin_TWT.png" mode=""></image>
 								<image v-if="item.name=='TWT0'" class="icon" src="../../static/common/coin_TWT0.png" mode=""></image>
 								<image class="icon" v-if="Type.type === 'ETH'" :src="item.logo" mode=""></image>
-								<image v-if="item.name!='HST'&&item.name!='HST0'&item.name!='TWT'&&item.name!='TWT0'" class="icon" src="../../static/common/coin_default.png" mode=""></image>
+								<image v-if="item.name!='HST'&&item.name!='HST0'&item.name!='TWT'&&item.name!='TWT0'&&Type.type!='ETH'" class="icon" src="../../static/common/coin_default.png" mode=""></image>
 								<text class="denom">{{ Type.type == 'HST'? item.name : item.label }}</text>
 							</view>
 							<view v-show="!item.loaded">
@@ -77,7 +77,7 @@
 							</view>
 							<view v-show="item.loaded">
 								<view class="tableRight">
-									<text>{{hideBalance ? '****' : Type.type=='HST'?item.amount:formatDecimal(item.balance,4)}}</text>
+									<text>{{hideBalance ? '****' : Type.type=='HST'?formatDecimal(item.amount,4):formatDecimal(item.balance,4)}}</text>
 									<text>{{hideBalance ? '****' : Type.type=='HST'?'$ ' + formatDecimal(item.value,2):"$ "+formatDecimal(item.balanceDollar,2)}}</text>
 								</view>
 							</view>
@@ -139,7 +139,10 @@
 				Type:{},
 				TotalAssets:0,
 				currencyList:[],
-				Total:"0.0000"
+				Total:"0.0000",
+				currentIndex:-1,
+				transfer:false,
+				collection:false
 			}
 		},
 		onLoad() {
@@ -232,7 +235,11 @@
 				}
 				return parseFloat(num).toFixed(i)
 			},
-			enterAssets(item) {
+			enterAssets(item,index) {
+				this.currentIndex=index
+				setTimeout(()=>{
+					this.currentIndex=-1
+				},300);
 				if (item.label != 'ETH'&& item.label) {
 					uni.setStorageSync('ERC20addr', item.value)
 				}
@@ -240,7 +247,18 @@
 					url: `/pages/assets/assets?val=${this.Type.type=='HST'?`${item.name}`+'&denom='+item.denom:item.label+'&logo='+item.logo}`
 				})
 			},
-			navigate(url) {
+			navigate(url,type) {
+				if (type=='transfer') {
+					this.transfer=true
+					setTimeout(() => {
+						this.transfer=false
+					}, 300)
+				}else if (type=='collection') {
+					this.collection=true
+					setTimeout(() => {
+						this.collection=false
+					}, 300)
+				}
 				uni.navigateTo({
 					url
 				})
@@ -281,9 +299,9 @@
 							item.loaded = true
 							item.price = item.price
 							item.value = item.price * item.amount
-							sum=sum+this.formatDecimal(item.value,2)*1
+							sum=sum+this.formatDecimal(item.value,2)*100
 						})
-						this.Total=sum
+						this.Total=sum/100
 					});
 					
 				}).catch(err => {
@@ -309,7 +327,7 @@
 					let arr	=res.data.version.split('v')
 					let arrNew=arr[1].split('.')
 					let configuration=arrNew[0]+arrNew[1]+arrNew[2]
-						if (version <configuration ) {
+						if (version*1 <configuration*1 ) {
 						// if (version != res.data.version) {
 							this.$store.commit('SAVE_UPDATE_RES', res)
 							this.$refs.updateTipNav.showDialog()
@@ -383,6 +401,10 @@
 </script>
 
 <style lang="scss">
+	.active{
+		background: #ccc;
+		opacity: 0.3;
+	}
 	.content {
 		width: 100%;
 		display: flex;
@@ -596,7 +618,7 @@
 			}
 
 			.assetsList {
-				margin-top: 100rpx;
+				margin-top: 70rpx;
 
 				.table {
 					height: 128rpx;
@@ -608,6 +630,7 @@
 					.tableWrapper {
 						width: 750rpx;
 						padding: 0rpx 32rpx;
+						padding-top: 32rpx;
 						display: flex;
 						justify-content: space-between;
 
@@ -615,7 +638,6 @@
 						.tableLeft {
 							display: flex;
 							font-family: gilroy-regular;
-
 							.icon {
 								width: 60rpx;
 								height: 60rpx;
@@ -644,7 +666,7 @@
 						background: #F3F3F7;
 						position: absolute;
 						right: 0;
-						bottom: 30rpx;
+						bottom: 0rpx;
 					}
 				}
 			}

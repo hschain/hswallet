@@ -6,7 +6,7 @@
 		<view class="Container">
 			<view class="containerWrap">
 				<view class="addrInput">
-					<u-input :custom-style="{fontSize: '32rpx',background:'#fff',fontFamily:'gilroy-bold'}" class="input" v-model="addr" :placeholder="this.Type.type + '地址'" :clearable="false" :border="false"/>
+					<u-input :custom-style="{fontSize: '32rpx',background:'#fff',fontFamily:'gilroy-bold'}" class="input" v-model="addr" :placeholder="'收款地址'" :clearable="false" :border="false"/>
 					<image @click="addAddress" class="addrImg" src="../../static/common/ic_address.png" mode=""></image>
 				</view>
 				<u-cell-group v-show="Object.keys(addrData).length">
@@ -198,9 +198,9 @@
 									}
 								}
 							],
-							// chain_id: 'hschain',
-							chain_id: 'test',
-							fee: { amount: [ ], gas: String(this.cash*200000) },
+							chain_id: 'hschain',
+							// chain_id: 'test',
+							fee: { amount: [ ], gas: String(200000) },
 							memo: this.memo,
 							account_number: String(res.result.value.account_number),
 							sequence: String(res.result.value.sequence)
@@ -208,7 +208,6 @@
 						const signedTx = hschain.sign(stdSignMsg, ecpairPriv)
 						
 						this.$u.api.broadcast(signedTx).then(res => {
-							console.log(res.raw_log);
 							if (JSON.parse(res.raw_log)[0].success) {
 								this.$refs.uToast.show({
 									title: '交易正在处理中',
@@ -228,6 +227,7 @@
 								})
 							}
 						}).catch(err => {
+
 							uni.showToast({
 								title: '交易失败'	
 							})

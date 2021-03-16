@@ -28,6 +28,32 @@
 		onHide: function() {
 		
 		},
+		onError:function(err) {
+			var pages = getCurrentPages();
+			let pageRoute="";
+			if(pages.length>0)
+			{
+				var page = pages[pages.length - 1];
+				var currentWebview = page.$getAppWebview();
+				 pageRoute=currentWebview.__uniapp_route;
+			}
+			
+			 let log = {  
+			     message: err.message,  
+			     stack: err.stack,
+				 route:pageRoute
+			 }  
+			 uni.showModal({
+			 	content:JSON.stringify(log)
+			 })
+			 
+			 let crashTool=uni.requireNativePlugin("CL-CrashTool");
+			 if(crashTool)
+			 {
+				crashTool.sendReportException(JSON.stringify(log));	 
+			 }
+			 	  
+		},
 		beforeDestroy() {
 			this.$store.dispatch('websocketClose', "wss://testnet.hschain.io/api/v1/ws")
 		}

@@ -157,6 +157,8 @@ const bip39 = require('bip39');
 								},1000)
 							}
 						})
+					}else{
+						uni.hideLoading();
 					}
 				})
 				

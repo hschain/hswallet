@@ -179,7 +179,13 @@
 				"navigationBarBackgroundColor":"#000",
 				"navigationBarTextStyle":"black"
 			}
-		}			
+		}, {
+			"path": "pages/bridge/bridge",
+			"style": {
+				// "navigationBarTitleText": "桥接",
+				"navigationStyle": "custom"
+			}
+		}				
 	],
 	"globalStyle": {//用于设置应用的状态、导航条、标题、窗口颜色背景
 		"navigationBarTextStyle": "black",//导航栏标题颜色及状态栏前景颜色，仅限black/white

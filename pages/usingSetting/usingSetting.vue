@@ -100,9 +100,11 @@
 			}
 		},
 		mounted(){
-			document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
-			document.querySelector('uni-page').style.background = '#F7F7F7';
-			document.querySelector('uni-page-body').style.background = '#F7F7F7';
+			// #ifdef H5
+			    document.querySelector('uni-page-wrapper').style.background = '#F7F7F7';
+			    document.querySelector('uni-page').style.background = '#F7F7F7';
+			    document.querySelector('uni-page-body').style.background = '#F7F7F7';
+			// #endif 
 		},
 		methods: {
 			//反馈校验是否成功

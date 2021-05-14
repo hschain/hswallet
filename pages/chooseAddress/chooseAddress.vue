@@ -24,6 +24,15 @@
                 <image v-if="AddressType=='ETH'" class="arrowRight" src="../../static/svg/ic_checked.svg" mode=""></image>
                 <view class="shortBoder"></view>
             </view>
+			<view class="eth" @click="onSelect('HECO')">
+			    <image  class="hstLogo" src="../../static/common/heco.png" mode=""></image>
+			    <view class="walletTitle">
+			        <view class="HSTwallet">HECO</view>
+			        <view class="small">HECOchain</view>
+			    </view>
+			    <image v-if="AddressType=='HECO'" class="arrowRight" src="../../static/svg/ic_checked.svg" mode=""></image>
+			    <view class="shortBoder"></view>
+			</view>
         </view>
 	</view>
 </template>

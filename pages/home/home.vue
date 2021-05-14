@@ -50,6 +50,7 @@
 		onShow(){
 			uni.setStorageSync('hstnameIndex',1)
 			uni.setStorageSync('ethnameIndex',1)
+			uni.setStorageSync('heconameIndex',1) // heco
 		},
 		methods: {
 			create() {

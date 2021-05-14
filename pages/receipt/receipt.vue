@@ -3,7 +3,7 @@
 		<view class="containerBox purpleContainer">
 			<view class="boxWrapper">
 				<view class="content">
-					扫二维码，转入{{ this.$store.state.walletType }}
+					扫二维码，转入{{ denom }}
 				</view>
 				<view class="qrCodeBox">
 					<view class="boxWrapper">
@@ -32,10 +32,13 @@
 		data() {
 			return {
 				addr: uni.getStorageSync('userAddress') || '', //地址
-				imgText: '' //二维码内容
+				imgText: '', //二维码内容
+				denom: '', // 转入类型
 			}
 		},
-		onLoad() {
+		onLoad(value) {
+			this.denom = value.denom?value.denom.slice(1).toUpperCase(): 'HST';
+			// console.log(this.denom)
 			let acc = this.secret.decrypt(uni.getStorageSync('account'));
 			// this.addr =  Object.keys(acc)[0]
 			this.imgText = QR.createQrCodeImg(this.addr, {  
@@ -48,9 +51,12 @@
 			},
 		},
 		created(){
-			// document.querySelector('.uni-page-head').style.background = '#1F1F1F';
+			// //#ifdef H5
+			// document.querySelector('.uni-page-head').style.backgroundColor = '#1F1F1F';
 			// document.querySelector('.uni-page-head').style.color = '#fff';
 			// document.querySelector('.uni-btn-icon').style.color = '#fff';
+			// //#endif
+			
 		},
 		methods: {
 			// 复制地址

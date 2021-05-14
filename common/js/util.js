@@ -73,5 +73,24 @@ export default {
 		}
 				
 		return decimal
+	},
+	
+	/**
+	 * 获取hsc合约精度
+	 * 
+	 * @param {Object} contractAddress
+	 */
+	getHscDecimal(contractAddress) {
+		let decimal = 6
+		let assets = uni.getStorageSync("assets")
+		
+		for(var key in assets) {
+			let asset = assets[key].find(asset => asset.value == contractAddress)
+			if (asset) {
+				return asset.decimal
+			}
+		}
+				
+		return decimal
 	}
 }

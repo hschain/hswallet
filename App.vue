@@ -34,8 +34,12 @@
 			if(pages.length>0)
 			{
 				var page = pages[pages.length - 1];
-				var currentWebview = page.$getAppWebview();
-				 pageRoute=currentWebview.__uniapp_route;
+				// #ifdef APP-PLUS
+					var currentWebview = page.$getAppWebview();
+					 pageRoute=currentWebview.__uniapp_route;
+				// #endif
+				// var currentWebview = page.$getAppWebview();
+				//  pageRoute=currentWebview.__uniapp_route;
 			}
 			
 			 let log = {  

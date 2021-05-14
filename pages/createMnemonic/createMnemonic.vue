@@ -9,16 +9,31 @@
 			<view class="tip">
 				<view class="tipWrapper ">
 					<text class="headerTip">助记词</text>
+					<!-- 助记词作用 -->
+					<view class="effect">
+						助记词用于恢复钱包及重置钱包密码，请准确无误抄写助记词，并存放在安全的地方
+					</view>
 					<view class="content">
 						<text class="mnemonic" v-for="(item, i) in mnemonic.split(' ')" :key="i+'key'"><text class="count">{{i+1}}</text>{{item}}</text>
-					</view>
+					</view>	
 				</view>
 			</view>
 			<view class="bottomSize">
 				
 				<view>
 					
-					<u-button class="backup" @click="backup">已确认备份</u-button>				
+					<!-- 提示 -->
+					<view class="tip-wrap">
+						<view class="tip-title">提示</view>
+						<view class="tip-text">· 请勿将助记词透漏给任何人</view>
+						<view class="tip-text">· 助记词一旦丢失，资产将无法恢复</view>
+						<view class="tip-text">· 请勿通过截屏、网络传输的方式进行备份保存</view>
+						<view class="tip-text">· 遇到任何情况，不要轻易卸载钱包App</view>
+					</view>
+					
+					<u-button class="backup" @click="backup">已确认备份</u-button>
+					
+					<view class="copy-mnemonic" @click="onCopy">复制助记词</view>
 				</view>
 			</view>
 		</view>
@@ -92,7 +107,14 @@ import hschain from 'hschainjs'
 		},
 		onShow(){
 			this.accountList=uni.getStorageSync('account')?this.secret.decrypt(uni.getStorageSync('account')):{}
-			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex')
+			// this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex')
+			if(this.$store.state.walletType=='HST'){
+				this.nameIndex = uni.getStorageSync('hstnameIndex');
+			}else if(this.$store.state.walletType=='ETH'){
+				this.nameIndex = uni.getStorageSync('ethnameIndex');
+			}else{
+				this.nameIndex = uni.getStorageSync('heconameIndex');
+			}
 		},
 		onReady(){
 			setTimeout(() => {
@@ -111,6 +133,7 @@ import hschain from 'hschainjs'
 					title: '内容已复制'
 				})
 				//#endif
+				
 				//#ifndef H5
 				uni.setClipboardData({
 					data: this.mnemonic
@@ -161,7 +184,15 @@ import hschain from 'hschainjs'
 						key: 'account',
 						data: this.secret.encrypt(accounts)
 					})
-					this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
+					// this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',this.nameIndex+1):uni.setStorageSync('ethnameIndex',this.nameIndex+1)
+					if(this.$store.state.walletType=='HST'){
+						uni.setStorageSync('hstnameIndex',this.nameIndex+1)
+					}else if(this.$store.state.walletType=='ETH'){
+						uni.setStorageSync('ethnameIndex',this.nameIndex+1)
+					}else{
+						uni.setStorageSync('heconameIndex',this.nameIndex+1)
+					}
+					
 					if (this.localPw) {
 						uni.switchTab({
 							url: '../main/main'
@@ -273,6 +304,12 @@ import hschain from 'hschainjs'
 					font-size: 68rpx;
 					color: #1F1F1F;
 				}
+				.effect{
+					color: #333;
+					
+					margin-top: 20rpx;
+				}
+				
 				.content {
 					width: 686rpx;
 					height: 512rpx;
@@ -344,6 +381,20 @@ import hschain from 'hschainjs'
 			top:460px;
 			left: 50%;
 			transform: translate(-50%,0);
+			
+			.tip-wrap{
+				color: #e61414;
+				margin-top: 60rpx;
+				
+				.tip-title{
+					font-size: 34rpx;
+					margin-bottom: 10rpx;
+				}
+				.tip-text{
+					line-height: 48rpx;
+				}
+			}
+			
 			.copy {
 				width: 686rpx;
 				height: 96rpx;
@@ -354,10 +405,15 @@ import hschain from 'hschainjs'
 			.backup {
 				width: 686rpx;
 				height: 96rpx;
-				margin: 0 auto 40rpx;
+				margin: 60rpx auto 20rpx;
 				color: #fff;
 				background: url('../../static/common/button_gold.png') no-repeat;
 				background-size: 100% 100%;
+			}
+			.copy-mnemonic{
+				text-align: center;
+				color: #333;
+				margin-bottom: 20rpx;
 			}
 			.disableBtn {
 				color: #fff;

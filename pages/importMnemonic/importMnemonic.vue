@@ -82,7 +82,14 @@ const bip39 = require('bip39');
 			}
 		},
 		onShow(){
-			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
+			// this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
+			if(this.$store.state.walletType=='HST'){
+				this.nameIndex = uni.getStorageSync('hstnameIndex');
+			}else if(this.$store.state.walletType=='ETH'){
+				this.nameIndex = uni.getStorageSync('ethnameIndex');
+			}else{
+				this.nameIndex = uni.getStorageSync('heconameIndex');
+			}
 		},
 		// onReady(){
 		// 	this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
@@ -92,10 +99,12 @@ const bip39 = require('bip39');
 				uni.navigateBack()
 			},
 			mnemonicCut(){
+				this.form.value = '';
 				this.select='mnemonic';
 				this.holder='请输入12个助记词单词,并使用空格分隔'
 			},
 			privatekeyCut(){
+				this.form.value = '';
 				this.select='privatekey';
 				this.holder='请输入您的私钥'
 			},
@@ -153,7 +162,14 @@ const bip39 = require('bip39');
 										url: `../setPw/setPw`
 									})
 								}	
-								_this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',_this.nameIndex+1):uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
+								// _this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',_this.nameIndex+1):uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
+								if(_this.$store.state.walletType=='HST'){
+									uni.setStorageSync('hstnameIndex',_this.nameIndex+1)
+								}else if(_this.$store.state.walletType=='ETH'){
+									uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
+								}else{
+									uni.setStorageSync('heconameIndex',_this.nameIndex+1)
+								}
 								},1000)
 							}
 						})
@@ -216,7 +232,14 @@ const bip39 = require('bip39');
 										url: `../setPw/setPw`
 									})
 								}	
-								_this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',_this.nameIndex+1):uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
+								// _this.$store.state.walletType=='HST'?uni.setStorageSync('hstnameIndex',_this.nameIndex+1):uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
+								if(_this.$store.state.walletType=='HST'){
+									uni.setStorageSync('hstnameIndex',_this.nameIndex+1)
+								}else if(_this.$store.state.walletType=='ETH'){
+									uni.setStorageSync('ethnameIndex',_this.nameIndex+1)
+								}else{
+									uni.setStorageSync('heconameIndex',_this.nameIndex+1)
+								}
 								},1000)
 							}
 						})

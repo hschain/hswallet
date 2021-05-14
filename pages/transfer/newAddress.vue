@@ -150,6 +150,8 @@
 				this.src='../../static/svg/chain_hst.svg'
 			}else if (this.AddressType=='ETH') {
 				this.src='../../static/svg/chain_eth.svg'
+			}else if (this.AddressType=='HECO') {
+				this.src='../../static/common/heco.png'
 			}
 		},
 		methods:{

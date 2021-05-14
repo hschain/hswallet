@@ -8,6 +8,7 @@
 					<!-- <u-cell-item v-for="(item, index) in addrList" :key="index" @click="choose(index)" :arrow="false" :label="item.description" :value="fliterAddr(item.addr)" :title="item.name" :title-style="{color: '#909195'}" hover-class="none"> -->
 						<view class="tableList" v-for="(item, index) in addrList" :key="index" @click="choose(index)">
 							<image v-if="item.denom=='HST'" class="rightImg" src="../../static/svg/chain_hst.svg" mode="" ></image>
+							<image v-else-if="item.denom=='HECO'" class="rightImg" src="../../static/common/heco.png" mode="" ></image>
 							<image v-else class="rightImg" src="../../static/svg/chain_eth.svg" mode="" ></image>
 							<view class="name">{{item.name}}</view>
 							<view class="addr">{{item.addr}}</view>

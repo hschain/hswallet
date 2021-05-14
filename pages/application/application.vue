@@ -18,6 +18,23 @@
 				</view>
 			</view>
 		</view>
+		<view class="margin cellMark"  @click="onBridge">
+			<view class=" circle">
+				<view class="boxLeft">
+					<image class="leftIcon bridge-icon" src="../../static/application/bridge.png" mode=""></image>
+					<view class="leftWrapper">
+						<view class="title ">
+							资产跨链
+						</view>
+					</view>
+				</view>
+				<view class="boxRight">
+					<view class="rightWrapper">
+						<image class="rightImg" src="../../static/svg/arrow_right.svg" mode=""></image>
+					</view>
+				</view>
+			</view>
+		</view>
 		<view class="margin cellMark"  @click="info">
 			<view class=" circle">
 				<view class="boxLeft">
@@ -127,6 +144,11 @@
 				uni.navigateTo({
 					url: '/pages/browser/browser?url=' + url
 				})
+			},
+			onBridge(){
+				uni.navigateTo({
+					url: '/pages/bridge/bridge'
+				})
 			}
 		}
 	}
@@ -145,6 +167,9 @@
 			width: 44rpx;
 			height: 44rpx;
 			margin-right: 32rpx;
+		}
+		.bridge-icon{
+			height: 48rpx;
 		}
 		.msg {
 			display: flex;

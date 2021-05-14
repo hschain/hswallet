@@ -11,6 +11,7 @@
 						<view :class="['containerWrap',selected==item.addr?'hei':'bai']">
                             <image v-if="item.type=='HST'" class="icons" src="../../static/svg/chain_hst.svg" mode=""></image>
                             <image v-else-if="item.type=='ETH'" class="icons" src="../../static/svg/chain_eth.svg" mode=""></image>
+							<image v-else-if="item.type=='HECO'" class="icons" src="../../static/common/heco.png" mode=""></image>
                             <image v-if="selected==item.addr" class="selected" src="../../static/svg/ic_checked.svg" mode=""></image>
 							<view class="walletInfo">
 								<view class="name">

@@ -46,7 +46,7 @@ var MaxUint256 = bignumber_1.bigNumberify('0xfffffffffffffffffffffffffffffffffff
 exports.MaxUint256 = MaxUint256;
 
 },{"./utils/bignumber":63}],4:[function(require,module,exports){
-'use strict';
+// 'use strict';
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -762,7 +762,7 @@ var ContractFactory = /** @class */ (function () {
 exports.ContractFactory = ContractFactory;
 
 },{"./abstract-signer":2,"./constants":3,"./errors":5,"./providers/abstract-provider":50,"./utils/abi-coder":59,"./utils/address":60,"./utils/bignumber":63,"./utils/bytes":64,"./utils/interface":69,"./utils/properties":74}],5:[function(require,module,exports){
-'use strict';
+// 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
 var _version_1 = require("./_version");
 // Unknown Error

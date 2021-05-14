@@ -1,7 +1,7 @@
 const install = (Vue, vm) => {
 	// 此为自定义配置参数
 	Vue.prototype.$u.http.setConfig({
-		// baseUrl: 'https://testnet.hschain.io', // 请求的本域名 (测试环境)
+		//baseUrl: 'https://testnet.hschain.io', // 请求的本域名 (测试环境)
 		// baseUrl:'http://explorer.buermailuo.cn',
 		baseUrl: 'https://scan.hschain.io', //请求的本域名 (正式环境)
 		// baseUrl:'http://8.129.187.233:25676',

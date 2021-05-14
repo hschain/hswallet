@@ -26,7 +26,14 @@
 			}
 		},
 		onShow(){
-			this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
+			// this.nameIndex=this.$store.state.walletType=='HST'?uni.getStorageSync('hstnameIndex'):uni.getStorageSync('ethnameIndex');
+			if(this.$store.state.walletType=='HST'){
+				this.nameIndex = uni.getStorageSync('hstnameIndex');
+			}else if(this.$store.state.walletType=='ETH'){
+				this.nameIndex = uni.getStorageSync('ethnameIndex');
+			}else{
+				this.nameIndex = uni.getStorageSync('heconameIndex');
+			}
 		},
 		methods: {
 			back() {

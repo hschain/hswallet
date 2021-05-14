@@ -24,6 +24,16 @@
                 <image  class="arrowRight" src="../../static/svg/arrow_right.svg" mode=""></image>
                 <view class="shortBoder"></view>
             </view>
+			<!-- heco -->
+			<view class="eth" @click="onSelect('HECO')">
+			    <image  class="hstLogo" src="../../static/common/heco.png" mode=""></image>
+			    <view class="walletTitle">
+			        <view class="HSTwallet">HECO</view>
+			        <view class="small">HECOchain</view>
+			    </view>
+			    <image  class="arrowRight" src="../../static/svg/arrow_right.svg" mode=""></image>
+			    <view class="shortBoder"></view>
+			</view>
         </view>
 	</view>
 </template>

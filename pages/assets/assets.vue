@@ -362,7 +362,7 @@
 							'startblock':0,
 							'endblock':99999999,
 							'sort':'desc',
-							'apikey':'STREDA3BHNE99FM7VXZ44DV385EF1CAG41'
+							'apikey':'HFZR63S1W3MV74T9RIC5S5ZTTUC19I6CQZ' // this.secret.decrypt(uni.getStorageSync('account'))
 							// address:uni.getStorageSync('userAddress').toLocaleLowerCase(),limit:20,start:0
 						},
 						header: {
@@ -410,7 +410,7 @@
 							'startblock':0,
 							'endblock':99999999,
 							'sort':'desc',
-							'apikey':this.secret.decrypt(uni.getStorageSync('account'))[0]
+							'apikey': 'STREDA3BHNE99FM7VXZ44DV385EF1CAG41'
 							// address:uni.getStorageSync('userAddress').toLocaleLowerCase(),limit:20,start:0
 						},
 						header: {

@@ -218,7 +218,7 @@
 						'startblock':0,
 						'endblock':99999999,
 						'sort':'desc',
-						'apikey':this.secret.decrypt(uni.getStorageSync('account'))
+						'apikey':'HFZR63S1W3MV74T9RIC5S5ZTTUC19I6CQZ'
 						// address:uni.getStorageSync('userAddress').toLocaleLowerCase(),limit:20,start:0
 					},
 					header: {

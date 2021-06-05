@@ -33,6 +33,15 @@
 			    <image v-if="AddressType=='HECO'" class="arrowRight" src="../../static/svg/ic_checked.svg" mode=""></image>
 			    <view class="shortBoder"></view>
 			</view>
+			<view class="eth" @click="onSelect('Binance')">
+			    <image  class="hstLogo" src="../../static/common/bnb.svg" mode=""></image>
+			    <view class="walletTitle">
+			        <view class="HSTwallet">Binance</view>
+			        <view class="small">Binancechain</view>
+			    </view>
+			    <image v-if="AddressType=='Binance'" class="arrowRight" src="../../static/svg/ic_checked.svg" mode=""></image>
+			    <view class="shortBoder"></view>
+			</view>
         </view>
 	</view>
 </template>

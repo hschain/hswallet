@@ -51,6 +51,7 @@
 			uni.setStorageSync('hstnameIndex',1)
 			uni.setStorageSync('ethnameIndex',1)
 			uni.setStorageSync('heconameIndex',1) // heco
+			uni.setStorageSync('binancenameIndex',1) // binance
 		},
 		methods: {
 			create() {

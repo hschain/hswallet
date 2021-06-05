@@ -127,6 +127,7 @@
 			})
 			this.denom = value.denom ? value.denom : 'uhst' // demo为传过来的值：uhsc或其他
 			this.name = value.name ? value.name : this.Type.type // name同理
+			// console.log(this.denom)
 		},
 		onShow() {
 			let acc = this.secret.decrypt(uni.getStorageSync('account'));
@@ -185,7 +186,7 @@
 						})
 						return
 					}
-				}else if(this.Type.type === 'HECO'){
+				}else if(this.Type.type === 'HECO' || this.Type.type === 'Binance'){
 					if(!isPass2){
 						uni.showToast({
 							icon: 'none',
@@ -326,21 +327,35 @@
 						type = 'privateKey'
 						mnemonic = this.account[uni.getStorageSync('userAddress')].privateKey;
 					}
-					// this.$wallet('HECO').sendETH(mnemonic,this.addr,this.cash,type).then(res=>{
-					// 	uni.showToast({
-					// 		title: '交易请求成功'
-					// 	})
-					// 	setTimeout(() => {
-					// 				uni.navigateBack()
-					// 	},2000)
-					// }).catch(err=>{
-					// 	uni.showToast({
-					// 		title: '交易失败'	
-					// 	})
-
-					// })
 
 					this.$wallet("HECO").sendHscToken(mnemonic, this.addr, this.cash, type).then(res => {
+						uni.showToast({
+							title: '交易请求成功'
+						})
+						setTimeout(() => {
+							uni.navigateBack()
+						}, 2000)
+					}, err => {
+
+						uni.showToast({
+							title: '交易失败'
+						})
+					});
+					uni.showToast({
+						title: '交易正在处理中'
+					})
+				}else if (this.Type.type === 'Binance') {
+					let type;
+					let mnemonic;
+					if (this.Type.key) {
+						type = 'mnemonic'
+						mnemonic = this.account[uni.getStorageSync('userAddress')].key;
+					} else if (this.Type.privateKey) {
+						type = 'privateKey'
+						mnemonic = this.account[uni.getStorageSync('userAddress')].privateKey;
+					}
+
+					this.$wallet("Binance").sendBinanceToken(mnemonic, this.addr, this.cash, type).then(res => {
 						uni.showToast({
 							title: '交易请求成功'
 						})

@@ -152,6 +152,8 @@
 				this.src='../../static/svg/chain_eth.svg'
 			}else if (this.AddressType=='HECO') {
 				this.src='../../static/common/heco.png'
+			}else if (this.AddressType=='Binance') {
+				this.src='../../static/common/bnb.svg'
 			}
 		},
 		methods:{

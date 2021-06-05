@@ -80,7 +80,7 @@
 					<image v-else class="icon" src="../../static/common/wrong.png" mode=""></image>
 					<text :class="['tip',details!={}?'green':'red']">{{details!={}? '成功' : '失败'}}</text>
 					<text class="time">{{timestampToTime(details.timeStamp)}}</text>
-					<text class="amount">{{details.to === address ? '+' : '- '}}{{formatDecimal(details.value/1000000,6)+' '+ details.tokenSymbol }}</text>
+					<text class="amount">{{details.to === address ? '+' : '- '}}{{formatDecimal(details.value/1000000,4)+' '+ details.tokenSymbol }}</text>
 				</view>
 			</view>
 		
@@ -88,6 +88,41 @@
 				<view class="fee">
 					<text class="title">矿工费</text>
 					<text class="number">{{(details.gas*details.gasPrice)/1000000000000000000 +' HT'}}</text>
+					<view class="calculation">GasPrice(24.00 GWEI) * Gas(112,956)</view>
+					<view class="border"></view>
+				</view>
+				<view class="collection">
+					<text class="title">收款地址</text>
+					<text class="addr">{{details.to}}</text>
+				</view>
+				<view class="transfer">
+					<text class="title">付款地址</text>
+					<text class="addr">{{details.from}}</text>
+					<view class="border"></view>
+				</view>
+				<view class="hash">
+					<text class="title">交易哈希</text>
+					<view class="addre">{{details.hash}}</view>
+				</view>
+				<view class="check" @click="goto(details.hash)">查询详细信息></view>
+			</view>
+		</view>
+		<view class="content" v-else-if="Type.type=='Binance'">
+			<view class="detail">
+				<view class="showDetail">
+					<image v-if="details!={}" class="icon" src="../../static/common/img_success.png"
+						mode=""></image>
+					<image v-else class="icon" src="../../static/common/wrong.png" mode=""></image>
+					<text :class="['tip',details!={}?'green':'red']">{{details!={}? '成功' : '失败'}}</text>
+					<text class="time">{{timestampToTime(details.timeStamp)}}</text>
+					<text class="amount">{{details.to === address ? '+' : '- '}}{{formatDecimal(details.value/1000000,4)+' '+ details.tokenSymbol }}</text>
+				</view>
+			</view>
+		
+			<view class="amountDetail ">
+				<view class="fee">
+					<text class="title">矿工费</text>
+					<text class="number">{{(details.gas*details.gasPrice)/1000000000000000000 +' BNB'}}</text>
 					<view class="calculation">GasPrice(24.00 GWEI) * Gas(112,956)</view>
 					<view class="border"></view>
 				</view>
@@ -116,7 +151,7 @@
 	import {
 		formatTime
 	} from '../../common/js/common.js'
-	import {hecoUrl} from '@/common/js/wallet.js'
+	import { hecoUrl,BinanceUrl } from '@/common/js/wallet.js'
 	
 	export default {
 		data() {
@@ -144,6 +179,7 @@
 				Type: {},
 				address: '', // 钱包地址
 				hecoUrl: hecoUrl, // 火币网链接
+				BinanceUrl: BinanceUrl, // 币安网链接
 			}
 		},
 		onShow() {
@@ -181,8 +217,37 @@
 						'address':uni.getStorageSync('userAddress').toLocaleLowerCase(),
 						'startblock':0,
 						'endblock':99999999,
-						'sort':'asc',
+						'sort':'desc',
 						'apikey':this.secret.decrypt(uni.getStorageSync('account'))
+						// address:uni.getStorageSync('userAddress').toLocaleLowerCase(),limit:20,start:0
+					},
+					header: {
+						'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
+					},
+					success: (res) => {
+						// console.log(res);
+						if (res.data) {
+							this.details = res.data.result[this.$store.state.index];
+						}
+				
+					},
+					fail:(err)=>{
+						console.log(err);
+					},
+				})
+				uni.hideLoading();
+			}else if(this.Type.type == 'Binance'){
+	
+				uni.request({
+					url: this.BinanceUrl, // 根据环境切换
+					data:{
+						'module':'account',
+						'action':'tokentx',
+						'address':uni.getStorageSync('userAddress').toLocaleLowerCase(),
+						'startblock':1,
+						'endblock':99999999,
+						'sort':'desc',
+						'apikey':'STREDA3BHNE99FM7VXZ44DV385EF1CAG41'
 						// address:uni.getStorageSync('userAddress').toLocaleLowerCase(),limit:20,start:0
 					},
 					header: {
@@ -295,11 +360,18 @@
 					})
 				}else if (this.Type.type == 'HECO') {
 					uni.navigateTo({
-						url: `../etheric/etheric?url=https://hecoinfo.com/tx/${item}` // 正式环境 https://hecoinfo.com/, 测试环境 https://testnet.hecoinfo.com/
+						url: `../etheric/etheric?url=https://hecoinfo.com/tx/${item}` // 正式环境 https://hecoinfo.com/
+						// url: `../etheric/etheric?url=https://testnet.hecoinfo.com/tx/${item}` // 测试环境 https://testnet.hecoinfo.com/
 					})
-				} else if (this.Type.type == 'HST') {
+				}else if (this.Type.type == 'Binance') {
 					uni.navigateTo({
-						url: `../etheric/etheric?url=https://scan.hschain.io/#/transactions/${item}` // 正式环境 https://scan.hschain.io/,测试环境 https://testnet.hschain.io/
+						url: `../etheric/etheric?url=https://bscscan.com/tx/${item}` // 正式环境 https://bscscan.com/
+						// url: `../etheric/etheric?url=https://testnet.bscscan.com/tx/${item}` // 测试环境 https://testnet.bscscan.com/
+					})
+				}  else if (this.Type.type == 'HST') {
+					uni.navigateTo({
+						url: `../etheric/etheric?url=https://scan.hschain.io/#/transactions/${item}` // 正式环境 https://scan.hschain.io/
+						// url: `../etheric/etheric?url=https://testnet.hschain.io/#/transactions/${item}` // 测试环境 https://testnet.hschain.io/
 					})
 				}
 

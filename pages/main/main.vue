@@ -13,6 +13,8 @@
 							mode=""></image>
 						<image v-show="Type.type=='HECO'" class="walletIcon" src="../../static/common/heco.png" mode="">
 						</image>
+						<image v-show="Type.type=='Binance'" class="walletIcon" src="../../static/common/bnb.svg" mode="">
+						</image>
 						<u-section font-size="42" :show-line="false" color="#fff" sub-color="#fff"
 							:title="this.$store.state.walletName" sub-title="" :arrow="false"
 							@click="navigate('../management/management')"></u-section>
@@ -173,6 +175,44 @@
 						<view class="border"></view>
 					</view>
 				</view>
+				
+				<!-- Binance -->
+				<view class="assetsList" v-if="Type.type == 'Binance'">
+					<view @click="enterAssets(item,index)" v-for="(item,index) in BinanceassetsList"
+						:key="Type.type == 'HST' ? item.denom : item.value"
+						:class="['table',currentIndex== index?'active':'']">
+						<view class="tableWrapper">
+							<view class="tableLeft">
+								<image v-if="item.name=='HST'" class="icon" src="../../static/common/coin_HST.png"
+									mode=""></image>
+								<image v-if="item.name=='HST0'" class="icon" src="../../static/common/coin_HST0.png"
+									mode=""></image>
+								<image v-if="item.name=='TWT'" class="icon" src="../../static/common/coin_TWT.png"
+									mode=""></image>
+								<image v-if="item.name=='TWT0'" class="icon" src="../../static/common/coin_TWT0.png"
+									mode=""></image>
+								<image v-if="item.name=='HSC'" class="icon" src="../../static/main/hsc.png"
+									mode=""></image>
+								<image class="icon" v-if="Type.type === 'Binance'" :src="item.logo" mode=""></image>
+								<image class="icon" v-if="Type.type === 'ETH'" :src="item.logo" mode=""></image>
+								<image
+									v-if="item.name!='HST'&&item.name!='HST0'&item.name!='TWT'&&item.name!='TWT0'&&item.name!='HSC'&&Type.type!='ETH'&&Type.type!='HECO'&&Type.type!='Binance'"
+									class="icon" src="../../static/common/coin_default.png" mode=""></image>
+								<text class="denom">{{ Type.type == 'HST'? item.name : item.label }}</text>
+							</view>
+							<view v-show="!item.loaded">
+								<u-loading color="green"></u-loading>
+							</view>
+							<view v-show="item.loaded">
+								<view class="tableRight">
+									<text>{{hideBalance ? '****' : Type.type=='HST'?formatDecimal(item.amount,4):formatDecimal(item.balance,4)}}</text>
+									<text>{{hideBalance ? '****' : Type.type=='HST'?'$ ' + formatDecimal(item.value,2):"$ "+formatDecimal(item.balanceDollar,2)}}</text>
+								</view>
+							</view>
+						</view>
+						<view class="border"></view>
+					</view>
+				</view>
 
 			</view>
 		</view>
@@ -234,6 +274,7 @@
 				transfer: false,
 				collection: false,
 				HECOassetsList: [], // heco
+				BinanceassetsList: [], // Binance
 				hscPrice: 0, // hsc价格
 			}
 		},
@@ -262,6 +303,7 @@
 			uni.setStorageSync('ERC20transfer', false)
 			this.ETHassetsList = util.getAssets(this.addr)
 			this.HECOassetsList = util.getAssets(this.addr);
+			this.BinanceassetsList = util.getAssets(this.addr);
 
 
 			this.ETHassetsList.unshift({
@@ -270,6 +312,11 @@
 				logo: '../../static/common/ETH.png',
 			})
 			this.HECOassetsList.unshift({
+				label: "HSC",
+				value: uni.getStorageSync('userAddress'),
+				logo: '../../static/main/hsc.png',
+			})
+			this.BinanceassetsList.unshift({
 				label: "HSC",
 				value: uni.getStorageSync('userAddress'),
 				logo: '../../static/main/hsc.png',
@@ -288,6 +335,13 @@
 				item.loaded = false
 				this.getBalance(item)
 			})
+			this.BinanceassetsList.forEach(item => {
+				item.balance = 0
+				item.balanceDollar = 0
+				item.loaded = false
+				this.getBalance(item)
+			})
+			
 			// console.log(this.HECOassetsList)
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
 				let acc = this.secret.decrypt(uni.getStorageSync('account'));
@@ -373,15 +427,19 @@
 			
 				if(this.Type.type == 'HST'){
 					uni.navigateTo({
-						url: url + '?denom=u'+this.assetsList[0].denom
+						url: url + '?denom=u'+this.assetsList[0].denom.toLowerCase()
 					})
 				}else if(this.Type.type == 'ETH'){
 					uni.navigateTo({
 						url: url + '?denom=u'+this.ETHassetsList[0].label
 					})
-				}else{
+				}else if(this.Type.type == 'HECO'){
 					uni.navigateTo({
 						url: url + '?denom=u'+this.HECOassetsList[0].label
+					})
+				}else{
+					uni.navigateTo({
+						url: url + '?denom=u'+this.BinanceassetsList[0].label
 					})
 				}	
 			},
@@ -512,8 +570,8 @@
 						this.$forceUpdate()
 						this.TotalAssets = this.TotalAssets + item.balanceDollar
 					})
-				} else if (item.label == "HSC") {
-					//let contractAddress = '0xDB073D4Ff4bF9A8BE2900EdDc43e4206269331e8'; // 测试环境合约地址
+				} else if (item.label == "HSC" && this.Type.type == 'HECO') {
+					// let contractAddress = '0xDB073D4Ff4bF9A8BE2900EdDc43e4206269331e8'; // 测试环境合约地址
 					let contractAddress = '0x18F801fd8B8E7821E0C52Cf4739D76520e965a21'; // 正式环境合约地址
 
 					let sum = 0
@@ -528,7 +586,23 @@
 						this.$forceUpdate()
 						this.TotalAssets =  item.balanceDollar
 					})
-				} else {
+				} else if (item.label == "HSC" && this.Type.type == 'Binance') {
+					// let contractAddress = '0x825F5256Aef3FeC35b97B8F1Ba57E971C4A59A27'; // 测试环境合约地址
+					let contractAddress = '0x8b0b4aFc40a028aa002a6DB52EC268e8978EAC40'; // 正式环境合约地址
+
+					let sum = 0;
+					this.$wallet('Binance').getHecoBalance(this.addr,contractAddress).then(res => {
+						// console.log(ethers.utils.formatUnits(res,util.getHscDecimal(contractAddress)))
+						item.loaded = true;
+						
+						let balance = ethers.utils.formatUnits(res,util.getHscDecimal(contractAddress));
+	
+						item.balance = balance
+						item.balanceDollar = balance * this.hscPrice
+						this.$forceUpdate()
+						this.TotalAssets =  item.balanceDollar
+					})
+				}else {
 					let sum = 0
 					this.$wallet('ETH').getTokenBalance(this.addr, item.value).then(res => {
 						item.loaded = true

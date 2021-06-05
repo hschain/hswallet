@@ -54,6 +54,7 @@
 										<text v-if="Type.type=='HST'" class="denom">{{item.denom}}</text>
 										<view class="address" v-if="Type.type=='ETH'">{{item.from | hash}}</view>
 										<view class="address" v-if="Type.type=='HECO'">{{item.from | hash}}</view>
+										<view class="address" v-if="Type.type=='Binance'">{{item.from | hash}}</view>
 										<view class="tiem">{{item.time}}</view>
 									</view>
 									<!-- <view class="tabBottom">{{item.time}}</view> -->
@@ -65,6 +66,8 @@
 										{{hideBalance ? "****" : item.amount}}</text>
 									<text v-else-if="Type.type=='HECO'">{{item.type === 'in' ? '+' : '-'}}
 										{{hideBalance ? "****" : formatDecimal(item.amount/1000000,4)}}</text>
+										<text v-else-if="Type.type=='Binance'">{{item.type === 'in' ? '+' : '-'}}
+											{{hideBalance ? "****" : formatDecimal(item.amount/1000000,4)}}</text>
 								</view>
 								<view class="border"></view>
 							</view>
@@ -98,7 +101,7 @@
 	import {
 		ethers
 	} from "@/common/js/ethers.js"
-	import {hecoUrl} from '@/common/js/wallet.js'
+	import { hecoUrl,BinanceUrl } from '@/common/js/wallet.js'
 	
 	export default {
 		name: 'assets',
@@ -142,6 +145,7 @@
 				transfers: false,
 				collection: false,
 				hecoUrl: hecoUrl, // 火币网链接
+				BinanceUrl: BinanceUrl, // 币安
 			}
 		},
 		onLoad(value) {
@@ -172,6 +176,15 @@
 				this.currencyName = value.val
 				this.imgsrc = value.logo
 				this.account = value.balance
+			}else if (this.Type.type == 'Binance') {
+
+				uni.setNavigationBarTitle({
+					title: value.val
+				})
+				this.denom = value.val.toLowerCase()
+				this.currencyName = value.val
+				this.imgsrc = value.logo
+				this.account = value.balance
 			}
 			this.denom = 'u' + this.denom;
 			// console.log(this.denom)
@@ -185,7 +198,7 @@
 			this.Type = accs[uni.getStorageSync('userAddress')];
 			this.walletType = this.$store.state.walletType;
 
-			if (this.Type.type != 'HST' && this.currencyName != 'ETH' && this.currencyName != 'HSC') {
+			if (this.Type.type != 'HST' && this.currencyName != 'ETH' && this.currencyName != 'HSC'&& this.currencyName != 'Binance') {
 				this.$wallet("ETH").getTokenBalance(uni.getStorageSync('userAddress'), uni.getStorageSync('ERC20addr'))
 					.then(res => {
 
@@ -199,6 +212,8 @@
 			} else if (this.currencyName == 'HSC') {
 				// let result = await this.$wallet('HECO').getBalance(uni.getStorageSync('userAddress'))
 				// this.account = ethers.utils.formatEther(result)
+			}else if(this.currencyName == 'Binance'){
+				
 			}
 
 			this.$store.commit('SET_QUERY_INFO_FLAG', true)
@@ -346,8 +361,8 @@
 							'address':uni.getStorageSync('userAddress').toLocaleLowerCase(),
 							'startblock':0,
 							'endblock':99999999,
-							'sort':'asc',
-							'apikey':this.secret.decrypt(uni.getStorageSync('account'))
+							'sort':'desc',
+							'apikey':'STREDA3BHNE99FM7VXZ44DV385EF1CAG41'
 							// address:uni.getStorageSync('userAddress').toLocaleLowerCase(),limit:20,start:0
 						},
 						header: {
@@ -384,7 +399,55 @@
 						},
 					})
 					uni.hideLoading();
-				} else if (this.Type.type == 'ETH' && this.currencyName != 'ETH' && this.currencyName != 'HSC') {
+				} else if (this.Type.type == 'Binance' && this.currencyName == 'HSC') {
+
+					uni.request({
+						url: this.BinanceUrl, // 根据环境切换
+						data:{
+							'module':'account',
+							'action':'tokentx',
+							'address':uni.getStorageSync('userAddress').toLocaleLowerCase(),
+							'startblock':0,
+							'endblock':99999999,
+							'sort':'desc',
+							'apikey':this.secret.decrypt(uni.getStorageSync('account'))[0]
+							// address:uni.getStorageSync('userAddress').toLocaleLowerCase(),limit:20,start:0
+						},
+						header: {
+							'content-type': 'application/json;charset=UTF-8' //自定义请求头信息
+						},
+						success: (res) => {
+							// console.log(res);
+							if (res.data) {
+								let i=0;
+								res.data.result.forEach(item => {
+
+									let obj = {
+										// fee:item.fee,
+										txHash: item.hash,
+										result:item.isError,
+										from:item.from,
+										to:item.to,
+										amount:item.value,
+										type:item.to==uni.getStorageSync('userAddress').toLocaleLowerCase()?'in':'out',
+										time: this.timestampToTime(item.timeStamp),
+										id:i++
+									}
+									this.assetsList.all.push(obj)
+
+								})
+								this.assetsList.out = this.assetsList.all.filter(item => item.type === 'out')
+								this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
+								this.assetsList.err = this.assetsList.all.filter(item => item.isError=='1')
+							}
+
+						},
+						fail:(err)=>{
+							console.log(err);
+						},
+					})
+					uni.hideLoading();
+				}else if (this.Type.type == 'ETH' && this.currencyName != 'ETH' && this.currencyName != 'HSC') {
 					uni.request({
 						url: 'http://47.242.65.77:5676/eth/access/rc20_list',
 						data: {

@@ -34,6 +34,16 @@
 			    <image  class="arrowRight" src="../../static/svg/arrow_right.svg" mode=""></image>
 			    <view class="shortBoder"></view>
 			</view>
+			<!-- Binance -->
+			<view class="eth" @click="onSelect('Binance')">
+			    <image  class="hstLogo" src="../../static/common/bnb.svg" mode=""></image>
+			    <view class="walletTitle">
+			        <view class="HSTwallet">Binance</view>
+			        <view class="small">Binancechain</view>
+			    </view>
+			    <image  class="arrowRight" src="../../static/svg/arrow_right.svg" mode=""></image>
+			    <view class="shortBoder"></view>
+			</view>
         </view>
 	</view>
 </template>

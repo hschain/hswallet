@@ -70,6 +70,27 @@
 					<view class="border"></view>
 				</view>
 			</view>
+			<!-- Binance -->
+			<view class="assetsList" v-if="Type.type == 'Binance'">
+				<view v-for="(item,index) in BinanceassetsList"
+					:key="Type.type=='HST' ? item.denom : item.value" class="table ">
+					<view class="tableWrapper">
+						<view class="tableLeft">
+							<image class="icon" v-if="Type.type=='HST'" src="../../static/common/logo.png" mode="">
+							</image>
+							<image class="icon" v-else-if="Type.type === 'ETH'" :src="item.logo" mode=""></image>
+							<image class="icon"  v-else-if="Type.type === 'HECO'" :src="item.logo" mode=""></image>
+							<image class="icon"  v-else-if="Type.type === 'Binance'" :src="item.logo" mode=""></image>
+							<image class="icon" v-else src="../../static/common/symbol_none.svg" mode=""></image>
+							<text class="denom">{{Type.type=='HST'?item.denom:item.label}}</text>
+							<view class="addre">{{item.value | hash}}</view>
+						</view>
+					</view>
+					<image class="assetsEdit" src="../../static/svg/ic_remove.svg" mode="" @click="removeAssets(index)">
+					</image>
+					<view class="border"></view>
+				</view>
+			</view>
 		</view>
 
 		<view v-if="keyword">
@@ -114,6 +135,7 @@
 				isEmpty: false,
 				ETHassetsList: [],
 				HECOassetsList: [],
+				BinanceassetsList: [],
 				Type: {},
 			}
 		},
@@ -124,11 +146,17 @@
 			this.addr = uni.getStorageSync('userAddress')
 			this.ETHassetsList = util.getAssets(this.addr);
 			this.HECOassetsList = util.getAssets(this.addr);
+			this.BinanceassetsList = util.getAssets(this.addr);
 			
 			this.HECOassetsList.unshift({
 				label: "HSC",
 				value: uni.getStorageSync('userAddress'),
 				logo: '../../static/main/hsc.png',
+			})
+			this.BinanceassetsList.unshift({
+				label: "Binance",
+				value: uni.getStorageSync('userAddress'),
+				logo: '../../static/common/bnb.svg',
 			})
 			
 			if (!this.$store.state.walletName && uni.getStorageSync('account')) {
@@ -227,22 +255,24 @@
 							}
 						})
 					}else if(_that.Type.type == 'HECO'){
-						let sum = 0
-						_that.$wallet('HECO').getHecoBalance(_that.addr,_that.keyword).then(res => {
-							//let contractAddress = '0xDB073D4Ff4bF9A8BE2900EdDc43e4206269331e8'; // 测试环境合约地址
-							let contractAddress = '0x18F801fd8B8E7821E0C52Cf4739D76520e965a21'; // 正式环境合约地址
-							// console.log(ethers.utils.formatUnits(res,util.getHscDecimal(contractAddress)))
-							// item.loaded = true;
+						// let sum = 0
+						// _that.$wallet('HECO').getHecoBalance(_that.addr,_that.keyword).then(res => {
+						// 	//let contractAddress = '0xDB073D4Ff4bF9A8BE2900EdDc43e4206269331e8'; // 测试环境合约地址
+						// 	let contractAddress = '0x18F801fd8B8E7821E0C52Cf4739D76520e965a21'; // 正式环境合约地址
+						// 	// console.log(ethers.utils.formatUnits(res,util.getHscDecimal(contractAddress)))
+						// 	// item.loaded = true;
 							
-							let balance = ethers.utils.formatUnits(res,util.getHscDecimal(contractAddress));
+						// 	let balance = ethers.utils.formatUnits(res,util.getHscDecimal(contractAddress));
 							
-							// item.balance = balance
-							// item.balanceDollar = balance * _that.hscPrice
-							// _that.$forceUpdate()
-							// _that.TotalAssets = _that.TotalAssets + item.balanceDollar
+						// 	// item.balance = balance
+						// 	// item.balanceDollar = balance * _that.hscPrice
+						// 	// _that.$forceUpdate()
+						// 	// _that.TotalAssets = _that.TotalAssets + item.balanceDollar
 							
-							uni.hideLoading()
-						})
+						// 	uni.hideLoading()
+						// })
+					}else if(_that.Type.type == 'Binance'){
+						
 					}
 					
 				}, 1000)
@@ -260,6 +290,9 @@
 				}else if(this.Type.type == 'HECO'){
 					util.removeAsset(this.addr, this.HECOassetsList[index])
 					this.HECOassetsList.splice(index, 1);
+				}else if(this.Type.type == 'Binance'){
+					util.removeAsset(this.addr, this.BinanceassetsList[index])
+					this.BinanceassetsList.splice(index, 1);
 				}
 				
 				uni.showToast({

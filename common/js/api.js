@@ -5,8 +5,8 @@ const install = (Vue, vm) => {
 		getAssets(hash) {return vm.$u.get('api/v1/account/' + hash)},
 		getAccounts(hash) {return vm.$u.get('api/v2/auth/accounts/' + hash)}, // 正式环境
 		broadcast(params) {return vm.$u.post('api/v2/txs', params)}, // 正式环境
-		//getAccounts(hash) {return vm.$u.get('api/lcd/auth/accounts/' + hash)}, // 测试环境
-		//broadcast(params) {return vm.$u.post('api/lcd/txs', params)}, // 测试环境
+		// getAccounts(hash) {return vm.$u.get('api/lcd/auth/accounts/' + hash)}, // 测试环境
+		// broadcast(params) {return vm.$u.post('api/lcd/txs', params)}, // 测试环境
 		getAssetsList(params, hash='') {return vm.$u.get('api/v1/txs' + hash, params)},
 		getVersion(params) {return vm.$u.get('api/v1/version', params)},
 		getETHtradingList(params){return vm.$u.get('api/eth/access/eth_list',params)},

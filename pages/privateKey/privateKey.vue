@@ -37,7 +37,10 @@ export default {
                 }else if (this.Type.type=='HECO') {
                     let wallet = ethers.Wallet.fromMnemonic(this.Type.key)
                     this.privateKey=wallet.privateKey
-                }
+                }else{
+					let wallet = ethers.Wallet.fromMnemonic(this.Type.key)
+					this.privateKey=wallet.privateKey
+				}
             }
     },   
     methods:{

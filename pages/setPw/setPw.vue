@@ -31,8 +31,10 @@
 				this.nameIndex = uni.getStorageSync('hstnameIndex');
 			}else if(this.$store.state.walletType=='ETH'){
 				this.nameIndex = uni.getStorageSync('ethnameIndex');
-			}else{
+			}else if(this.$store.state.walletType=='HECO'){
 				this.nameIndex = uni.getStorageSync('heconameIndex');
+			}else{
+				this.nameIndex = uni.getStorageSync('binancenameIndex');
 			}
 		},
 		methods: {

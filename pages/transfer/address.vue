@@ -9,6 +9,7 @@
 						<view class="tableList" v-for="(item, index) in addrList" :key="index" @click="choose(index)">
 							<image v-if="item.denom=='HST'" class="rightImg" src="../../static/svg/chain_hst.svg" mode="" ></image>
 							<image v-else-if="item.denom=='HECO'" class="rightImg" src="../../static/common/heco.png" mode="" ></image>
+							<image v-else-if="item.denom=='Binance'" class="rightImg" src="../../static/common/bnb.svg" mode="" ></image>
 							<image v-else class="rightImg" src="../../static/svg/chain_eth.svg" mode="" ></image>
 							<view class="name">{{item.name}}</view>
 							<view class="addr">{{item.addr}}</view>
@@ -92,16 +93,19 @@
 			},
 			//点击时根据不同入口做出动作
 			choose(val) {
-				if (this.route === 'pages/transfer/transfer') { //将数据返回到转账页面
-					this.$store.dispatch('saveAddrData', this.addrList[val])
-					this.addrList.unshift(this.addrList[val])
-					this.addrList.splice(val+1, 1)
-					uni.setStorageSync('addressBook_' + uni.getStorageSync('userAddress'), this.addrList)
-					uni.navigateBack()
-				} else { //换出侧边栏
-					this.showIndex = val
-					this.showActionSheet = true
+				if(this.route){
+					if (this.route === 'pages/transfer/transfer') { //将数据返回到转账页面
+						this.$store.dispatch('saveAddrData', this.addrList[val])
+						this.addrList.unshift(this.addrList[val])
+						this.addrList.splice(val+1, 1)
+						uni.setStorageSync('addressBook_' + uni.getStorageSync('userAddress'), this.addrList)
+						uni.navigateBack()
+					} else { //换出侧边栏
+						this.showIndex = val
+						this.showActionSheet = true
+					}
 				}
+				
 			},
 			//删除所选内容
 			delItem() {

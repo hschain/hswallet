@@ -168,9 +168,7 @@
 			height: 44rpx;
 			margin-right: 32rpx;
 		}
-		.bridge-icon{
-			height: 48rpx;
-		}
+
 		.msg {
 			display: flex;
 			justify-content: center;

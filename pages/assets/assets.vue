@@ -10,8 +10,7 @@
 			</image>
 			<image v-if="currencyName=='HSC'" class="walletIcon" src="../../static/main/hsc.png" mode=""></image>
 			<image v-if="Type.type=='ETH'" class="walletIcon" :src="imgsrc" mode=""></image>
-			<image
-				v-if="currencyName!='HST'&&currencyName!='HST0'&currencyName!='TWT'&&currencyName!='TWT0'&&currencyName!='HSC'&&Type.type!='ETH'"
+			<image v-if="currencyName!='HST'&&currencyName!='HST0'&currencyName!='TWT'&&currencyName!='TWT0'&&currencyName!='HSC'&&Type.type!='ETH'"
 				class="walletIcon" src="../../static/common/coin_default.png" mode=""></image>
 			<view class="detail ">
 				<view class="value">
@@ -34,7 +33,7 @@
 		<swiper class="swiperCard" :current="swiperCurrent" @transition="transition" @animationfinish="animationfinish">
 			<swiper-item v-for="(sub, name) in assetsList" :key="name">
 				<view class="">
-					<scroll-view scroll-y="true" class="assetsList " @scrolltolower="getAssetsList(true)"
+					<scroll-view scroll-y="true" class="assetsList " @scrolltolower="queryAssetsList(true)"
 						scroll-with-animation="true">
 						<view class="listWrapper">
 							<view v-if="!assetsList[name].length" class="isEmpty">
@@ -130,6 +129,7 @@
 				// 因为内部的滑动机制限制，请将tabs组件和swiper组件的current用不同变量赋值
 				activeIndex: 0, // tabs组件的current值，表示当前活动的tab选项
 				swiperCurrent: 0, // swiper组件的current值，表示当前那个swiper-item是活动的
+				page: 0,
 				limit: 10,
 				paging: {}, //列表数据量细节
 				loadStatus: 'loadmore', //底部加载状态
@@ -189,7 +189,8 @@
 			this.denom = 'u' + this.denom;
 			// console.log(this.denom)
 		},
-		async onShow() {
+		onShow() {
+			this.page = 0;
 			// uni.showLoading({
 			// 			title: '加载中',
 			// 			mask:true
@@ -207,7 +208,7 @@
 						this.account = 0.0
 					})
 			} else if (this.currencyName == 'ETH') {
-				let result = await this.$wallet('ETH').getBalance(uni.getStorageSync('userAddress'))
+				let result = this.$wallet('ETH').getBalance(uni.getStorageSync('userAddress'))
 				this.account = ethers.utils.formatEther(result)
 			} else if (this.currencyName == 'HSC') {
 				// let result = await this.$wallet('HECO').getBalance(uni.getStorageSync('userAddress'))
@@ -216,7 +217,7 @@
 				
 			}
 
-			this.$store.commit('SET_QUERY_INFO_FLAG', true)
+			// this.$store.commit('SET_QUERY_INFO_FLAG', true)
 			this.assetsList = {
 				all: [],
 				out: [],
@@ -231,7 +232,6 @@
 			// this.$store.state.socketTask.onMessage(res => {
 
 			// })
-
 		},
 		onBackPress() {
 			this.$store.commit('SET_QUERY_INFO_FLAG', false)
@@ -292,6 +292,14 @@
 			},
 			changeIndex(val) {
 				this.swiperCurrent = val
+				this.page = 0;
+				if(this.Type.type == 'HST'){
+					this.assetsList.all = [];
+					this.assetsList.out = [];
+					this.assetsList.in = [];
+					this.assetsList.err = [];
+				}
+				this.queryAssetsList();
 			},
 			// swiper-item左右移动，通知tabs的滑块跟随移动
 			transition(e) {
@@ -492,6 +500,7 @@
 			},
 			//请求资产详情
 			queryAssetsList(lazyLoad, loadStatus, params) {
+				this.page++
 				if (this.Type.type == 'HST') {
 					// this.$u.api.getAssets(uni.getStorageSync('userAddress')).then(res => {
 					// 		let coins = res.data.result.value.coins
@@ -502,11 +511,13 @@
 
 					// })
 					this.$u.api.getAssetsList({
-						limit: 9999,
+						page: this.page,
+						limit: 10,
 						address: uni.getStorageSync('userAddress'),
 						// address:'hsc1wqznqd37hve7mdk759e25svw5597rw5gglle9f',
-						timetable: 'history',
-						denom: this.denom
+						// timetable: 'history',
+						denom: this.denom,
+						type: this.swiperCurrent
 					}).then(res => {
 						if (!lazyLoad) this.paging = res.paging
 						if (res.data) {
@@ -536,8 +547,8 @@
 							this.assetsList.in = this.assetsList.all.filter(item => item.type === 'in')
 							this.assetsList.err = this.assetsList.all.filter(item => !item.success)
 						}
-						res.paging.total * 1 <= this.assetsList.all.length ? this.loadStatus = 'nomore' : this
-							.loadStatus = 'loadmore'
+						// res.paging.total * 1 <= this.assetsList.all.length ? this.loadStatus = 'nomore' : this
+						// 	.loadStatus = 'loadmore'
 					})
 				}
 			},

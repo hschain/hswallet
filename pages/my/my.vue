@@ -111,6 +111,9 @@
 		methods: {
 			navigate(url) {
 				uni.navigateTo({url})
+				if(url == '../transfer/address'){
+					uni.setStorageSync('addressOriginal', '')
+				}
 			},
 			info() {
 				// #ifdef APP-PLUS

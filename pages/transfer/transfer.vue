@@ -159,8 +159,10 @@
 			//添加新地址
 			addAddress() {
 				uni.navigateTo({
-					url: `address?val=transfer`
+					url: `address`
 				})
+				
+				uni.setStorageSync('addressOriginal', 'transfer')
 			},
 			// 下一步前验证弹框
 			nextStep() {

@@ -134,7 +134,7 @@
 					uni.showToast({
 						title: '保存成功',
 						success() {
-							uni.navigateTo({url: '../transfer/address'})
+							uni.redirectTo({url: '../transfer/address'})
 						}
 					})
 				}
@@ -158,7 +158,7 @@
 		},
 		methods:{
 			back(){
-				uni.navigateTo({
+				uni.redirectTo({
 					url: "address"
 				})
 			},

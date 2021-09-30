@@ -21,7 +21,7 @@
 		<view class="margin cellMark"  @click="onBridge">
 			<view class=" circle">
 				<view class="boxLeft">
-					<image class="leftIcon bridge-icon" src="../../static/application/bridge.png" mode=""></image>
+					<image class="leftIcon bridge-icon" src="../../static/svg/bridge.svg" mode=""></image>
 					<view class="leftWrapper">
 						<view class="title ">
 							资产跨链

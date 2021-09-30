@@ -114,7 +114,7 @@ import hschain from 'hschainjs'
 				this.nameIndex = uni.getStorageSync('ethnameIndex');
 			}else if(this.$store.state.walletType=='HECO'){
 				this.nameIndex = uni.getStorageSync('heconameIndex');
-			}else{
+			}else if(this.$store.state.walletType == 'Binance'){
 				this.nameIndex = uni.getStorageSync('binancenameIndex');
 			}
 		},
@@ -193,7 +193,7 @@ import hschain from 'hschainjs'
 						uni.setStorageSync('ethnameIndex',this.nameIndex+1)
 					}else if(this.$store.state.walletType=='HECO'){
 						uni.setStorageSync('heconameIndex',this.nameIndex+1)
-					}else{
+					}else if(this.$store.state.walletType == 'Binance'){
 						uni.setStorageSync('binancenameIndex',this.nameIndex+1)
 					}
 					

@@ -560,17 +560,18 @@
 				}
 			},
 			getBalance(item) {
-				if (item.label == "ETH") {
-					let sum = 0
-					this.$wallet('ETH').getBalance(this.addr).then(res => {
-						item.loaded = true
-						item.balance = ethers.utils.formatEther(res)
-						item.balanceDollar = (ethers.utils.formatEther(res) / this.exchange.eth.value) * this
-							.exchange.usd.value
-						this.$forceUpdate()
-						this.TotalAssets = this.TotalAssets + item.balanceDollar
-					})
-				} else if (item.label == "HSC" && this.Type.type == 'HECO') {
+				// if (item.label == "ETH") {
+				// 	let sum = 0
+				// 	this.$wallet('ETH').getBalance(this.addr).then(res => {
+				// 		item.loaded = true
+				// 		item.balance = ethers.utils.formatEther(res)
+				// 		item.balanceDollar = (ethers.utils.formatEther(res) / this.exchange.eth.value) * this
+				// 			.exchange.usd.value
+				// 		this.$forceUpdate()
+				// 		this.TotalAssets = this.TotalAssets + item.balanceDollar
+				// 	})
+				// } else 
+				if (item.label == "HSC" && this.Type.type == 'HECO') {
 					// let contractAddress = '0xDB073D4Ff4bF9A8BE2900EdDc43e4206269331e8'; // 测试环境合约地址
 					let contractAddress = '0x18F801fd8B8E7821E0C52Cf4739D76520e965a21'; // 正式环境合约地址
 
@@ -603,16 +604,16 @@
 						this.TotalAssets =  item.balanceDollar
 					})
 				}else {
-					let sum = 0
-					this.$wallet('ETH').getTokenBalance(this.addr, item.value).then(res => {
-						item.loaded = true
-						item.balance = ethers.utils.formatUnits(res, item.decimal),
-							item.balanceDollar = item.desc.split('$')[1] ? item.desc.split('$')[1] * ethers.utils
-							.formatUnits(res, item.decimal) :
-							'~'
-						this.$forceUpdate()
-						this.TotalAssets = this.TotalAssets + item.balanceDollar
-					})
+					// let sum = 0
+					// this.$wallet('ETH').getTokenBalance(this.addr, item.value).then(res => {
+					// 	item.loaded = true
+					// 	item.balance = ethers.utils.formatUnits(res, item.decimal),
+					// 		item.balanceDollar = item.desc.split('$')[1] ? item.desc.split('$')[1] * ethers.utils
+					// 		.formatUnits(res, item.decimal) :
+					// 		'~'
+					// 	this.$forceUpdate()
+					// 	this.TotalAssets = this.TotalAssets + item.balanceDollar
+					// })
 				}
 			}
 		}

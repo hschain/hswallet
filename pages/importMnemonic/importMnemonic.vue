@@ -78,7 +78,7 @@
 				this.nameIndex = uni.getStorageSync('ethnameIndex');
 			} else if (this.$store.state.walletType == 'HECO') {
 				this.nameIndex = uni.getStorageSync('heconameIndex');
-			} else {
+			} else if(this.$store.state.walletType == 'Binance'){
 				this.nameIndex = uni.getStorageSync('binancenameIndex');
 			}
 		},
@@ -170,7 +170,7 @@
 										uni.setStorageSync('ethnameIndex', _this.nameIndex + 1)
 									} else if (_this.$store.state.walletType == 'HECO') {
 										uni.setStorageSync('heconameIndex', _this.nameIndex + 1)
-									} else {
+									} else if(_this.$store.state.walletType == 'Binance'){
 										uni.setStorageSync('binancenameIndex', _this.nameIndex + 1)
 									}
 								}, 1000)
@@ -249,7 +249,7 @@
 									uni.setStorageSync('ethnameIndex', _this.nameIndex + 1)
 								} else if(_this.$store.state.walletType == 'HECO'){
 									uni.setStorageSync('heconameIndex', _this.nameIndex + 1)
-								}else{
+								}else if(this.$store.state.walletType == 'Binance'){
 									uni.setStorageSync('binancenameIndex', _this.nameIndex + 1)
 								}
 							}, 1000)

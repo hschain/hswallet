@@ -73,7 +73,7 @@
 			</view>			 
 		</u-link>
 		
-		<!-- <updateTip  ref="updateTipNav" :formMain="false"></updateTip> -->
+		<updateTip  ref="updateTipNav" :formMain="false"></updateTip>
 	</view>
 </template>
 

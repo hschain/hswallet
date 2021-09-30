@@ -56,7 +56,7 @@
 			// 获取入口地址
 			let page = getCurrentPages()
 			this.route = page[page.length - 2].route
-			this.source=value.val
+			this.source = uni.getStorageSync('addressOriginal');
 		
 		},
 		onShow() {
@@ -70,7 +70,7 @@
 			}
 		},
 		onNavigationBarButtonTap() {
-			uni.navigateTo({url: "newAddress"})
+			uni.redirectTo({url: "newAddress"})
 		},
 		methods:{
 			back() {	
@@ -111,7 +111,7 @@
 			delItem() {
 				this.addrList.splice(this.showIndex, 1)
 				uni.setStorageSync('addressBook_' + uni.getStorageSync('userAddress'), this.addrList)
-				this.showIndex = -1
+				this.showIndex = 0
 				this.delWarning = false
 				uni.showToast({title: '删除成功'})
 			},

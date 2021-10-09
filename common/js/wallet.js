@@ -34,10 +34,10 @@ let Wallet = function(chain) {
 		this.provider = new ethers.providers.JsonRpcProvider('http://47.242.155.204:8545')
 	}else if(chain == 'HECO'){
 		// this.provider = new ethers.providers.JsonRpcProvider('https://http-testnet.hecochain.com'); // 测试网
-		this.provider = new ethers.providers.JsonRpcProvider('https://http-mainnet-node.huobichain.com'); // 正式网
+		this.provider = new ethers.providers.JsonRpcProvider('https://proxy.hschain.io/huobi/'); // 正式网  old: https://http-mainnet-node.huobichain.com
 	}else if(chain == 'Binance'){
 		// this.provider = new ethers.providers.JsonRpcProvider('https://data-seed-prebsc-1-s2.binance.org:8545/') // 测试网
-		this.provider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed1.binance.org') // 正式网
+		this.provider = new ethers.providers.JsonRpcProvider('https://proxy.hschain.io/binance/') // 正式网  old: https://bsc-dataseed1.binance.org
 	}
 }
 

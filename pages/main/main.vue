@@ -293,7 +293,8 @@
 			}
 
 			uni.request({
-				url: 'https://api.coingecko.com/api/v3/exchange_rates',
+				// url: 'https://api.coingecko.com/api/v3/exchange_rates',
+				url: 'https://proxy.hschain.io/coingecko/api/v3/exchange_rates',
 				success: (res) => {
 					this.exchange = res.data.rates
 				},

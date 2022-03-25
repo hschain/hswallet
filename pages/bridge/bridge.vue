@@ -37,7 +37,7 @@
 				<view class="uni-form-item uni-column">
 					<view class="title">数量</view>
 					<u-input :custom-style="{fontSize: '32rpx',background:'#fff',fontFamily:'gilroy-bold',paddingLeft:'16rpx'}"
-						class="input" v-model="amount" type="number" placeholder="请输入转账数量" :clearable="false" :border="false" />
+						class="input" v-model="amount" type="digit" placeholder="请输入转账数量" :clearable="false" :border="false" />
 				</view>
 				<view class="uni-form-item uni-column">
 					<view class="title">{{coinType}}接收地址</view>
@@ -287,6 +287,19 @@
 						ecpairPriv = hschain.getECPairPriv(mnemonic)
 					}
 					this.$u.api.getAccounts(this.myAddr).then(res => {
+						
+						for(var i=0;i<res.result.value.coins.length;i++){
+							if('uhsc' == res.result.value.coins[i].denom){
+								if(this.amount * 1000000 > res.result.value.coins[i].amount){
+									uni.showToast({
+										title: '当前余额不足',
+										icon: 'none'
+									})
+									return;
+								}
+							}
+						}
+						
 						let stdSignMsg = hschain.newStdMsg({
 							msgs: [{
 								type: "cosmos-sdk/MsgSend",
@@ -346,6 +359,16 @@
 						type = 'privateKey'
 						mnemonic = this.account[uni.getStorageSync('userAddress')].privateKey;
 					}
+					
+					if(this.amount.split('.')[1]){
+						if(this.amount.split('.')[1].length > 6){
+							uni.showToast({
+								title: "请输入6位以内小数",
+								icon: "none"
+							})
+							return
+						}
+					}
 
 					this.$wallet("HECO").HecoBridgeHsc(mnemonic, this.myAddr, this.testHECOAddr, this.address, this.amount,
 						type).then(res => {
@@ -375,6 +398,16 @@
 					} else if (this.Type.privateKey) {
 						type = 'privateKey'
 						mnemonic = this.account[uni.getStorageSync('userAddress')].privateKey;
+					}
+					
+					if(this.amount.split('.')[1]){
+						if(this.amount.split('.')[1].length > 6){
+							uni.showToast({
+								title: "请输入6位以内小数",
+								icon: "none"
+							})
+							return
+						}
 					}
 
 					this.$wallet("Binance").BinanceBridgeHsc(mnemonic, this.myAddr, this.testBinanceAddr, this.address, this.amount,

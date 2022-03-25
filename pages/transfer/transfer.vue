@@ -29,11 +29,11 @@
 						<u-cell-item :arrow="false" hover-class="none">
 							<u-input class="table" slot="title"
 								:custom-style="{fontSize: '46rpx',fontFamily:'gilroy-bold'}" v-model="cash"
-								placeholder="0" :clearable="false" type="number" />
+								placeholder="0" :clearable="false" type="digit" />
 						</u-cell-item>
 						<u-cell-item :arrow="false" hover-class="none">
 							<u-input class="table" slot="title" :custom-style="{fontSize: '32rpx'}" v-model="memo"
-								placeholder="备注" :clearable="false" />
+								placeholder="备注" :clearable="false" maxlength="15"/>
 						</u-cell-item>
 					</u-cell-group>
 				</view>
@@ -244,6 +244,19 @@
 						ecpairPriv = hschain.getECPairPriv(mnemonic)
 					}
 					this.$u.api.getAccounts(this.myAddr).then(res => {
+
+						for(var i=0;i<res.result.value.coins.length;i++){
+							if(this.denom == res.result.value.coins[i].denom){
+								if(this.cash * 1000000 > res.result.value.coins[i].amount){
+									uni.showToast({
+										title: '当前余额不足',
+										icon: 'none'
+									})
+									return;
+								}
+							}
+						}
+						
 						let stdSignMsg = hschain.newStdMsg({
 							msgs: [{
 								type: "cosmos-sdk/MsgSend",
@@ -329,7 +342,17 @@
 						type = 'privateKey'
 						mnemonic = this.account[uni.getStorageSync('userAddress')].privateKey;
 					}
-
+					
+					if(this.cash.split('.')[1]){
+						if(this.cash.split('.')[1].length > 6){
+							uni.showToast({
+								title: "请输入6位以内小数",
+								icon: "none"
+							})
+							return
+						}
+					}
+					
 					this.$wallet("HECO").sendHscToken(mnemonic, this.addr, this.cash, type).then(res => {
 						uni.showToast({
 							title: '交易请求成功'
@@ -355,6 +378,16 @@
 					} else if (this.Type.privateKey) {
 						type = 'privateKey'
 						mnemonic = this.account[uni.getStorageSync('userAddress')].privateKey;
+					}
+					
+					if(this.cash.split('.')[1]){
+						if(this.cash.split('.')[1].length > 6){
+							uni.showToast({
+								title: "请输入6位以内小数",
+								icon: "none"
+							})
+							return
+						}
 					}
 
 					this.$wallet("Binance").sendBinanceToken(mnemonic, this.addr, this.cash, type).then(res => {

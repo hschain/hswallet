@@ -163,6 +163,21 @@ import hschain from 'hschainjs'
 					title: '',
 					mask:true
 				});
+				
+				// console.log(uni.getStorageSync("createWallet"));
+				if(uni.getStorageSync("createWallet") == 2){
+					uni.showToast({
+						title: "助记词备份成功"
+					})
+					
+					setTimeout(()=>{
+						uni.redirectTo({
+							url: "../management/management"
+						})
+					},2000)
+					return;
+				}
+				
 				//存储数据并跳转路由
 				let addr = this.addr
 					this.$store.commit('SET_WALLETNAME', this.walletType+`-${this.nameIndex}`)

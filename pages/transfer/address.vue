@@ -61,7 +61,9 @@
 		},
 		onShow() {
 			//获取地址本
-			if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))) this.addrList = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
+			if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))){
+				this.addrList = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
+			}
 		},
 		onBackPress() {
 			if(!this.source){

@@ -10,7 +10,7 @@
 			</view>
 		</view>
 		
-		<view class="clearBG cellMark" @click="navigate('../log/log')" style="position:absolute;top:700rpx;left:32rpx;">
+		<view class="clearBG cellMark" @click="navigate('../log/log')" style="position:absolute;top:700rpx;left:32rpx;" v-if="false">
 			<view class="circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">

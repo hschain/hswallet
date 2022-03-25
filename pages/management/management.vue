@@ -86,7 +86,7 @@
 		<!-- 修改钱包名称弹框 -->
 		<u-modal :negative-top="top" v-model="modifyName" title="钱包名称" @confirm="modify" @cancel="()=>modifyName = false" :show-cancel-button="true" :mask-close-able="true">
 			<view class="walletName">
-				<u-input v-model="value" :placeholder="account[addr].name" :border="true" />
+				<u-input v-model="value" :placeholder="account[addr].name" :border="true" maxlength="12"/>
 			</view>
 		</u-modal>
 
@@ -233,6 +233,8 @@
 			correct(val) {
 				if (val) {
 					if (this.inputPwOption === 'backup') {
+						uni.setStorageSync("createWallet",2);
+						
 						this.$store.dispatch('redirectToBackupPage', true)
 						uni.setStorageSync('isAccount', true)//管理界面标识
 						this.$store.dispatch('saveMnemonic', this.secret.decrypt(uni.getStorageSync('account'))[this.addr].key)

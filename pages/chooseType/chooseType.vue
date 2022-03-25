@@ -15,7 +15,7 @@
                 <image  class="arrowRight" src="../../static/svg/arrow_right.svg" mode=""></image>
                 <view class="shortBoder"></view>
             </view>
-            <view class="eth" @click="onSelect('ETH')">
+            <view class="eth" @click="onSelect('ETH')" v-if="false">
                 <image  class="hstLogo" src="../../static/common/chain_eth.png" mode=""></image>
                 <view class="walletTitle">
                     <view class="HSTwallet">ETH</view>

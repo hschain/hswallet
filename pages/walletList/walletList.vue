@@ -125,6 +125,8 @@
 			},
 			//创建,导入钱包
 			createWallet(){
+				uni.setStorageSync("createWallet",1);
+				
                 uni.navigateTo({
 					url: '../chooseType/chooseType?type=create'
 				})

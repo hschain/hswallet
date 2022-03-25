@@ -55,6 +55,8 @@
 		},
 		methods: {
 			create() {
+				uni.setStorageSync("createWallet",1);
+				
 				uni.navigateTo({
 					url: '../chooseType/chooseType?type=create'
 				})

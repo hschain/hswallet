@@ -1,6 +1,6 @@
 <template>
 	<view class="usingSetting ">
-		<view class=" cellMark" style="margin-top:48rpx">
+		<view class="cellMark" style="margin-top:48rpx" v-if="false">
 			<view class=" circle">
 				<view class="boxLeft">
 					<view class="leftWrapper">

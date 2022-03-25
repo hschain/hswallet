@@ -117,6 +117,19 @@
 							})
 						}
 						let addr = this.$wallet(this.$store.state.walletType).getAddress(value)
+						if (uni.getStorageSync('account')) {
+							let acc = this.secret.decrypt(uni.getStorageSync('account'));
+							for(let key in acc){
+								if(addr == key){
+									uni.showToast({
+										title: "当前钱包地址已存在",
+										icon: "none"
+									})
+									return;
+								}
+							}
+						}
+						
 						let _this = this
 						uni.showToast({
 							title: '助记词导入成功',
@@ -192,6 +205,18 @@
 					let addr
 					try {
 						addr = this.$wallet(this.$store.state.walletType).getAddress(value, 'privateKey')
+						if (uni.getStorageSync('account')) {
+							let acc = this.secret.decrypt(uni.getStorageSync('account'));
+							for(let key in acc){
+								if(addr == key){
+									uni.showToast({
+										title: "当前钱包地址已存在",
+										icon: "none"
+									})
+									return;
+								}
+							}
+						}
 					} catch (error) {
 						uni.showToast({
 							title: '私钥不正确',

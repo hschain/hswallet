@@ -15,7 +15,7 @@
 						</image>
 						<image v-show="Type.type=='Binance'" class="walletIcon" src="../../static/common/bnb.svg" mode="">
 						</image>
-						<u-section font-size="42" :show-line="false" color="#fff" sub-color="#fff"
+						<u-section class="wallet-name" font-size="42" :show-line="false" color="#fff" sub-color="#fff"
 							:title="this.$store.state.walletName" sub-title="" :arrow="false"
 							@click="navigate('../management/management')"></u-section>
 						<image class="more" src="../../static/svg/ic_more.svg" mode=""
@@ -61,7 +61,7 @@
 				<view class="title">
 					<text>资产</text>
 				</view>
-				<u-icon v-if="Type.type!='HST'" class="addIcon" size="40" name="../../static/common/circlePlus.png"
+				<u-icon v-if="Type.type!='HST' && Type.type!='HECO' && Type.type!='Binance' " class="addIcon" size="40" name="../../static/common/circlePlus.png"
 					color="#000" @click="gotoAddCurrency"></u-icon>
 				<!-- HST -->
 				<view class="assetsList" v-if="Type.type == 'HST'">
@@ -675,6 +675,10 @@
 							position: absolute;
 							left: 14px;
 							top: 36rpx;
+						}
+						
+						.wallet-name{
+							word-break: break-word;
 						}
 
 						.more {

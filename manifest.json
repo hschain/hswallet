@@ -2,7 +2,7 @@
     "name" : "HS Wallet",
     "appid" : "__UNI__4330A40",
     "description" : "HSWallet",
-    "versionName" : "1.1.7",
+    "versionName" : "1.1.9",
     "versionCode" : 101,
     "transformPx" : false,
     /* 5+App特有相关 */
@@ -80,7 +80,7 @@
                     "xxxhdpi" : "static/AppIcon/Android/192x192.png"
                 },
                 "ios" : {
-                    "appstore" : "C:/Users/ms04/Desktop/usuallyDir/交接文档/de-unpackage/res/icons/1024x1024.png",
+                    "appstore" : "C:/Users/dev/Desktop/usuallyDir/交接文档/de-unpackage/res/icons/1024x1024.png",
                     "ipad" : {
                         "app" : "unpackage/res/icons/76x76.png",
                         "app@2x" : "unpackage/res/icons/152x152.png",

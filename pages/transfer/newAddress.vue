@@ -57,15 +57,34 @@
 					duration: '1500'
 				},
 				editIndex: -1,
-				AddressType:uni.getStorageSync('AddressType')||'HST'
+				AddressType: ''
 			}
 		},
 		onLoad(value) {
+			if(uni.getStorageSync('AddressType')){
+				this.AddressType = uni.getStorageSync('AddressType');
+			}else{
+				this.AddressType = 'HST';
+			}
+			
 			//从编辑进入的，则给予初始值
 			if (value.addrIndex) {
 				this.editIndex = value.addrIndex
 				this.newAddr = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))[value.addrIndex]
+				this.AddressType = this.newAddr.denom;
+				uni.setStorageSync('AddressType',this.AddressType);
 			}
+			
+			if (this.AddressType=='HST') {
+				this.src='../../static/svg/chain_hst.svg'
+			}else if (this.AddressType=='ETH') {
+				this.src='../../static/svg/chain_eth.svg'
+			}else if (this.AddressType=='HECO') {
+				this.src='../../static/common/heco.png'
+			}else if (this.AddressType=='Binance') {
+				this.src='../../static/common/bnb.svg'
+			}
+			
 		},
 		onReady() {
 			if (this.editIndex !== -1) {
@@ -76,6 +95,9 @@
 		},
 	
 		onNavigationBarButtonTap() {
+			let reg1 = /^hsc[0-9a-zA-Z]{39}$/;  // hsc地址校验
+			let reg2 = /^0x[0-9a-fA-F]{40}$/;	// heco地址校验
+			
 			// 保存时做一系列规则判断
 			if (!this.newAddr.addr) {
 				this.$refs.uTips.show({
@@ -83,13 +105,19 @@
 					type: this.tips.type,
 					duration: this.tips.duration
 				})
-			} else if (uni.getStorageSync('AddressType')=='HST'&& !(/^hsc/i.test(this.newAddr.addr))){
+			} else if (uni.getStorageSync('AddressType')=='HST'&& !reg1.test(this.newAddr.addr)){
 				this.$refs.uTips.show({
 					title: '请输入正确的地址',
 					type: this.tips.type,
 					duration: this.tips.duration
 				})
-			} else if (!this.newAddr.name) {
+			} else if ((uni.getStorageSync('AddressType')=='HECO' || uni.getStorageSync('AddressType')=='Binance' )&& !reg2.test(this.newAddr.addr)){
+				this.$refs.uTips.show({
+					title: '请输入正确的地址',
+					type: this.tips.type,
+					duration: this.tips.duration
+				})
+			}else if (!this.newAddr.name) {
 				this.$refs.uTips.show({
 					title: '名称不能为空',
 					type: this.tips.type,
@@ -99,6 +127,7 @@
 				let sameAddr = false //是否存在相同地址的判断标志位
 				if (uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))) { //本地存储是否存在这一属性值
 					let data = uni.getStorageSync('addressBook_' + uni.getStorageSync('userAddress'))
+					
 					if (this.editIndex === -1) {// 判断是否为编辑地址模式，等于-1则不是
 						data.forEach(item => {
 						if (item.addr === this.newAddr.addr) {
@@ -108,8 +137,10 @@
 									duration: this.tips.duration
 								})
 								sameAddr = true
+								return;
 							}
 						})
+						
 						if (!sameAddr) {
 							data.push(this.newAddr)
 							uni.setStorage({
@@ -118,11 +149,13 @@
 							})
 						}
 					} else{
-						data.splice(this.editIndex, 1, this.newAddr)
-						uni.setStorage({
-							key: 'addressBook_' + uni.getStorageSync('userAddress'),
-							data: data
-						})
+						if (!sameAddr) {
+							data.splice(this.editIndex, 1, this.newAddr)
+							uni.setStorage({
+								key: 'addressBook_' + uni.getStorageSync('userAddress'),
+								data: data
+							})
+						}
 					}
 				} else {
 					uni.setStorage({
@@ -144,17 +177,6 @@
 		onBackPress() {
 			this.back();
 			return true;
-		},
-		onShow(){
-			if (this.AddressType=='HST') {
-				this.src='../../static/svg/chain_hst.svg'
-			}else if (this.AddressType=='ETH') {
-				this.src='../../static/svg/chain_eth.svg'
-			}else if (this.AddressType=='HECO') {
-				this.src='../../static/common/heco.png'
-			}else if (this.AddressType=='Binance') {
-				this.src='../../static/common/bnb.svg'
-			}
 		},
 		methods:{
 			back(){

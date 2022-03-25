@@ -341,7 +341,7 @@
 							if (/^u/i.test(item.messages[0].events.transfer.denom)) {
 								this.assetData.denom = item.messages[0].events.transfer.denom.slice(1);
 								this.assetData.value = (item.messages[0].events.transfer.amount / 1000000)
-									.toFixed(6);
+									.toFixed(4);
 							}
 						})
 
